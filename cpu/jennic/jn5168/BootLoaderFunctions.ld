@@ -1,0 +1,2 @@
+__exception_vsr_table = 0x00080038;
+_pSPIflashFncTable = 0x04000000;
