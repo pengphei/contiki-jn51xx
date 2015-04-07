@@ -23,7 +23,7 @@
  * Copyright NXP B.V. 2012. All rights reserved
  *
  ***************************************************************************/
-
+INCLUDE Rom_Functions_JN5168.ld
 INCLUDE AppBuildStart_JN5168.ld
 INCLUDE AppBuildExceptionHandlers_JN5168.ld
 INCLUDE AppBuildEnd_JN5168.ld

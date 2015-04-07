@@ -1,0 +1,98 @@
+CONTIKI_CPU_DIRS     = . dev net_new sys
+CONTIKI_SOURCEFILES += clock.c timer-arch.c uart1.c uart0.c jts.c assert.c i2c.c irq.c sprintf.c watchdog.c init.c slip.c
+
+### Compiler definitions
+CCPREFIX = ba-elf
+CC       = $(CCPREFIX)-gcc
+LD       = $(CCPREFIX)-gcc
+AS       = $(CCPREFIX)-as
+AR       = $(CCPREFIX)-ar
+OBJCOPY  = $(CCPREFIX)-objcopy
+STRIP    = $(CCPREFIX)-strip
+
+### This chooses the Jennic processor we're building for.
+#    GCC 4.1.2 always builds for JN5148 (jn5139 support is not working)
+#    GCC 4.2.1 always builds for JN5139 (jn5148 support is not working)
+#   So put the proper compiler in your PATH to build for JN5148 or JN5139,
+#   the compiler will fail on mixed incomplete builds!
+#
+#   Building for the JN5168 is the default!
+
+ifeq ($(DEBUG),true)
+CONTIKI_SOURCEFILES += gdb2.c
+CFLAGS += -DGDB
+endif
+
+CFLAGS += -DJENNIC_CHIP_FAMILY_JN516x
+
+# Chip specific C flags
+# watchdog is enabled by default on chip so allow disable if reqd
+CFLAGS += -DWATCHDOG_ENABLED
+
+# Feature set:
+#   JENNIC_HW_xx is silicon feature and so fixed
+#   JENNIC_SW_xx is build option and can be changed
+#
+#   JENNIC_HW_BBC_RXINCCA:    BBC RX during CCA capability
+#   JENNIC_HW_BBC_DMA:        BBC frame buffer DMA mechanism
+#   JENNIC_HW_BBC_ISA:        BBC inline security engine 
+#   JENNIC_SW_EXTERNAL_FLASH: whether external flash is supported
+#   JN516X_DMA_UART_BACKWARDS_COMPATIBLE_API: API behaves like the older versions with no visible UART DMA 
+#   JN516X_BACKWARDS_COMPATIBLE_API: API behaves like the older versions (supercedes above)
+#
+CFLAGS += -DJENNIC_HW_BBC_RXINCCA=1
+CFLAGS += -DJENNIC_HW_BBC_DMA=1
+CFLAGS += -DJENNIC_HW_BBC_ISA=0
+CFLAGS += -DJENNIC_SW_EXTERNAL_FLASH=0
+CFLAGS += -DJN516X_DMA_UART_BACKWARDS_COMPATIBLE_API=1
+CFLAGS += -DJN516X_BACKWARDS_COMPATIBLE_API=1
+
+
+CFLAGS += -I$(CONTIKI_CPU)/jn5168
+LDFLAGS += -L$(CONTIKI_CPU)/jn5168
+
+TARGET_LIBFILES += -lAES_CCM_SW_PATCH_JN516x 
+TARGET_LIBFILES += -lAes_JN516x 
+TARGET_LIBFILES += -lTimerServer_JN516x
+TARGET_LIBFILES += -lHardwareApi_JN516x 
+TARGET_LIBFILES += -lMicroSpecific_JN516x 
+TARGET_LIBFILES += -lBoot_JN516x 
+TARGET_LIBFILES += -lMAC_JN516x
+TARGET_LIBFILES += -lAppApi_JN516x 
+TARGET_LIBFILES += -lTof_JN516x 
+TARGET_LIBFILES += -lXcv_JN516x
+
+# common config for ba2
+CFLAGS += -Wall -Os -fomit-frame-pointer -fpack-struct -Wcast-align
+CFLAGS += -fdata-sections -ffunction-sections
+CFLAGS += -march=ba2
+CFLAGS += -msibcall -mno-entri -mno-multi -mno-setcc -mno-cmov
+CFLAGS += -mno-carry -mno-subb -mno-sext -mno-ror
+CFLAGS += -mno-hard-div -mhard-mul -mbranch-cost=3 #-mno-unal
+CFLAGS += -msimple-mul -mredzone-size=4
+CFLAGS += -ffixed-r16 -ffixed-r17 -ffixed-r18 -ffixed-r19
+CFLAGS += -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
+CFLAGS += -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
+CFLAGS += -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
+
+LDFLAGS += -Wl,--relax -TAppBuildMac_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
+
+
+### Compilation rules
+
+# .PHONY: symbols.c symbols.h
+ifdef CORE
+symbols.c symbols.h:
+	$(NM) $(CORE) | awk -f ../../tools/mknmlist > symbols.c
+#	@${CONTIKI}/tools/make-symbols $(CORE)
+else
+symbols.c symbols.h:
+	@${CONTIKI}/tools/make-empty-symbols
+endif
+
+%.$(TARGET).hex: %.$(TARGET)
+	$(OBJCOPY) $^ -O binary $@
+
+%.u: %.$(TARGET).hex
+	sudo jenprog -c serial -t /dev/ttyACM0 $<
+	#jenprog $<

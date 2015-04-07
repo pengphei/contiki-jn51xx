@@ -1,0 +1,18 @@
+ifndef CONTIKI
+  $(error CONTIKI not defined! You must specify where CONTIKI resides!)
+endif
+
+CONTIKI_TARGET_SOURCEFILES += ieee802.c \
+                              contiki-main.c leds-arch.c leds.c
+CONTIKI_TARGET_DIRS += . dev
+CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
+TARGET_STARTFILES = ${addprefix $(OBJECTDIR)/,contiki-main.o}
+
+.SUFFIXES:
+
+### Define the CPU directory
+CONTIKI_CPU=$(CONTIKI)/cpu/jennic
+include $(CONTIKI)/cpu/jennic/Makefile.jn516x
+
+CFLAGS += -fpack-struct
+
