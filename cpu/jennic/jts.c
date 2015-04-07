@@ -35,7 +35,6 @@
 #include "jts.h"
 #include "hrclock.h"
 #include "ieee802.h"
-#include "ieee_mac_pib.h"
 #include "AppApi.h"
 #include "gdb2.h"
 #include "string.h"

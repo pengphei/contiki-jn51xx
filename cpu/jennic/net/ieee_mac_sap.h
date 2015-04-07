@@ -113,8 +113,8 @@
  * @section p_disclaimer Disclaimer
  * This document is subject to change. Please contact Jennic Ltd. for more information
  */
-#ifndef _mac_sap_h_
-#define _mac_sap_h_
+#ifndef _ieee_mac_sap_h_
+#define _ieee_mac_sap_h_
 
 #include <contiki-conf.h>
 

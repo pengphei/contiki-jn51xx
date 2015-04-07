@@ -46,8 +46,8 @@
  * @ingroup g_mac
  */
 
-#ifndef _mac_pib_h_
-#define _mac_pib_h_
+#ifndef _ieee_mac_pib_h_
+#define _ieee_mac_pib_h_
 
 #ifdef __cplusplus
 extern "C" {

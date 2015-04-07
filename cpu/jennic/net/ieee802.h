@@ -39,6 +39,7 @@
 # include "uip.h"
 # include "rime.h"
 # include "ieee_mac_sap.h"
+# include "ieee_mac_pib.h"
 
 #ifndef JENNIC_CONF_TIMESYNC
 # define USE_TS 0
