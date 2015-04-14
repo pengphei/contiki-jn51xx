@@ -61,6 +61,7 @@ static volatile uint8_t transmitting;
 void
 uart0_set_br(unsigned int br)
 {
+#if 0
     uint8 *pu8Reg;
     uint8  u8TempLcr;
     uint16 u16Divisor;
@@ -95,6 +96,9 @@ uart0_set_br(unsigned int br)
     pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
     u8TempLcr = *pu8Reg;
     *pu8Reg   = u8TempLcr & 0x7F;
+#else
+    vAHI_UartSetBaudDivisor(E_AHI_UART_0, E_AHI_UART_RATE_115200);
+#endif
 }
 
 static volatile int (*uart0_input)(unsigned char c);

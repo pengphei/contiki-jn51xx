@@ -35,4 +35,4 @@
  * file to your apoplication build folder and
  * alter the stack size as required. */
  
-_stack_size = 2048;
+_stack_size = 8192;

@@ -48,6 +48,19 @@
 # define UNALIGNED_ACCESS_HANDLER 0x00012D70
 
 #elif defined(__BA2__)
+
+#ifdef JENNIC_CHIP_FAMILY_JN516x
+# define BUS_ERROR           *((volatile uint32 *)(0x4000008))
+# define UNALIGNED_ACCESS    *((volatile uint32 *)(0x4000014))
+# define ILLEGAL_INSTRUCTION *((volatile uint32 *)(0x400001A))
+# define HARDWARE_INTERRUPT  *((volatile uint32 *)(0x4000020))
+
+# define TICK_TIMER          *((volatile uint32 *)(0x400000E))
+# define SYS_CALL            *((volatile uint32 *)(0x4000026))
+# define SYS_TRAP            *((volatile uint32 *)(0x400002C))
+# define SYS_RESET           *((volatile uint32 *)(0x4000038))
+# define STACK_OVERFLOW      *((volatile uint32 *)(0x400003E))
+#else
 # define BUS_ERROR           *((volatile uint32 *)(0x4000000))
 # define UNALIGNED_ACCESS    *((volatile uint32 *)(0x4000008))
 # define ILLEGAL_INSTRUCTION *((volatile uint32 *)(0x400000C))
@@ -55,8 +68,8 @@
 # define TICK_TIMER          *((volatile uint32 *)(0x4000004))
 # define SYS_CALL            *((volatile uint32 *)(0x4000014))
 # define SYS_TRAP            *((volatile uint32 *)(0x4000018))
-# define SYS_GENERIC         *((volatile uint32 *)(0x400001C))
 # define STACK_OVERFLOW      *((volatile uint32 *)(0x4000020))
+#endif
 
 #else
 # error "unkown arch"
@@ -345,18 +358,19 @@ misalign_test()
 void
 init_hardware()
 {
-  init_hardware_baud(38400);
+  init_hardware_baud(115200);
 }
 
 void
 init_hardware_baud(uint32_t baudrate)
 {
+  watchdog_stop();
   u32AHI_Init();
 
 #ifdef __BA2__
   BUS_ERROR           = bus_error;
   ILLEGAL_INSTRUCTION = illegal_instr;
-#endif __BA2__
+#endif
 
 #ifdef GDB
   GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);

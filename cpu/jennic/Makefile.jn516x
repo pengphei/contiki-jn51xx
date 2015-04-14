@@ -27,7 +27,7 @@ CFLAGS += -DJENNIC_CHIP_FAMILY_JN516x
 
 # Chip specific C flags
 # watchdog is enabled by default on chip so allow disable if reqd
-CFLAGS += -DWATCHDOG_ENABLED
+# CFLAGS += -DWATCHDOG_ENABLED
 
 # Feature set:
 #   JENNIC_HW_xx is silicon feature and so fixed
@@ -75,7 +75,7 @@ CFLAGS += -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
 CFLAGS += -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
 CFLAGS += -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
 
-LDFLAGS += -Wl,--relax -TAppBuildMac_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
+LDFLAGS += -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart -Wl,-TAppBuildMac_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
 
 
 ### Compilation rules
