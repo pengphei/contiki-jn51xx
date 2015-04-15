@@ -36,3 +36,5 @@ EXTERN(_MAC_vHandleMcpsReqRsp)
 
 EXTERN(_vMicroIntEnableOnly)
 EXTERN(_vMicroIntRestoreState)
+
+EXTERN(_sAppHousekeeping)
