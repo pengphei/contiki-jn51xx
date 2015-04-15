@@ -358,7 +358,7 @@ misalign_test()
 void
 init_hardware()
 {
-  init_hardware_baud(115200);
+  init_hardware_baud(E_AHI_UART_RATE_115200);
 }
 
 void
@@ -370,6 +370,15 @@ init_hardware_baud(uint32_t baudrate)
 #ifdef __BA2__
   BUS_ERROR           = bus_error;
   ILLEGAL_INSTRUCTION = illegal_instr;
+#endif
+
+#ifdef __BA2__
+#ifdef JENNIC_CHIP_FAMILY_JN516x
+    /* Wait until FALSE i.e. on XTAL  - otherwise uart data will be at wrong speed */
+    while (bAHI_GetClkSource() == TRUE);
+    /* Now we are running on the XTAL, optimise the flash memory wait states */
+    vAHI_OptimiseWaitStates();
+#endif
 #endif
 
 #ifdef GDB
