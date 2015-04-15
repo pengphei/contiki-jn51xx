@@ -61,44 +61,49 @@ static volatile uint8_t transmitting;
 void
 uart0_set_br(unsigned int br)
 {
-#if 0
-    uint8 *pu8Reg;
-    uint8  u8TempLcr;
-    uint16 u16Divisor;
-    uint32 u32Remainder;
-    uint32 UART_START_ADR;
-
-    UART_START_ADR=UART0_START_ADDR;
-
-    /* Put UART into clock divisor setting mode */
-    pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
-    u8TempLcr = *pu8Reg;
-    *pu8Reg   = u8TempLcr | 0x80;
-
-    /* Write to divisor registers:
-       Divisor register = 16MHz / (16 x baud rate) */
-    u16Divisor = (uint16)(16000000UL / (16UL * br));
-
-    /* Correct for rounding errors */
-    u32Remainder = (uint32)(16000000UL % (16UL * br));
-
-    if (u32Remainder >= ((16UL * br) / 2))
+    if((E_AHI_UART_RATE_19200 == br)||(E_AHI_UART_RATE_4800 == br)
+        ||(E_AHI_UART_RATE_9600 == br)||(E_AHI_UART_RATE_38400 == br)
+        ||(E_AHI_UART_RATE_76800 == br)||(E_AHI_UART_RATE_115200 == br))
     {
-        u16Divisor += 1;
+        vAHI_UartSetBaudDivisor(E_AHI_UART_0, br);
     }
+    else
+    {
+        uint8 *pu8Reg;
+        uint8  u8TempLcr;
+        uint16 u16Divisor;
+        uint32 u32Remainder;
+        uint32 UART_START_ADR;
 
-    pu8Reg  = (uint8 *)UART_START_ADR;
-    *pu8Reg = (uint8)(u16Divisor & 0xFF);
-    pu8Reg  = (uint8 *)(UART_START_ADR + UART_DLM_OFFSET);
-    *pu8Reg = (uint8)(u16Divisor >> 8);
+        UART_START_ADR=UART0_START_ADDR;
 
-    /* Put back into normal mode */
-    pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
-    u8TempLcr = *pu8Reg;
-    *pu8Reg   = u8TempLcr & 0x7F;
-#else
-    vAHI_UartSetBaudDivisor(E_AHI_UART_0, E_AHI_UART_RATE_115200);
-#endif
+        /* Put UART into clock divisor setting mode */
+        pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
+        u8TempLcr = *pu8Reg;
+        *pu8Reg   = u8TempLcr | 0x80;
+
+        /* Write to divisor registers:
+           Divisor register = 16MHz / (16 x baud rate) */
+        u16Divisor = (uint16)(16000000UL / (16UL * br));
+
+        /* Correct for rounding errors */
+        u32Remainder = (uint32)(16000000UL % (16UL * br));
+
+        if (u32Remainder >= ((16UL * br) / 2))
+        {
+            u16Divisor += 1;
+        }
+
+        pu8Reg  = (uint8 *)UART_START_ADR;
+        *pu8Reg = (uint8)(u16Divisor & 0xFF);
+        pu8Reg  = (uint8 *)(UART_START_ADR + UART_DLM_OFFSET);
+        *pu8Reg = (uint8)(u16Divisor >> 8);
+
+        /* Put back into normal mode */
+        pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
+        u8TempLcr = *pu8Reg;
+        *pu8Reg   = u8TempLcr & 0x7F;
+    }
 }
 
 static volatile int (*uart0_input)(unsigned char c);
