@@ -59,10 +59,10 @@ JENNIC_LIBS += -lMicroSpecific_JN516x
 JENNIC_LIBS += -lBoot_JN516x
 JENNIC_LIBS += -lMaths_JN516x
 
-#JENNIC_LIBS += -lAppApi_JN516x
-#JENNIC_LIBS += -lMAC_JN516x
-#JENNIC_LIBS += -lTof_JN516x
-#JENNIC_LIBS += -lXcv_JN516x
+JENNIC_LIBS += -lAppApi_JN516x
+JENNIC_LIBS += -lMAC_JN516x
+JENNIC_LIBS += -lTof_JN516x
+JENNIC_LIBS += -lXcv_JN516x
 
 TARGET_LIBFILES = -Wl,--start-group $(JENNIC_LIBS) -Wl,--end-group
 
