@@ -51,31 +51,41 @@ CFLAGS += -DJN516X_BACKWARDS_COMPATIBLE_API=1
 CFLAGS += -I$(CONTIKI_CPU)/jn5168
 LDFLAGS += -L$(CONTIKI_CPU)/jn5168
 
-TARGET_LIBFILES += -lAES_CCM_SW_PATCH_JN516x 
-TARGET_LIBFILES += -lAes_JN516x 
-TARGET_LIBFILES += -lTimerServer_JN516x
-TARGET_LIBFILES += -lHardwareApi_JN516x 
-TARGET_LIBFILES += -lMicroSpecific_JN516x 
-TARGET_LIBFILES += -lBoot_JN516x 
-TARGET_LIBFILES += -lMAC_JN516x
-TARGET_LIBFILES += -lAppApi_JN516x 
-TARGET_LIBFILES += -lTof_JN516x 
-TARGET_LIBFILES += -lXcv_JN516x
+JENNIC_LIBS += -lAES_CCM_SW_PATCH_JN516x
+JENNIC_LIBS += -lAes_JN516x
+JENNIC_LIBS += -lTimerServer_JN516x
+JENNIC_LIBS += -lHardwareApi_JN516x
+JENNIC_LIBS += -lMicroSpecific_JN516x
+JENNIC_LIBS += -lBoot_JN516x
+JENNIC_LIBS += -lMaths_JN516x
 
-# common config for ba2
-CFLAGS += -Wall -Os -fomit-frame-pointer -fpack-struct -Wcast-align
+#JENNIC_LIBS += -lAppApi_JN516x
+#JENNIC_LIBS += -lMAC_JN516x
+#JENNIC_LIBS += -lTof_JN516x
+#JENNIC_LIBS += -lXcv_JN516x
+
+TARGET_LIBFILES = -Wl,--start-group $(JENNIC_LIBS) -Wl,--end-group
+
+# BA2 archtecture compiler flags
+CFLAGS += -msibcall -mno-multi -mno-setcc
+CFLAGS += -mno-carry -mno-subb -mno-sext
+CFLAGS += -mno-hard-div -mhard-mul -mbranch-cost=3 -msimple-mul
+CFLAGS += -march=ba2 -mredzone-size=4
+CFLAGS +=  -ffixed-r16 -ffixed-r17 -ffixed-r18 -ffixed-r19
+CFLAGS +=  -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
+CFLAGS +=  -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
+CFLAGS +=  -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
+
+# omit frame pointer by default
+CFLAGS += -fomit-frame-pointer
+
+# default to optimise for size
+CFLAGS += -Os
+
+# Output each function and static data in their own sections
 CFLAGS += -fdata-sections -ffunction-sections
-CFLAGS += -march=ba2
-CFLAGS += -msibcall -mno-entri -mno-multi -mno-setcc -mno-cmov
-CFLAGS += -mno-carry -mno-subb -mno-sext -mno-ror
-CFLAGS += -mno-hard-div -mhard-mul -mbranch-cost=3 #-mno-unal
-CFLAGS += -msimple-mul -mredzone-size=4
-CFLAGS += -ffixed-r16 -ffixed-r17 -ffixed-r18 -ffixed-r19
-CFLAGS += -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
-CFLAGS += -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
-CFLAGS += -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
 
-LDFLAGS += -Wl,--gc-sections -Wl,-u_AppColdStart -Wl,-u_AppWarmStart -Wl,-TAppBuildMac_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
+LDFLAGS += -Wl,-u_AppColdStart -Wl,-u_AppWarmStart -Wl,-TAppBuildNone_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
 
 
 ### Compilation rules
