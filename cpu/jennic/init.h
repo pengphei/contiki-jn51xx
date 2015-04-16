@@ -38,7 +38,7 @@
 #include "clock.h"
 
 void jn5148_doze(clock_time_t time);
-void init_hardware_baud(uint32_t rate);
+void sys_baudrate_init(uint16_t rate);
 void init_hardware();
 
 #endif

@@ -355,56 +355,60 @@ misalign_test()
 # define UNALIGNED_ACCESS_HANDLER unaligned_access
 #endif
 
-void
-init_hardware()
+static
+void sys_irs_init()
 {
-  init_hardware_baud(E_AHI_UART_RATE_115200);
+#ifdef __BA2__
+#ifndef JENNIC_CHIP_FAMILY_JN516x
+  BUS_ERROR           = bus_error;
+  ILLEGAL_INSTRUCTION = illegal_instr;
+  UNALIGNED_ACCESS    = UNALIGNED_ACCESS_HANDLER;
+#endif
+#endif
 }
 
 void
-init_hardware_baud(uint32_t baudrate)
+init_hardware()
 {
-  watchdog_stop();
-  u32AHI_Init();
+    u32AHI_Init();
+    sys_irs_init();
+    sys_baudrate_init(E_AHI_UART_RATE_115200);
+    leds_init();
+    irq_init();
+    clock_init();
+    ctimer_init();
+}
 
-#ifdef __BA2__
-  BUS_ERROR           = bus_error;
-  ILLEGAL_INSTRUCTION = illegal_instr;
-#endif
-
+void
+sys_baudrate_init(uint16_t baudrate)
+{
 #ifdef __BA2__
 #ifdef JENNIC_CHIP_FAMILY_JN516x
     /* Wait until FALSE i.e. on XTAL  - otherwise uart data will be at wrong speed */
-    while (bAHI_GetClkSource() == TRUE);
+    while (bAHI_GetClkSource() == true);
     /* Now we are running on the XTAL, optimise the flash memory wait states */
     vAHI_OptimiseWaitStates();
 #endif
 #endif
 
 #ifdef GDB
-  GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);
+    GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);
 # ifdef __BA1__
-  uart0_set_br(baudrate);
-  HAL_BREAKPOINT();
+    uart0_set_br(baudrate);
+    HAL_BREAKPOINT();
 # endif
 # else
-  uart0_init(baudrate);
+    uart0_init(baudrate);
 #endif
-
-  UNALIGNED_ACCESS    = UNALIGNED_ACCESS_HANDLER;
 
 #ifdef __BA2__
-  if (bAHI_BrownOutEventResetStatus()) { printf("reset due to brownout\n"); }
-  if (bAHI_WatchdogResetEvent())  { printf("reset due to watchdog\n"); }
-  //misalign_test();
+    if (bAHI_BrownOutEventResetStatus()) { printf("reset due to brownout\n"); }
+    if (bAHI_WatchdogResetEvent())  { printf("reset due to watchdog\n"); }
+    //misalign_test();
 
-  /* just make sure its disabled (its on by default), reenable somewhere else
-   * if needed. */
-  watchdog_stop();
+    /* just make sure its disabled (its on by default), reenable somewhere else
+    * if needed. */
+    watchdog_stop();
 #endif
 
-  leds_init();
-  irq_init();
-  clock_init();
-  ctimer_init();
 }
