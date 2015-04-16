@@ -34,10 +34,11 @@
 
 #ifndef __UART1_H__
 #define __UART1_H__
+#include "contiki-conf.h"
 
-void uart1_set_br(unsigned int br);
+void uart1_set_br(uint16 br);
 void uart1_set_input(int (*input)(unsigned char c));
 void uart1_writeb(unsigned char c);
-void uart1_init(unsigned long br);
+void uart1_init(uint16 br);
 
 #endif

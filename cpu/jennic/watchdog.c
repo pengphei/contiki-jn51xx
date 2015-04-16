@@ -58,7 +58,10 @@ void
 watchdog_stop(void)
 {
 #ifdef __BA2__
-  vAHI_WatchdogStop();
+    //if (bAHI_BrownOutEventResetStatus()) { printf("reset due to brownout\n"); }
+    //if (bAHI_WatchdogResetEvent())  { printf("reset due to watchdog\n"); }
+    //misalign_test();
+    vAHI_WatchdogStop();
 #endif
 }
 /*---------------------------------------------------------------------------*/

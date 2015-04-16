@@ -59,47 +59,56 @@ static uint8_t txbuf_data[TXBUFSIZE];
 static volatile uint8_t transmitting;
 
 void
-uart0_set_br(unsigned int br)
+uart0_set_br(uint16 br)
 {
-    uint8 *pu8Reg;
-    uint8  u8TempLcr;
-    uint16 u16Divisor;
-    uint32 u32Remainder;
-    uint32 UART_START_ADR;
-
-    UART_START_ADR=UART0_START_ADDR;
-
-    /* Put UART into clock divisor setting mode */
-    pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
-    u8TempLcr = *pu8Reg;
-    *pu8Reg   = u8TempLcr | 0x80;
-
-    /* Write to divisor registers:
-       Divisor register = 16MHz / (16 x baud rate) */
-    u16Divisor = (uint16)(16000000UL / (16UL * br));
-
-    /* Correct for rounding errors */
-    u32Remainder = (uint32)(16000000UL % (16UL * br));
-
-    if (u32Remainder >= ((16UL * br) / 2))
+    if((E_AHI_UART_RATE_19200 == br)||(E_AHI_UART_RATE_4800 == br)
+        ||(E_AHI_UART_RATE_9600 == br)||(E_AHI_UART_RATE_38400 == br)
+        ||(E_AHI_UART_RATE_76800 == br)||(E_AHI_UART_RATE_115200 == br))
     {
-        u16Divisor += 1;
+        vAHI_UartSetBaudRate(E_AHI_UART_0, br);
     }
+    else
+    {
+        uint8 *pu8Reg;
+        uint8  u8TempLcr;
+        uint16 u16Divisor;
+        uint32 u32Remainder;
+        uint32 UART_START_ADR;
 
-    pu8Reg  = (uint8 *)UART_START_ADR;
-    *pu8Reg = (uint8)(u16Divisor & 0xFF);
-    pu8Reg  = (uint8 *)(UART_START_ADR + UART_DLM_OFFSET);
-    *pu8Reg = (uint8)(u16Divisor >> 8);
+        UART_START_ADR=UART0_START_ADDR;
 
-    /* Put back into normal mode */
-    pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
-    u8TempLcr = *pu8Reg;
-    *pu8Reg   = u8TempLcr & 0x7F;
+        /* Put UART into clock divisor setting mode */
+        pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
+        u8TempLcr = *pu8Reg;
+        *pu8Reg   = u8TempLcr | 0x80;
+
+        /* Write to divisor registers:
+           Divisor register = 16MHz / (16 x baud rate) */
+        u16Divisor = (uint16)(16000000UL / (16UL * br));
+
+        /* Correct for rounding errors */
+        u32Remainder = (uint32)(16000000UL % (16UL * br));
+
+        if (u32Remainder >= ((16UL * br) / 2))
+        {
+            u16Divisor += 1;
+        }
+
+        pu8Reg  = (uint8 *)UART_START_ADR;
+        *pu8Reg = (uint8)(u16Divisor & 0xFF);
+        pu8Reg  = (uint8 *)(UART_START_ADR + UART_DLM_OFFSET);
+        *pu8Reg = (uint8)(u16Divisor >> 8);
+
+        /* Put back into normal mode */
+        pu8Reg    = (uint8 *)(UART_START_ADR + UART_LCR_OFFSET);
+        u8TempLcr = *pu8Reg;
+        *pu8Reg   = u8TempLcr & 0x7F;
+    }
 }
 
 static volatile int (*uart0_input)(unsigned char c);
 
-static void irq(unsigned int irqsrc, unsigned int map)
+static void irq(uint32 irqsrc, uint32 map)
 {
   if (map==E_AHI_UART_INT_RXDATA)
   {
@@ -136,7 +145,7 @@ void uart0_writeb(unsigned char c)
   }
 }
 
-void uart0_init(unsigned long br)
+void uart0_init(uint16 br)
 {
   transmitting = 0;
   ringbuf_init(&txbuf, txbuf_data, sizeof(txbuf_data));
@@ -147,7 +156,7 @@ void uart0_init(unsigned long br)
   vAHI_UartReset(E_AHI_UART_0, true, true);
 
   uart0_set_br(br);
-  vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
+  //vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
 
   vAHI_Uart0RegisterCallback(irq);
   vAHI_UartSetInterrupt(E_AHI_UART_0, false,  /* modem status         */
@@ -156,6 +165,6 @@ void uart0_init(unsigned long br)
                               true,   /* rx data there        */
                               E_AHI_UART_FIFO_LEVEL_1);
 
-  vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
+  //vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
   vAHI_UartReset(E_AHI_UART_0, false, false);
 }

@@ -48,6 +48,19 @@
 # define UNALIGNED_ACCESS_HANDLER 0x00012D70
 
 #elif defined(__BA2__)
+
+#ifdef JENNIC_CHIP_FAMILY_JN516x
+# define BUS_ERROR           *((volatile uint32 *)(0x4000008))
+# define UNALIGNED_ACCESS    *((volatile uint32 *)(0x4000014))
+# define ILLEGAL_INSTRUCTION *((volatile uint32 *)(0x400001A))
+# define HARDWARE_INTERRUPT  *((volatile uint32 *)(0x4000020))
+
+# define TICK_TIMER          *((volatile uint32 *)(0x400000E))
+# define SYS_CALL            *((volatile uint32 *)(0x4000026))
+# define SYS_TRAP            *((volatile uint32 *)(0x400002C))
+# define SYS_RESET           *((volatile uint32 *)(0x4000038))
+# define STACK_OVERFLOW      *((volatile uint32 *)(0x400003E))
+#else
 # define BUS_ERROR           *((volatile uint32 *)(0x4000000))
 # define UNALIGNED_ACCESS    *((volatile uint32 *)(0x4000008))
 # define ILLEGAL_INSTRUCTION *((volatile uint32 *)(0x400000C))
@@ -55,8 +68,8 @@
 # define TICK_TIMER          *((volatile uint32 *)(0x4000004))
 # define SYS_CALL            *((volatile uint32 *)(0x4000014))
 # define SYS_TRAP            *((volatile uint32 *)(0x4000018))
-# define SYS_GENERIC         *((volatile uint32 *)(0x400001C))
 # define STACK_OVERFLOW      *((volatile uint32 *)(0x4000020))
+#endif
 
 #else
 # error "unkown arch"
@@ -342,46 +355,50 @@ misalign_test()
 # define UNALIGNED_ACCESS_HANDLER unaligned_access
 #endif
 
-void
-init_hardware()
+static
+void sys_irs_init()
 {
-  init_hardware_baud(38400);
+#ifdef __BA2__
+#ifndef JENNIC_CHIP_FAMILY_JN516x
+  BUS_ERROR           = bus_error;
+  ILLEGAL_INSTRUCTION = illegal_instr;
+  UNALIGNED_ACCESS    = UNALIGNED_ACCESS_HANDLER;
+#endif
+#endif
 }
 
 void
-init_hardware_baud(uint32_t baudrate)
+init_hardware()
 {
-  u32AHI_Init();
+    u32AHI_Init();
+    watchdog_stop();
+    sys_irs_init();
+    sys_baudrate_init(E_AHI_UART_RATE_38400);
+    leds_init();
+    irq_init();
+    clock_init();
+    ctimer_init();
+}
 
+void
+sys_baudrate_init(uint16_t baudrate)
+{
 #ifdef __BA2__
-  BUS_ERROR           = bus_error;
-  ILLEGAL_INSTRUCTION = illegal_instr;
-#endif __BA2__
+#ifdef JENNIC_CHIP_FAMILY_JN516x
+    /* Wait until FALSE i.e. on XTAL  - otherwise uart data will be at wrong speed */
+    while (bAHI_GetClkSource() == true);
+    /* Now we are running on the XTAL, optimise the flash memory wait states */
+    vAHI_OptimiseWaitStates();
+#endif
+#endif
 
 #ifdef GDB
-  GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);
+    GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);
 # ifdef __BA1__
-  uart0_set_br(baudrate);
-  HAL_BREAKPOINT();
+    uart0_set_br(baudrate);
+    HAL_BREAKPOINT();
 # endif
 # else
-  uart0_init(baudrate);
+    uart0_init(baudrate);
 #endif
-
-  UNALIGNED_ACCESS    = UNALIGNED_ACCESS_HANDLER;
-
-#ifdef __BA2__
-  if (bAHI_BrownOutEventResetStatus()) { printf("reset due to brownout\n"); }
-  if (bAHI_WatchdogResetEvent())  { printf("reset due to watchdog\n"); }
-  //misalign_test();
-
-  /* just make sure its disabled (its on by default), reenable somewhere else
-   * if needed. */
-  watchdog_stop();
-#endif
-
-  leds_init();
-  irq_init();
-  clock_init();
-  ctimer_init();
 }
