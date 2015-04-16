@@ -371,8 +371,9 @@ void
 init_hardware()
 {
     u32AHI_Init();
+    watchdog_stop();
     sys_irs_init();
-    sys_baudrate_init(E_AHI_UART_RATE_115200);
+    sys_baudrate_init(E_AHI_UART_RATE_38400);
     leds_init();
     irq_init();
     clock_init();
@@ -400,15 +401,4 @@ sys_baudrate_init(uint16_t baudrate)
 # else
     uart0_init(baudrate);
 #endif
-
-#ifdef __BA2__
-    if (bAHI_BrownOutEventResetStatus()) { printf("reset due to brownout\n"); }
-    if (bAHI_WatchdogResetEvent())  { printf("reset due to watchdog\n"); }
-    //misalign_test();
-
-    /* just make sure its disabled (its on by default), reenable somewhere else
-    * if needed. */
-    watchdog_stop();
-#endif
-
 }
