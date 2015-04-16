@@ -53,13 +53,13 @@
 #endif
 
 void
-uart1_set_br(unsigned int br)
+uart1_set_br(uint16 br)
 {
     if((E_AHI_UART_RATE_19200 == br)||(E_AHI_UART_RATE_4800 == br)
         ||(E_AHI_UART_RATE_9600 == br)||(E_AHI_UART_RATE_38400 == br)
         ||(E_AHI_UART_RATE_76800 == br)||(E_AHI_UART_RATE_115200 == br))
     {
-        vAHI_UartSetBaudDivisor(E_AHI_UART_1, br);
+        vAHI_UartSetBaudRate(E_AHI_UART_1, br);
     }
     else
     {
@@ -102,7 +102,7 @@ uart1_set_br(unsigned int br)
 
 static int (*uart1_input)(unsigned char c);
 
-static void irq(unsigned int irqsrc, unsigned int map)
+static void irq(uint32 irqsrc, uint32 map)
 {
   while (u8AHI_UartReadLineStatus(E_AHI_UART_1)&E_AHI_UART_LS_DR)
     uart1_input(u8AHI_UartReadData(E_AHI_UART_1));
@@ -121,7 +121,7 @@ void uart1_writeb(unsigned char c)
   vAHI_UartWriteData(E_AHI_UART_1, c);
 }
 
-void uart1_init(unsigned long br)
+void uart1_init(uint16 br)
 {
   vAHI_UartSetRTSCTS(E_AHI_UART_1, false);
   vAHI_UartEnable(E_AHI_UART_1);
