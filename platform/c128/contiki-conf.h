@@ -30,11 +30,10 @@
  * 
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: contiki-conf.h,v 1.17 2010/10/23 13:48:06 oliverschmidt Exp $
  */
 
-#ifndef __CONTIKI_CONF_H__
-#define __CONTIKI_CONF_H__
+#ifndef CONTIKI_CONF_H_
+#define CONTIKI_CONF_H_
 
 #include "6502def.h"
 
@@ -71,11 +70,6 @@
 #define WWW_CONF_HISTORY_SIZE        0
 #define WWW_CONF_MAX_URLLEN         78
 #define WWW_CONF_MAX_NUMPAGEWIDGETS 20
-#define WWW_CONF_RENDERSTATE         0
 #define WWW_CONF_FORMS               0
-#define WWW_CONF_MAX_FORMACTIONLEN  20
-#define WWW_CONF_MAX_FORMNAMELEN    20
-#define WWW_CONF_MAX_INPUTNAMELEN   20
-#define WWW_CONF_MAX_INPUTVALUELEN  20
 
-#endif /* __CONTIKI_CONF_H__ */
+#endif /* CONTIKI_CONF_H_ */

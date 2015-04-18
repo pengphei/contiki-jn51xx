@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-text.h,v 1.2 2010/02/03 20:37:29 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_TEXT_H__
-#define __SHELL_TEXT_H__
+#ifndef SHELL_TEXT_H_
+#define SHELL_TEXT_H_
 
 #include "shell.h"
 
 void shell_text_init(void);
 
-#endif /* __SHELL_TEXT_H__ */
+#endif /* SHELL_TEXT_H_ */

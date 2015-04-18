@@ -1,25 +1,3 @@
-/**
- * \addtogroup dev
- * @{
- */
-
-/**
- * \defgroup eeprom EEPROM API
- *
- * The EEPROM API defines a common interface for EEPROM access on
- * Contiki platforms.
- *
- * A platform with EEPROM support must implement this API.
- *
- * @{
- */
-
-/**
- * \file
- * EEPROM functions.
- * \author Adam Dunkels <adam@sics.se>
- */
-
 /* Copyright (c) 2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
@@ -45,18 +23,51 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  *
- * $Id: eeprom.h,v 1.1 2006/06/17 22:41:16 adamdunkels Exp $
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
 
+/**
+ * \file
+ * EEPROM functions.
+ * \author Adam Dunkels <adam@sics.se>
+ */
 
-#ifndef __EEPROM_H__
-#define __EEPROM_H__
+/**
+ * \addtogroup dev
+ * @{
+ */
+
+/**
+ * \defgroup eeprom EEPROM API
+ *
+ * The EEPROM API defines a common interface for EEPROM access on
+ * Contiki platforms.
+ *
+ * A platform with EEPROM support must implement this API.
+ *
+ * @{
+ */
+
+#ifndef EEPROM_H_
+#define EEPROM_H_
 
 typedef unsigned short eeprom_addr_t;
-#define EEPROM_NULL 0
+
+#define EEPROM_NULL			0
+
+#ifdef EEPROM_CONF_SIZE
+#define EEPROM_SIZE			(EEPROM_CONF_SIZE)
+#else
+#define EEPROM_SIZE			0 /* Default to no EEPROM */
+#endif
+
+#ifdef EEPROM_CONF_END_ADDR
+#define EEPROM_END_ADDR		(EEPROM_CONF_END_ADDR)
+#else
+#define EEPROM_END_ADDR		(EEPROM_SIZE - 1)
+#endif
 
 /**
  * Write a buffer into EEPROM.
@@ -99,7 +110,7 @@ void eeprom_read(eeprom_addr_t addr, unsigned char *buf, int size);
  
 void eeprom_init(void);
 
-#endif /* __EEPROM_H__ */
+#endif /* EEPROM_H_ */
 
 /** @} */
 /** @} */

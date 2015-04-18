@@ -117,7 +117,7 @@ void main(void) {
 	/* trim the reference osc. to 24MHz */
 	pack_XTAL_CNTL(CTUNE_4PF, CTUNE, FTUNE, IBIAS);
 	
-	uart_init(INC, MOD, SAMP);
+	uart_init(UART1, 115200);
 
 	vreg_init();
 
@@ -146,7 +146,7 @@ void main(void) {
 				print_packet(p);
 				type = get_packet_type((packet_t *) p);
 				addr = 0; /* FIXME */
-				free_packet(p);
+				maca_free_packet(p);
 				/* pick a new address if someone else is using ours */
 				if(addr == my_addr) {
 					my_addr = random_short_addr();

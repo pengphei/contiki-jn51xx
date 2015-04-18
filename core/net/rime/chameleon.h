@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: chameleon.h,v 1.4 2010/05/28 06:18:39 nifi Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __CHAMELEON_H__
-#define __CHAMELEON_H__
+#ifndef CHAMELEON_H_
+#define CHAMELEON_H_
 
 #include "net/rime/channel.h"
 
@@ -55,4 +54,4 @@ int chameleon_hdrsize(const struct packetbuf_attrlist attrlist[]);
 struct channel *chameleon_parse(void);
 int chameleon_create(struct channel *c);
 
-#endif /* __CHAMELEON_H__ */
+#endif /* CHAMELEON_H_ */

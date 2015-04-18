@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-tcpsend.h,v 1.1 2009/03/06 00:29:33 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_TCPSEND_H__
-#define __SHELL_TCPSEND_H__
+#ifndef SHELL_TCPSEND_H_
+#define SHELL_TCPSEND_H_
 
 #include "shell.h"
 
 void shell_tcpsend_init(void);
 
-#endif /* __SHELL_TCPSEND_H__ */
+#endif /* SHELL_TCPSEND_H_ */

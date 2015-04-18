@@ -1,4 +1,4 @@
-/** @file adc.c
+/** @file cpu/stm32w108/hal/micro/cortexm3/adc.c
  * @brief  ADC HAL functions
  *
  * <!--(C) COPYRIGHT 2010 STMicroelectronics. All rights reserved.        -->
@@ -10,30 +10,30 @@
 
 
 #if (NUM_ADC_USERS > 8)
-  #error NUM_ADC_USERS must not be greater than 8, or int8u variables in adc.c must be changed
+  #error NUM_ADC_USERS must not be greater than 8, or uint8_t variables in adc.c must be changed
 #endif
 
-static int16u adcData;             // conversion result written by DMA
-static int8u adcPendingRequests;   // bitmap of pending requests
-volatile static int8u adcPendingConversion; // id of pending conversion
-static int8u adcReadingValid;      // bitmap of valid adcReadings
-static int16u adcReadings[NUM_ADC_USERS];
-static int16u adcConfig[NUM_ADC_USERS];
+static uint16_t adcData;             // conversion result written by DMA
+static uint8_t adcPendingRequests;   // bitmap of pending requests
+volatile static uint8_t adcPendingConversion; // id of pending conversion
+static uint8_t adcReadingValid;      // bitmap of valid adcReadings
+static uint16_t adcReadings[NUM_ADC_USERS];
+static uint16_t adcConfig[NUM_ADC_USERS];
 static boolean adcCalibrated;
-static int16s Nvss;
-static int16s Nvdd;
-/* Modified the original ADC driver for enabling the ADC extended range mode required for 
+static int16_t Nvss;
+static int16_t Nvdd;
+/* Modified the original ADC driver for enabling the ADC extended range mode required for
    supporting the STLM20 temperature sensor.
-   NOTE: 
-   The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC 
+   NOTE:
+   The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC
    (see STM32W108 errata). As consequence, it is not reccomended to use this ADC driver for getting
-   the temperature values 
+   the temperature values
 */
 #ifdef ENABLE_ADC_EXTENDED_RANGE_BROKEN
-static int16s Nvref;
-static int16s Nvref2;
+static int16_t Nvref;
+static int16_t Nvref2;
 #endif /* ENABLE_ADC_EXTENDED_RANGE_BROKEN */
-static int16u adcStaticConfig;
+static uint16_t adcStaticConfig;
 
 void halAdcSetClock(boolean slow)
 {
@@ -73,8 +73,8 @@ boolean halAdcGetRange(void)
 
 void halAdcIsr(void)
 {
-  int8u i;
-  int8u conversion = adcPendingConversion; //fix 'volatile' warning; costs no flash
+  uint8_t i;
+  uint8_t conversion = adcPendingConversion; //fix 'volatile' warning; costs no flash
 
   // make sure data is ready and the desired conversion is valid
   if ( (INT_ADCFLAG & INT_ADCULDFULL)
@@ -87,7 +87,7 @@ void halAdcIsr(void)
         if (BIT(i) & adcPendingRequests) {
           adcPendingConversion = i;     // set pending conversion
           adcPendingRequests ^= BIT(i); //clear request: conversion is starting
-          ADC_CFG = adcConfig[i]; 
+          ADC_CFG = adcConfig[i];
           break; //conversion started, so we're done here (only one at a time)
         }
       }
@@ -105,8 +105,8 @@ void halAdcIsr(void)
 // otherwise.
 ADCUser startNextConversion()
 {
-  int8u i;
-  
+  uint8_t i;
+
   ATOMIC (
     // start the next requested conversion if any
     if (adcPendingRequests && !(ADC_CFG & ADC_ENABLE)) {
@@ -143,7 +143,7 @@ void halInternalInitAdc(void)
   ADC_OFFSET = ADC_OFFSET_RESET;
   ADC_GAIN = ADC_GAIN_RESET;
   ADC_DMACFG = ADC_DMARST;
-  ADC_DMABEG = (int32u)&adcData;
+  ADC_DMABEG = (uint32_t)&adcData;
   ADC_DMASIZE = 1;
   ADC_DMACFG = (ADC_DMAAUTOWRAP | ADC_DMALOAD);
 
@@ -160,7 +160,7 @@ StStatus halStartAdcConversion(ADCUser id,
                                ADCChannelType channel,
                                ADCRateType rate)
 {
- 
+
    if(reference != ADC_REF_INT)
     return ST_ERR_FATAL;
 
@@ -186,12 +186,12 @@ StStatus halStartAdcConversion(ADCUser id,
     return ST_ADC_CONVERSION_DEFERRED;
 }
 
-StStatus halRequestAdcData(ADCUser id, int16u *value)
+StStatus halRequestAdcData(ADCUser id, uint16_t *value)
 {
   //Both the ADC interrupt and the global interrupt need to be enabled,
   //otherwise the ADC ISR cannot be serviced.
   boolean intsAreOff = ( INTERRUPTS_ARE_OFF()
-                        || !(INT_CFGSET & INT_ADC) 
+                        || !(INT_CFGSET & INT_ADC)
                         || !(INT_ADCCFG & INT_ADCULDFULL) );
   StStatus stat;
 
@@ -199,7 +199,7 @@ StStatus halRequestAdcData(ADCUser id, int16u *value)
     // If interupts are disabled but the flag is set,
     // manually run the isr...
     //FIXME -= is this valid???
-    if( intsAreOff 
+    if( intsAreOff
       && ( (INT_CFGSET & INT_ADC) && (INT_ADCCFG & INT_ADCULDFULL) )) {
       halAdcIsr();
     }
@@ -220,7 +220,7 @@ StStatus halRequestAdcData(ADCUser id, int16u *value)
   return stat;
 }
 
-StStatus halReadAdcBlocking(ADCUser id, int16u *value)
+StStatus halReadAdcBlocking(ADCUser id, uint16_t *value)
 {
   StStatus stat;
 
@@ -235,28 +235,28 @@ StStatus halReadAdcBlocking(ADCUser id, int16u *value)
 StStatus halAdcCalibrate(ADCUser id)
 {
   StStatus stat;
-/* Modified the original ADC driver for enabling the ADC extended range mode required for 
+/* Modified the original ADC driver for enabling the ADC extended range mode required for
      supporting the STLM20 temperature sensor.
-     NOTE: 
-     The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC 
+     NOTE:
+     The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC
      (see STM32W108 errata). As consequence, it is not reccomended to use this ADC driver for getting
-     the temperature values 
+     the temperature values
    */
 #ifdef ENABLE_ADC_EXTENDED_RANGE_BROKEN
   if(halAdcGetRange()){
-    
+
     halStartAdcConversion(id,
                           ADC_REF_INT,
                           ADC_SOURCE_VREF_VREF2,
                           ADC_CONVERSION_TIME_US_4096);
-    
-    stat = halReadAdcBlocking(id, (int16u *)(&Nvref));
+
+    stat = halReadAdcBlocking(id, (uint16_t *)(&Nvref));
     if (stat == ST_ADC_CONVERSION_DONE) {
       halStartAdcConversion(id,
                             ADC_REF_INT,
                             ADC_SOURCE_VREF2_VREF2,
                             ADC_CONVERSION_TIME_US_4096);
-      stat = halReadAdcBlocking(id, (int16u *)(&Nvref2));
+      stat = halReadAdcBlocking(id, (uint16_t *)(&Nvref2));
     }
     if (stat == ST_ADC_CONVERSION_DONE) {
       adcCalibrated = TRUE;
@@ -264,21 +264,21 @@ StStatus halAdcCalibrate(ADCUser id)
       adcCalibrated = FALSE;
       stat = ST_ERR_FATAL;
     }
-    return stat;    
-    
-  }  
+    return stat;
+
+  }
 #endif /* ENABLE_ADC_EXTENDED_RANGE_BROKEN */
   halStartAdcConversion(id,
                         ADC_REF_INT,
                         ADC_SOURCE_GND_VREF2,
                         ADC_CONVERSION_TIME_US_4096);
-  stat = halReadAdcBlocking(id, (int16u *)(&Nvss));
+  stat = halReadAdcBlocking(id, (uint16_t *)(&Nvss));
   if (stat == ST_ADC_CONVERSION_DONE) {
     halStartAdcConversion(id,
                           ADC_REF_INT,
                           ADC_SOURCE_VREG2_VREF2,
                           ADC_CONVERSION_TIME_US_4096);
-    stat = halReadAdcBlocking(id, (int16u *)(&Nvdd));
+    stat = halReadAdcBlocking(id, (uint16_t *)(&Nvdd));
   }
   if (stat == ST_ADC_CONVERSION_DONE) {
     Nvdd -= Nvss;
@@ -294,37 +294,37 @@ StStatus halAdcCalibrate(ADCUser id)
 // to convert to 100uV units.
 // FIXME: support external Vref
 //        use #define of Vref, ignore VDD_PADSA
-// FIXME: support  high voltage range 
+// FIXME: support  high voltage range
 //        use Vref-Vref/2 to calibrate
 // FIXME: check for mfg token specifying measured VDD_PADSA
-int16s halConvertValueToVolts(int16u value)
+int16_t halConvertValueToVolts(uint16_t value)
 {
-  int32s N;
-  int16s V;
-  int32s nvalue;
-  
+  int32_t N;
+  int16_t V;
+  int32_t nvalue;
+
   if (!adcCalibrated) {
     halAdcCalibrate(ADC_USER_LQI);
   }
   if (adcCalibrated) {
- /* Modified the original ADC driver for enabling the ADC extended range mode required for 
+ /* Modified the original ADC driver for enabling the ADC extended range mode required for
      supporting the STLM20 temperature sensor.
-     NOTE: 
-     The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC 
+     NOTE:
+     The ADC extended range is inaccurate due to the high voltage mode bug of the general purpose ADC
      (see STM32W108 errata). As consequence, it is not reccomended to use this ADC driver for getting
-     the temperature values 
+     the temperature values
    */
 #ifdef ENABLE_ADC_EXTENDED_RANGE_BROKEN
     if(halAdcGetRange()){  // High range.
-      
-      N = (((int32s)value + Nvref - 2*Nvref2) << 16)/(2*(Nvref-Nvref2));
+
+      N = (((int32_t)value + Nvref - 2*Nvref2) << 16)/(2*(Nvref-Nvref2));
       // Calculate voltage with: V = (N * VREF) / (2^16) where VDD = 1.2 volts
       // Mutiplying by 1.2*10000 makes the result of this equation 100 uVolts
-      V = (int16s)((N*12000L) >> 16);
+      V = (int16_t)((N*12000L) >> 16);
       if (V > 21000) {  // VDD_PADS ?
         V = 21000;
-      }      
-      
+      }
+
     }
     else {
  #endif /* ENABLE_ADC_EXTENDED_RANGE_BROKEN */
@@ -336,46 +336,46 @@ int16s halConvertValueToVolts(int16u value)
       // Mutiplying by0.9*10000 makes the result of this equation 100 uVolts
       // (in fixed point E-4 which allows for 13.5 bits vs millivolts
       // which is only 10.2 bits).
-      V = (int16s)((N*9000L) >> 16);
+      V = (int16_t)((N*9000L) >> 16);
       if (V > 12000) {
         V = 12000;
       }
- #ifdef ENABLE_ADC_EXTENDED_RANGE_BROKEN    
+ #ifdef ENABLE_ADC_EXTENDED_RANGE_BROKEN
     }
- #endif /* ENABLE_ADC_EXTENDED_RANGE_BROKEN */   
+ #endif /* ENABLE_ADC_EXTENDED_RANGE_BROKEN */
   } else {
     V = -32768;
   }
   return V;
 }
 
-int8u halGetADCChannelFromGPIO(int32u io)
+uint8_t halGetADCChannelFromGPIO(uint32_t io)
 {
 	switch(io)
 	{
 	case PORTB_PIN(5):
 		return ADC_MUX_ADC0;
-			
+
 	case PORTB_PIN(6):
 		return ADC_MUX_ADC1;
-		
+
 	case PORTB_PIN(7):
 		return ADC_MUX_ADC2;
-		
+
 	case PORTC_PIN(1):
 		return ADC_MUX_ADC3;
-		
+
 	case PORTA_PIN(4):
 		return ADC_MUX_ADC4;
-		
+
 	case PORTA_PIN(5):
 		return ADC_MUX_ADC5;
-		
+
 	case PORTB_PIN(0):
 		return ADC_MUX_VREF;
-		
+
 	default :
 		return 0x0F; // Invalid analogue source
-			
+
 	}
 }

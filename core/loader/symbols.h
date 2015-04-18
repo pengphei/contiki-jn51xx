@@ -28,10 +28,9 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: symbols.h,v 1.5 2007/01/30 18:04:59 bg- Exp $
  */
-#ifndef __SYMBOLS_H__
-#define __SYMBOLS_H__
+#ifndef SYMBOLS_H_
+#define SYMBOLS_H_
 
 struct symbols {
   const char *name;
@@ -42,4 +41,4 @@ extern const int symbols_nelts;
 
 extern const struct symbols symbols[/* symbols_nelts */];
 
-#endif /* __SYMBOLS_H__ */
+#endif /* SYMBOLS_H_ */

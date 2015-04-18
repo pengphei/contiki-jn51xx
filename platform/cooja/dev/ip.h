@@ -26,10 +26,9 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: ip.h,v 1.1 2006/08/21 12:11:19 fros4943 Exp $
  */
 
-#ifndef __IP_H__
-#define __IP_H__
+#ifndef IP_H_
+#define IP_H_
 
-#endif /* __IP_H__ */
+#endif /* IP_H_ */

@@ -1,17 +1,3 @@
-/**
- * \addtogroup rime
- * @{
- */
-/**
- * \defgroup rimelinkestimate Link estimate management
- *
- * The link estimate module is used for computing estimations of link
- * quality. It computes a quality index for links, based on
- * information about how many times a packet has been transmitted, as
- * well as information about incoming packets. The link estimate
- * module exposes an interface that provides functions that are called
- * for incoming and outgoing packets.
- */
 /*
  * Copyright (c) 2010, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -42,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: collect-link-estimate.h,v 1.4 2011/01/09 21:14:22 adamdunkels Exp $
  */
 
 /**
@@ -50,6 +35,22 @@
  *         Header file for the Collect link estimate
  * \author
  *         Adam Dunkels <adam@sics.se>
+ */
+
+/**
+ * \addtogroup rime
+ * @{
+ */
+
+/**
+ * \defgroup rimelinkestimate Link estimate management
+ *
+ * The link estimate module is used for computing estimations of link
+ * quality. It computes a quality index for links, based on
+ * information about how many times a packet has been transmitted, as
+ * well as information about incoming packets. The link estimate
+ * module exposes an interface that provides functions that are called
+ * for incoming and outgoing packets.
  */
 
 #ifndef COLLECT_LINK_ESTIMATE_H

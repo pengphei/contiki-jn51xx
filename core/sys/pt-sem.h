@@ -30,7 +30,6 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: pt-sem.h,v 1.2 2008/10/14 12:46:39 nvt-se Exp $
  */
 
 /**
@@ -157,8 +156,8 @@ PT_THREAD(driver_thread(struct pt *pt))
  *
  */
 
-#ifndef __PT_SEM_H__
-#define __PT_SEM_H__
+#ifndef PT_SEM_H_
+#define PT_SEM_H_
 
 #include "sys/pt.h"
 
@@ -221,7 +220,7 @@ struct pt_sem {
  */
 #define PT_SEM_SIGNAL(pt, s) ++(s)->count
 
-#endif /* __PT_SEM_H__ */
+#endif /* PT_SEM_H_ */
 
 /** @} */
 /** @} */

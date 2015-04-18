@@ -30,12 +30,11 @@
  * 
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: error.h,v 1.1 2007/11/27 18:17:47 oliverschmidt Exp $
  */
 
-#ifndef __ERROR_H__
-#define __ERROR_H__
+#ifndef ERROR_H_
+#define ERROR_H_
 
 void error_exit(void);
 
-#endif /* __ERROR_H__ */
+#endif /* ERROR_H_ */

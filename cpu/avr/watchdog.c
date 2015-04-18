@@ -64,6 +64,14 @@
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 
+/* MCUSR is a deprecated name but older avr-libc versions may define it */
+#if !defined (MCUCSR)
+# if defined (MCUSR)
+#  warning *** MCUCSR not defined, using MCUSR instead ***
+#  define MCUCSR MCUSR
+# endif
+#endif
+
 #if WATCHDOG_CONF_BALANCE && WATCHDOG_CONF_TIMEOUT >= 0
 static int stopped = 0;
 #endif
@@ -75,7 +83,7 @@ watchdog_init(void)
 /*  Clear startup bit and disable the wdt, whether or not it will be used.
     Random code may have caused the last reset.
  */
-	MCUSR&=~(1<<WDRF);
+	MCUCSR&=~(1<<WDRF);
     wdt_disable();
 #if WATCHDOG_CONF_BALANCE && WATCHDOG_CONF_TIMEOUT >= 0
 	stopped = 1;

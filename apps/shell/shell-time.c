@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-time.c,v 1.9 2010/10/20 15:18:49 adamdunkels Exp $
  */
 
 /**
@@ -267,7 +266,7 @@ PROCESS_THREAD(shell_repeat_process, ev, data)
   etimer_set(&etimer, CLOCK_SECOND * period);
   for(i = 0; reps == 0 || i < reps; ++i) {
 
-    process_start(&shell_repeat_server_process, command);
+    process_start(&shell_repeat_server_process, (void *)command);
     process_post(&shell_repeat_server_process,
 		 PROCESS_EVENT_CONTINUE,
 		 &shell_repeat_process);

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: chameleon-raw.c,v 1.8 2010/05/28 06:18:39 nifi Exp $
  */
 
 /**
@@ -41,7 +40,7 @@
 #include <string.h>
 
 #include "net/rime/chameleon.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 /* This option enables an optimization where the link addresses are
    left to the MAC RDC and not encoded in the Chameleon header.
@@ -104,27 +103,25 @@ input(void)
       continue;
     }
 #endif /* CHAMELEON_WITH_MAC_LINK_ADDRESSES */
-    PRINTF("%d.%d: unpack_header type %s, len %d\n",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	   packetbuf_attr_strings[a->type], a->len);
+    PRINTF("%d.%d: unpack_header type %d, len %d\n",
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	   a->type, a->len);
     len = (a->len & 0xf8) + ((a->len & 7) ? 8: 0);
     if(PACKETBUF_IS_ADDR(a->type)) {
-      const rimeaddr_t addr;
+      const linkaddr_t addr;
       memcpy((uint8_t *)&addr, &hdrptr[byteptr], len / 8);
-      PRINTF("%d.%d: unpack_header type %s, addr %d.%d\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	     packetbuf_attr_strings[a->type],
-	     addr.u8[0], addr.u8[1]);
+      PRINTF("%d.%d: unpack_header type %d, addr %d.%d\n",
+	     linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	     a->type, addr.u8[0], addr.u8[1]);
       packetbuf_set_addr(a->type, &addr);
     } else {
       packetbuf_attr_t val = 0;
       memcpy((uint8_t *)&val, &hdrptr[byteptr], len / 8);
 
       packetbuf_set_attr(a->type, val);
-      PRINTF("%d.%d: unpack_header type %s, val %d\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	     packetbuf_attr_strings[a->type],
-	     val);
+      PRINTF("%d.%d: unpack_header type %d, val %d\n",
+	     linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	     a->type, val);
     }
     byteptr += len / 8;
   }
@@ -160,19 +157,19 @@ output(struct channel *c)
       continue;
     }
 #endif /* CHAMELEON_WITH_MAC_LINK_ADDRESSES */
-    PRINTF("%d.%d: pack_header type %s, len %d\n",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	   packetbuf_attr_strings[a->type], a->len);
+    PRINTF("%d.%d: pack_header type %d, len %d\n",
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	   a->type, a->len);
     len = (a->len & 0xf8) + ((a->len & 7) ? 8: 0);
     if(PACKETBUF_IS_ADDR(a->type)) {
-      const rimeaddr_t *rimeaddr;
+      const linkaddr_t *linkaddr;
       /*      memcpy(&hdrptr[byteptr], (uint8_t *)packetbuf_attr_aget(a->type), len / 8);*/
-      rimeaddr = packetbuf_addr(a->type);
-      hdrptr[byteptr] = rimeaddr->u8[0];
-      hdrptr[byteptr + 1] = rimeaddr->u8[1];
+      linkaddr = packetbuf_addr(a->type);
+      hdrptr[byteptr] = linkaddr->u8[0];
+      hdrptr[byteptr + 1] = linkaddr->u8[1];
       
       PRINTF("%d.%d: address %d.%d\n",
-	    rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	    linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	    ((uint8_t *)packetbuf_addr(a->type))[0],
 	    ((uint8_t *)packetbuf_addr(a->type))[1]);
     } else {
@@ -180,7 +177,7 @@ output(struct channel *c)
       val = packetbuf_attr(a->type);
       memcpy(&hdrptr[byteptr], &val, len / 8);
       PRINTF("%d.%d: value %d\n",
-	    rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	    linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	    val);
     }
     byteptr += len / 8;
@@ -199,10 +196,8 @@ hdrsize(const struct packetbuf_attrlist *a)
   
   size = 0;
   for(; a->type != PACKETBUF_ATTR_NONE; ++a) {
-    /*    PRINTF("chameleon header_size: header type %s (%d) len %d\n",
-	   packetbuf_attr_strings[a->type],
-	   a->type,
-	   a->len);*/
+    /*    PRINTF("chameleon header_size: header type %d len %d\n",
+	   a->type, a->len);*/
 #if CHAMELEON_WITH_MAC_LINK_ADDRESSES
     if(a->type == PACKETBUF_ADDR_SENDER ||
        a->type == PACKETBUF_ADDR_RECEIVER) {

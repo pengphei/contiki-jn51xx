@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: uip6-bridge-tap.c,v 1.3 2010/06/14 19:19:17 adamdunkels Exp $
  *
  */
 
@@ -39,7 +38,7 @@
  */
 
 #include "contiki.h"
-#include "net/uip.h"
+#include "net/ip/uip.h"
 #include "dev/slip.h"
 #include "dev/leds.h"
 #include "sicslow_ethernet.h"
@@ -56,16 +55,16 @@ PROCESS(tcpip_process, "tcpip dummy");
 AUTOSTART_PROCESSES(&uip6_bridge);
 
 /*---------------------------------------------------------------------------*/
-static uint8_t (* outputfunc)(uip_lladdr_t *a);
+static uint8_t (* outputfunc)(const uip_lladdr_t *a);
 uint8_t
-tcpip_output(uip_lladdr_t *a)
+tcpip_output(const uip_lladdr_t *a)
 {
   if(outputfunc != NULL) {
     outputfunc(a);
     /*    printf("pppp o %u tx %u rx %u\n", UIP_IP_BUF->proto,
 	   packetbuf_attr(PACKETBUF_ATTR_TRANSMIT_TIME),
 	   packetbuf_attr(PACKETBUF_ATTR_LISTEN_TIME));*/
-    leds_invert(LEDS_GREEN);
+    leds_toggle(LEDS_GREEN);
   }
   return 0;
 }
@@ -74,7 +73,7 @@ tcpip_ipv6_output(void)
 {
 }
 void
-tcpip_set_outputfunc(uint8_t (*f)(uip_lladdr_t *))
+tcpip_set_outputfunc(uint8_t (*f)(const uip_lladdr_t *))
 {
   outputfunc = f;
 }
@@ -95,7 +94,7 @@ tcpip_input(void)
 	     packetbuf_attr(PACKETBUF_ATTR_TRANSMIT_TIME),
 	     packetbuf_attr(PACKETBUF_ATTR_LISTEN_TIME));*/
       slip_write(uip_buf, uip_len);
-      leds_invert(LEDS_RED);
+      leds_toggle(LEDS_RED);
       uip_len = 0;
     }
   }
@@ -113,7 +112,7 @@ slip_tcpip_input(void)
 static void
 slip_activity(void)
 {
-  leds_invert(LEDS_BLUE);
+  leds_toggle(LEDS_BLUE);
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(uip6_bridge, ev, data)

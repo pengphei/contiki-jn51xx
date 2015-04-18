@@ -1,8 +1,3 @@
-/**
- * \addtogroup shell
- * @{
- */
-
 /*
  * Copyright (c) 2008, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -32,8 +27,6 @@
  * SUCH DAMAGE.
  *
  * This file is part of the Contiki operating system.
- *
- * $Id: serial-shell.c,v 1.5 2009/03/17 15:56:32 adamdunkels Exp $
  */
 
 /**
@@ -43,11 +36,16 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/**
+ * \addtogroup shell
+ * @{
+ */
+
 #include "contiki.h"
 #include "shell.h"
 
 #include "dev/serial-line.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -59,6 +57,7 @@ PROCESS(serial_shell_process, "Contiki serial shell");
 void
 shell_default_output(const char *text1, int len1, const char *text2, int len2)
 {
+  int i;
   if(text1 == NULL) {
     text1 = "";
     len1 = 0;
@@ -67,13 +66,22 @@ shell_default_output(const char *text1, int len1, const char *text2, int len2)
     text2 = "";
     len2 = 0;
   }
-  printf("%.*s%.*s\r\n", len1, text1, len2, text2);
+
+  /* Precision (printf("%.Ns", text1)) not supported on all platforms.
+     putchar(c) not be supported on all platforms. */
+  for(i = 0; i < len1; i++) {
+    printf("%c", text1[i]);
+  }
+  for(i = 0; i < len2; i++) {
+    printf("%c", text2[i]);
+  }
+  printf("\r\n");
 }
 /*---------------------------------------------------------------------------*/
 void
 shell_prompt(char *str)
 {
-  printf("%d.%d: %s\r\n", rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+  printf("%d.%d: %s\r\n", linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	 str);
 }
 /*---------------------------------------------------------------------------*/
@@ -87,12 +95,12 @@ PROCESS_THREAD(serial_shell_process, ev, data)
   PROCESS_BEGIN();
 
   shell_init();
-  
+
   while(1) {
     PROCESS_WAIT_EVENT_UNTIL(ev == serial_line_event_message && data != NULL);
     shell_input(data, strlen(data));
   }
-  
+
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/

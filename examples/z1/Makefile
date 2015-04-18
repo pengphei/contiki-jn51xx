@@ -2,13 +2,19 @@ ifndef TARGET
 TARGET=z1
 endif
 
-CONTIKI_PROJECT = test-phidgets blink test-adxl345 tmp102-test test-battery test-sht11 #test-potent
-CONTIKI_SOURCEFILES += cc2420-arch.c sensors.c sht11.c potentiometer-sensor.c
-PROJECT_SOURCEFILES = i2cmaster.c tmp102.c adxl345.c battery-sensor.c sky-sensors.c #potentiometer-sensor.c
+# Enable to pull-in Z1SP specific test/source files
+ZOLERTIA_Z1SP=0
+
+CONTIKI_PROJECT = test-phidgets blink test-adxl345 test-tmp102 test-light-ziglet
+CONTIKI_PROJECT += test-battery test-relay-phidget test-tlc59116 test-sht25
+CONTIKI_SOURCEFILES += sht11.c reed-sensor.c
 APPS=serial-shell
 
+ifeq ($(ZOLERTIA_Z1SP),1)
+CONTIKI_PROJECT += test-potent
+endif
 
 all: $(CONTIKI_PROJECT)
-
 CONTIKI = ../..
+CONTIKI_WITH_RIME = 1
 include $(CONTIKI)/Makefile.include

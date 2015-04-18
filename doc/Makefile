@@ -1,4 +1,4 @@
-basedirs	:= core cpu platform
+basedirs	:= core cpu platform apps
 manuals		:= $(shell find ./ -name "*.txt")
 filetypes	:= -iwholename "*/doc/*.txt"
 empty		:=
@@ -13,32 +13,33 @@ export doclatex	:= NO
 export docroot	:= ../
 
 # Get appropriate root for doxygen path cutoff
-ifneq (,$(findstring Windows,$(OS)))
-# on windows need to convert cygwin path to windows path for doxygen
-ifneq (,$(findstring cygdrive,$(pwd)))
-	cygroot	= $(subst /,$(space),$(patsubst /cygdrive/%,%,$(pwd)))
-	export docroot = $(firstword $(cygroot)):/$(subst $(space),/,$(wordlist 2,$(words $(cygroot)),$(cygroot)))
-endif
+ifeq ($(HOST_OS),Windows)
+  # on windows need to convert cygwin path to windows path for doxygen
+  ifneq (,$(findstring cygdrive,$(pwd)))
+    cygroot = $(subst /,$(space),$(patsubst /cygdrive/%,%,$(pwd)))
+    export docroot = $(firstword $(cygroot)):/$(subst $(space),/,$(wordlist 2,$(words $(cygroot)),$(cygroot)))
+  endif
 endif
 
 .PHONY: clean html pdf upload
 
-html: init doxygen
+html: init doxygen.log
 
 pdf: doclatex = YES
-pdf: init doxygen
+pdf: init doxygen.log
 	gmake -C latex refman.pdf
 
 init:
 	@echo "> Scanning files"
 
 # This target requires and graphviz and doxygen
-doxygen: docdirs = $(foreach dir,$(basedirs),${shell find ../${dir} -type d -not -path "*/.*" -not -path "*/obj_*"})
-doxygen: docsrc = $(docdirs) $(foreach dir,$(docdirs),${shell find $(dir) -type f $(filetypes)}) $(manuals)
-doxygen:
+doxygen.log: docdirs = $(sort $(foreach dir,$(basedirs),${shell find ../${dir} -type d -not -path "*/.*" -not -path "*/obj_*"}))
+doxygen.log: docsrc = $(docdirs) $(foreach dir,$(docdirs),${shell find $(dir) -type f $(filetypes)}) $(manuals)
+doxygen.log:
 	@doxygen Doxyfile
 	@echo "Done, errorlog follows:"
 	@echo ""
+	@touch doxygen.log
 	@cat "doxygen.log"
 
 clean:

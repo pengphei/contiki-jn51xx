@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: dlloader.c,v 1.2 2008/02/07 15:53:43 oliverschmidt Exp $
  */
 #include <dlfcn.h>
 #include <stddef.h>
@@ -61,8 +60,9 @@ dlloader_load(char *path, char *arg)
   }
 
   /* Start the process. */
-  printf("Starting '%s'\n", (*p)->name);
-  process_start(*p, arg);
+ 
+  printf("Starting '%s'\n", PROCESS_NAME_STRING(*p));
+  process_start(*p, (void *)arg);
 
   return LOADER_OK;
 }

@@ -26,12 +26,12 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
  * SUCH DAMAGE. 
  *
- * @(#)$Id: assert.h,v 1.2 2007/06/01 15:36:00 bg- Exp $
  */
 
-#ifndef ASSERT_H
-#define ASSERT_H
+#ifndef ASSERT_H_
+#define ASSERT_H_
 
+#undef assert
 #ifdef NDEBUG
 #define assert(e) ((void)0)
 #else
@@ -45,4 +45,4 @@ void _xassert(const char *, int);
 #define __CTASSERT(x, y)        typedef char __assert ## y[(x) ? 1 : -1]
 #endif
 
-#endif /* ASSERT_H */
+#endif /* ASSERT_H_ */

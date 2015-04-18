@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki desktop OS.
  *
- * $Id: gui-shell.c,v 1.6 2008/11/10 22:10:32 oliverschmidt Exp $
  *
  */
 
@@ -37,7 +36,7 @@
 
 #include "shell.h"
 
-#include "lib/ctk-textentry-cmdline.h"
+#include "ctk/ctk-textentry-cmdline.h"
 
 #include <string.h>
 
@@ -103,7 +102,7 @@ shell_prompt(char *str)
 }
 /*-----------------------------------------------------------------------------------*/
 void
-shell_exit(char *str)
+shell_exit(void)
 {
   ctk_window_close(&window);
 }

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rime-ping.h,v 1.1 2008/02/04 23:42:17 adamdunkels Exp $
  */
 
 /**
@@ -38,9 +37,9 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_RIME_PING_H__
-#define __SHELL_RIME_PING_H__
+#ifndef SHELL_RIME_PING_H_
+#define SHELL_RIME_PING_H_
 
 void shell_rime_ping_init(void);
 
-#endif /* __SHELL-RIME_-PING_H__ */
+#endif /* SHELL-RIME_-PING_H_ */

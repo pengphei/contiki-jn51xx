@@ -39,22 +39,44 @@
  *         Simon Barner <barner@in.tum.de
  */
 
-#ifndef __CONTIKI_CONF_H__
-#define __CONTIKI_CONF_H__
+#ifndef CONTIKI_CONF_H_
+#define CONTIKI_CONF_H_
 
 #include <stdint.h>
 
-typedef int32_t s32_t;
+//typedef int32_t s32_t;
 
 /*
  * MCU and clock rate
  */
-#define MCU_MHZ 8
-#define PLATFORM PLATFORM_AVR
-#define RCB_REVISION RCB_B
+ /* Platform name, type, and MCU clock rate */
+#define PLATFORM_NAME  "RCB"
+#define PLATFORM_TYPE  RCB_B
+#ifndef F_CPU
+#define F_CPU          8000000UL
+#endif
 
+/* The AVR tick interrupt usually is done with an 8 bit counter around 128 Hz.
+ * 125 Hz needs slightly more overhead during the interrupt, as does a 32 bit
+ * clock_time_t.
+ */
 /* Clock ticks per second */
 #define CLOCK_CONF_SECOND 125
+#if 1
+/* 16 bit counter overflows every ~10 minutes */
+typedef unsigned short clock_time_t;
+#define CLOCK_LT(a,b)  ((signed short)((a)-(b)) < 0)
+#define INFINITE_TIME 0xffff
+#define RIME_CONF_BROADCAST_ANNOUNCEMENT_MAX_TIME INFINITE_TIME/CLOCK_CONF_SECOND /* Default uses 600 */
+#define COLLECT_CONF_BROADCAST_ANNOUNCEMENT_MAX_TIME INFINITE_TIME/CLOCK_CONF_SECOND /* Default uses 600 */
+#else
+typedef unsigned long clock_time_t;
+#define CLOCK_LT(a,b)  ((signed long)((a)-(b)) < 0)
+#define INFINITE_TIME 0xffffffff
+#endif
+/* These routines are not part of the contiki core but can be enabled in cpu/avr/clock.c */
+void clock_delay_msec(uint16_t howlong);
+void clock_adjust_ticks(clock_time_t howmany);
 
 /* COM port to be used for SLIP connection */
 #define SLIP_PORT RS232_PORT_0
@@ -70,17 +92,26 @@ typedef int32_t s32_t;
 #define CCIF
 #define CLIF
 
-//#define UIP_CONF_IPV6            1  //Let makefile determine this so ipv4 hello-world will compile
+#define LINKADDR_CONF_SIZE       8
+#define PACKETBUF_CONF_HDR_SIZE    48	/* Choose a buffersize != 0 for the messages which should be sended over the wireless interface */
 
-#define RIMEADDR_CONF_SIZE       8
-#define PACKETBUF_CONF_HDR_SIZE    0
+/* Uncomment this lines to activate the specific drivers */
+//#define NETSTACK_CONF_NETWORK     rime_driver		
+//#define NETSTACK_CONF_MAC         nullmac_driver
+//#define NETSTACK_CONF_RDC         sicslowmac_driver	
+//#define NETSTACK_CONF_FRAMER      framer_802154	/* Framer for 802.15.4 Medium Access Control */
+#define NETSTACK_CONF_RADIO       rf230_driver		/* Select the wireless driver, otherwise contiki would operate with the "nulldriver" which does nothing */
 
-/* 0 for IPv6, or 1 for HC1, 2 for HC01 */
-#define SICSLOWPAN_CONF_COMPRESSION_IPV6 0 
-#define SICSLOWPAN_CONF_COMPRESSION_HC1  1 
-#define SICSLOWPAN_CONF_COMPRESSION_HC01 2
+#define RF230_CONF_AUTOACK        1
+#define CXMAC_CONF_ANNOUNCEMENTS  10
+#define NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE 8
 
-#define SICSLOWPAN_CONF_COMPRESSION       SICSLOWPAN_CONF_COMPRESSION_HC01 
+/* 211 bytes per queue buffer. Burst mode will need 15 for a 1280 byte MTU */
+#define QUEUEBUF_CONF_NUM         15
+/* 54 bytes per queue ref buffer */
+#define QUEUEBUF_CONF_REF_NUM     2
+
+#define SICSLOWPAN_CONF_COMPRESSION       SICSLOWPAN_COMPRESSION_HC06
 #define SICSLOWPAN_CONF_MAX_ADDR_CONTEXTS 2
 #define SICSLOWPAN_CONF_FRAG              1
 
@@ -100,30 +131,22 @@ typedef int32_t s32_t;
 #define UIP_CONF_IPV6_QUEUE_PKT  0
 #define UIP_CONF_IPV6_REASSEMBLY 0
 #define UIP_CONF_NETIF_MAX_ADDRESSES  3
-#define UIP_CONF_ND6_MAX_PREFIXES     3
-#define UIP_CONF_ND6_MAX_NEIGHBORS    4  
-#define UIP_CONF_ND6_MAX_DEFROUTERS   2
-#if UIP_CONF_IPV6                       //tcpip.c error on ipv4 build if UIP_CONF_ICMP6 defined
-#define UIP_CONF_ICMP6           1
+#if NETSTACK_CONF_WITH_IPV6 //tcpip.c error on ipv4 build if UIP_CONF_ICMP6 defined
+#define UIP_CONF_ICMP6 1
 #endif
 
 #define UIP_CONF_UDP             1
 #define UIP_CONF_UDP_CHECKSUMS   1
 
-#define UIP_CONF_TCP             0
+#define UIP_CONF_TCP             1
 #define UIP_CONF_TCP_SPLIT       0
 
-
-typedef unsigned short clock_time_t;
-typedef unsigned char u8_t;
+/* These names are deprecated, use C99 names. */
+/*typedef unsigned char u8_t;
 typedef unsigned short u16_t;
 typedef unsigned long u32_t;
+*/
 typedef unsigned short uip_stats_t;
 typedef unsigned long off_t;
 
-void clock_delay(unsigned int us2);
-void clock_wait(int ms10);
-void clock_set_seconds(unsigned long s);
-unsigned long clock_seconds(void);
-
-#endif /* __CONTIKI_CONF_H__ */
+#endif /* CONTIKI_CONF_H_ */

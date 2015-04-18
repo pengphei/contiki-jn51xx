@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: powertrace.c,v 1.8 2010/10/06 18:40:21 adamdunkels Exp $
  */
 
 /**
@@ -42,7 +41,7 @@
 #include "contiki-lib.h"
 #include "sys/compower.h"
 #include "powertrace.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -52,6 +51,9 @@ struct powertrace_sniff_stats {
   uint32_t num_input, num_output;
   uint32_t input_txtime, input_rxtime;
   uint32_t output_txtime, output_rxtime;
+#if NETSTACK_CONF_WITH_IPV6
+  uint16_t proto; /* includes proto + possibly flags */
+#endif
   uint16_t channel;
   uint32_t last_input_txtime, last_input_rxtime;
   uint32_t last_output_txtime, last_output_rxtime;
@@ -115,7 +117,7 @@ powertrace_print(char *str)
 
   printf("%s %lu P %d.%d %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu (radio %d.%02d%% / %d.%02d%% tx %d.%02d%% / %d.%02d%% listen %d.%02d%% / %d.%02d%%)\n",
          str,
-         clock_time(), rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1], seqno,
+         clock_time(), linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1], seqno,
          all_cpu, all_lpm, all_transmit, all_listen, all_idle_transmit, all_idle_listen,
          cpu, lpm, transmit, listen, idle_transmit, idle_listen,
          (int)((100L * (all_transmit + all_listen)) / all_time),
@@ -132,8 +134,10 @@ powertrace_print(char *str)
          (int)((10000L * listen) / time - (100L * listen / time) * 100));
 
   for(s = list_head(stats_list); s != NULL; s = list_item_next(s)) {
+
+#if ! NETSTACK_CONF_WITH_IPV6
     printf("%s %lu SP %d.%d %lu %u %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu (channel %d radio %d.%02d%% / %d.%02d%%)\n",
-           str, clock_time(), rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1], seqno,
+           str, clock_time(), linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1], seqno,
            s->channel,
            s->num_input, s->input_txtime, s->input_rxtime,
            s->input_txtime - s->last_input_txtime,
@@ -154,7 +158,30 @@ powertrace_print(char *str)
                           (s->last_input_rxtime + s->last_input_txtime +
                            s->last_output_rxtime + s->last_output_txtime))) /
                  radio));
-
+#else
+    printf("%s %lu SP %d.%d %lu %u %u %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu (proto %u(%u) radio %d.%02d%% / %d.%02d%%)\n",
+           str, clock_time(), linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1], seqno,
+           s->proto, s->channel,
+           s->num_input, s->input_txtime, s->input_rxtime,
+           s->input_txtime - s->last_input_txtime,
+           s->input_rxtime - s->last_input_rxtime,
+           s->num_output, s->output_txtime, s->output_rxtime,
+           s->output_txtime - s->last_output_txtime,
+           s->output_rxtime - s->last_output_rxtime,
+           s->proto, s->channel,
+           (int)((100L * (s->input_rxtime + s->input_txtime + s->output_rxtime + s->output_txtime)) / all_radio),
+           (int)((10000L * (s->input_rxtime + s->input_txtime + s->output_rxtime + s->output_txtime)) / all_radio),
+           (int)((100L * (s->input_rxtime + s->input_txtime +
+                          s->output_rxtime + s->output_txtime -
+                          (s->last_input_rxtime + s->last_input_txtime +
+                           s->last_output_rxtime + s->last_output_txtime))) /
+                 radio),
+           (int)((10000L * (s->input_rxtime + s->input_txtime +
+                          s->output_rxtime + s->output_txtime -
+                          (s->last_input_rxtime + s->last_input_txtime +
+                           s->last_output_rxtime + s->last_output_txtime))) /
+                 radio));
+#endif
     s->last_input_txtime = s->input_txtime;
     s->last_input_rxtime = s->input_rxtime;
     s->last_output_txtime = s->output_txtime;
@@ -198,29 +225,6 @@ powertrace_stop(void)
   process_exit(&powertrace_process);
 }
 /*---------------------------------------------------------------------------*/
-#if ! UIP_CONF_IPV6
-static void
-sniffprint(char *prefix, int seqno)
-{
-  const rimeaddr_t *sender, *receiver, *esender, *ereceiver;
-
-  sender = packetbuf_addr(PACKETBUF_ADDR_SENDER);
-  receiver = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-  esender = packetbuf_addr(PACKETBUF_ADDR_ESENDER);
-  ereceiver = packetbuf_addr(PACKETBUF_ADDR_ERECEIVER);
-
-
-  printf("%lu %s %d %u %d %d %d.%d %u %u\n",
-         clock_time(),
-         prefix,
-         rimeaddr_node_addr.u8[0], seqno,
-         packetbuf_attr(PACKETBUF_ATTR_CHANNEL),
-         packetbuf_attr(PACKETBUF_ATTR_PACKET_TYPE),
-         esender->u8[0], esender->u8[1],
-         packetbuf_attr(PACKETBUF_ATTR_TRANSMIT_TIME),
-         packetbuf_attr(PACKETBUF_ATTR_LISTEN_TIME));
-}
-/*---------------------------------------------------------------------------*/
 static void
 add_stats(struct powertrace_sniff_stats *s, int input_or_output)
 {
@@ -244,7 +248,11 @@ add_packet_stats(int input_or_output)
      of the packet. If we don't find one, we allocate a new one and
      put it on the list. */
   for(s = list_head(stats_list); s != NULL; s = list_item_next(s)) {
-    if(s->channel == packetbuf_attr(PACKETBUF_ATTR_CHANNEL)) {
+    if(s->channel == packetbuf_attr(PACKETBUF_ATTR_CHANNEL)
+#if NETSTACK_CONF_WITH_IPV6
+       && s->proto == packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID)
+#endif
+       ) {
       add_stats(s, input_or_output);
       break;
     }
@@ -254,6 +262,9 @@ add_packet_stats(int input_or_output)
     if(s != NULL) {
       memset(s, 0, sizeof(struct powertrace_sniff_stats));
       s->channel = packetbuf_attr(PACKETBUF_ATTR_CHANNEL);
+#if NETSTACK_CONF_WITH_IPV6
+      s->proto = packetbuf_attr(PACKETBUF_ATTR_NETWORK_ID);
+#endif
       list_add(stats_list, s);
       add_stats(s, input_or_output);
     }
@@ -270,6 +281,29 @@ static void
 output_sniffer(int mac_status)
 {
   add_packet_stats(OUTPUT);
+}
+/*---------------------------------------------------------------------------*/
+#if NETSTACK_CONF_WITH_RIME
+static void
+sniffprint(char *prefix, int seqno)
+{
+  const linkaddr_t *sender, *receiver, *esender, *ereceiver;
+
+  sender = packetbuf_addr(PACKETBUF_ADDR_SENDER);
+  receiver = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  esender = packetbuf_addr(PACKETBUF_ADDR_ESENDER);
+  ereceiver = packetbuf_addr(PACKETBUF_ADDR_ERECEIVER);
+
+
+  printf("%lu %s %d %u %d %d %d.%d %u %u\n",
+         clock_time(),
+         prefix,
+         linkaddr_node_addr.u8[0], seqno,
+         packetbuf_attr(PACKETBUF_ATTR_CHANNEL),
+         packetbuf_attr(PACKETBUF_ATTR_PACKET_TYPE),
+         esender->u8[0], esender->u8[1],
+         packetbuf_attr(PACKETBUF_ATTR_TRANSMIT_TIME),
+         packetbuf_attr(PACKETBUF_ATTR_LISTEN_TIME));
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -299,21 +333,7 @@ output_printsniffer(int mac_status)
   sniffprint("O", seqno++);
 }
 /*---------------------------------------------------------------------------*/
-RIME_SNIFFER(powersniff, input_sniffer, output_sniffer);
 RIME_SNIFFER(printsniff, input_printsniffer, output_printsniffer);
-/*---------------------------------------------------------------------------*/
-void
-powertrace_sniff(powertrace_onoff_t onoff)
-{
-  switch(onoff) {
-  case POWERTRACE_ON:
-    rime_sniffer_add(&powersniff);
-    break;
-  case POWERTRACE_OFF:
-    rime_sniffer_remove(&powersniff);
-    break;
-  }
-}
 /*---------------------------------------------------------------------------*/
 void
 powertrace_printsniff(powertrace_onoff_t onoff)
@@ -327,10 +347,19 @@ powertrace_printsniff(powertrace_onoff_t onoff)
     break;
   }
 }
+#endif /* NETSTACK_CONF_WITH_RIME */
 /*---------------------------------------------------------------------------*/
-#else /* ! UIP_CONF_IPV6 */
+RIME_SNIFFER(powersniff, input_sniffer, output_sniffer);
+/*---------------------------------------------------------------------------*/
 void
 powertrace_sniff(powertrace_onoff_t onoff)
 {
+  switch(onoff) {
+  case POWERTRACE_ON:
+    rime_sniffer_add(&powersniff);
+    break;
+  case POWERTRACE_OFF:
+    rime_sniffer_remove(&powersniff);
+    break;
+  }
 }
-#endif /* ! UIP_CONF_IPV6 */

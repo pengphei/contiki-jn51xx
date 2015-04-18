@@ -1,17 +1,3 @@
-/** \addtogroup sys
- * @{ */
-
-/**
- * \defgroup compower Communication power accounting
- * @{
- *
- * The compower module accumulates power consumption information and
- * attributes it to communication activities. Examples of
- * communication activities are packet transmission, packet reception,
- * and idle listening.
- *
- */
-
 /*
  * Copyright (c) 2009, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -42,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: compower.h,v 1.2 2009/03/12 21:58:21 adamdunkels Exp $
  */
 
 /**
@@ -52,8 +37,22 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __COMPOWER_H__
-#define __COMPOWER_H__
+/** \addtogroup sys
+ * @{ */
+
+/**
+ * \defgroup compower Communication power accounting
+ * @{
+ *
+ * The compower module accumulates power consumption information and
+ * attributes it to communication activities. Examples of
+ * communication activities are packet transmission, packet reception,
+ * and idle listening.
+ *
+ */
+
+#ifndef COMPOWER_H_
+#define COMPOWER_H_
 
 /**
  * \brief      An activity record that contains power consumption information for a specific communication activity.
@@ -130,7 +129,7 @@ void compower_attrconv(struct compower_activity *a);
  */
 void compower_accumulate_attrs(struct compower_activity *a);
 
-#endif /* __COMPOWER_H__ */
+#endif /* COMPOWER_H_ */
 
 /** @} */
 /** @} */

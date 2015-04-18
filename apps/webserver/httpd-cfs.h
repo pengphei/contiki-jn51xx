@@ -28,12 +28,11 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd-cfs.h,v 1.3 2010/04/11 20:10:12 oliverschmidt Exp $
  *
  */
 
-#ifndef __HTTPD_CFS_H__
-#define __HTTPD_CFS_H__
+#ifndef HTTPD_CFS_H_
+#define HTTPD_CFS_H_
 
 #include "contiki-net.h"
 
@@ -59,4 +58,4 @@ struct httpd_state {
 void httpd_init(void);
 void httpd_appcall(void *state);
 
-#endif /* __HTTPD_CFS_H__ */
+#endif /* HTTPD_CFS_H_ */

@@ -1,18 +1,3 @@
-/**
- * \file
- * PETSCII/ASCII conversion functions.
- * \author Adam Dunkels <adam@dunkels.com>
- *
- * The Commodore based Contiki targets all have a special character
- * encoding called PETSCII which differs from the ASCII encoding that
- * normally is used for representing characters.
- *
- * \note For targets that do not use PETSCII encoding the C compiler
- * define WITH_ASCII should be used to avoid the PETSCII converting
- * functions.
- *
- */
-
 /*
  * Copyright (c) 2002, Adam Dunkels.
  * All rights reserved. 
@@ -44,11 +29,26 @@
  *
  * This file is part of the Contiki desktop environment for the C64.
  *
- * $Id: petsciiconv.h,v 1.1 2006/06/17 22:41:18 adamdunkels Exp $
  *
  */
-#ifndef __PETSCIICONV_H__
-#define __PETSCIICONV_H__
+
+/**
+ * \file
+ * PETSCII/ASCII conversion functions.
+ * \author Adam Dunkels <adam@dunkels.com>
+ *
+ * The Commodore based Contiki targets all have a special character
+ * encoding called PETSCII which differs from the ASCII encoding that
+ * normally is used for representing characters.
+ *
+ * \note For targets that do not use PETSCII encoding the C compiler
+ * define WITH_ASCII should be used to avoid the PETSCII converting
+ * functions.
+ *
+ */
+
+#ifndef PETSCIICONV_H_
+#define PETSCIICONV_H_
 
 #ifdef WITH_PETSCII
 
@@ -76,4 +76,4 @@ void petsciiconv_topetscii(char *buf, unsigned int len);
 
 #endif /* WITH_PETSCII */
 
-#endif /* __PETSCIICONV_H__ */
+#endif /* PETSCIICONV_H_ */

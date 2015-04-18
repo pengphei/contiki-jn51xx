@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: uip-driver.c,v 1.2 2010/06/14 19:19:17 adamdunkels Exp $
  */
 
 /**
@@ -38,9 +37,8 @@
  */
 
 #include "net/netstack.h"
-#include "net/uip.h"
-#include "net/tcpip.h"
-#include "net/hc.h"
+#include "net/ip/uip.h"
+#include "net/ip/tcpip.h"
 #include "net/packetbuf.h"
 #include "net/uip-driver.h"
 #include <string.h>
@@ -53,7 +51,7 @@ uip_driver_send(void)
 
   /* XXX we should provide a callback function that is called when the
      packet is sent. For now, we just supply a NULL pointer. */
-  NETSTACK_MAC.send(NULL, NULL);
+  NETSTACK_LLSEC.send(NULL, NULL);
   return 1;
 }
 /*--------------------------------------------------------------------*/

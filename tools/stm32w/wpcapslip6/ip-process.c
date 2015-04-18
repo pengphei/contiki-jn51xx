@@ -1,12 +1,12 @@
 
-#define UIP_CONF_IPV6 1
+#define NETSTACK_CONF_WITH_IPV6 1
 #define UIP_CONF_LL_802154 1
 
 #include <string.h>
 
 #define DEBUG DEBUG_NONE
 
-#include "net/uip-debug.h"
+#include "net/ip/uip-debug.h"
 
 #include "ip-process.h"
 
@@ -14,7 +14,7 @@
 
 #undef uip_buf
 extern unsigned char *uip_buf;
-extern u16_t uip_len;
+extern uint16_t uip_len;
 
 
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
@@ -46,8 +46,8 @@ int8_t mac_translateIPLinkLayer()
   return 0;
 }
 
-#include "net/uip-icmp6.h"
-#include "net/uip-nd6.h"
+#include "net/ipv6/uip-icmp6.h"
+#include "net/ipv6/uip-nd6.h"
 
 typedef struct {
   uint8_t type;
@@ -200,7 +200,7 @@ uint8_t mac_createEthernetAddr(uint8_t * ethernet, uip_lladdr_t * lowpan)
 {
  /*   uint8_t j, match; */
 
-	u8_t tmp[8];
+	uint8_t tmp[8];
 
 	memcpy(tmp,lowpan,sizeof(uip_lladdr_t));
 
@@ -247,7 +247,7 @@ void slide(uint8_t * data, uint8_t length, int16_t slide)
 
 
 
-u16_t ip_process(unsigned char *buf, unsigned int len)
+uint16_t ip_process(unsigned char *buf, unsigned int len)
 {
 	uip_buf = buf;
 	uip_len = len;

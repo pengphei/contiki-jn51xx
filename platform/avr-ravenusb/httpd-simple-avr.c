@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: httpd-simple-avr.c,v 1.8 2010/12/04 21:32:35 dak664 Exp $
  */
 
 /**
@@ -146,13 +145,13 @@ PT_THREAD(send_string_P(struct httpd_state *s, char *str))
 }
 #endif
 /*---------------------------------------------------------------------------*/
-char http_content_type_html[] PROGMEM = "Content-type: text/html\r\n\r\n";
+const char http_content_type_html[] PROGMEM = "Content-type: text/html\r\n\r\n";
 static
-PT_THREAD(send_headers(struct httpd_state *s, char *statushdr))
+PT_THREAD(send_headers(struct httpd_state *s, const char *statushdr))
 {
   PSOCK_BEGIN(&s->sout);
-  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, statushdr);
-  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, http_content_type_html);
+  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, (char *) statushdr);
+  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, (char *) http_content_type_html);
   PSOCK_END(&s->sout);
 }
 /*---------------------------------------------------------------------------*/
@@ -241,13 +240,9 @@ ipaddr_add(const uip_ipaddr_t *addr)
   }
 }
 /*---------------------------------------------------------------------------*/
-char TOP1[] PROGMEM = "<html><head><title>ContikiRPL(Jackdaw)";
-char TOP2[] PROGMEM = "</title></head><body>";
-char BOTTOM[] PROGMEM = "</body></html>";
-#if UIP_CONF_IPV6
-extern uip_ds6_nbr_t uip_ds6_nbr_cache[];
-extern uip_ds6_route_t uip_ds6_routing_table[];
-#endif
+const char TOP1[] PROGMEM = "<html><head><title>ContikiRPL(Jackdaw)";
+const char TOP2[] PROGMEM = "</title></head><body>";
+const char BOTTOM[] PROGMEM = "</body></html>";
 
 static
 PT_THREAD(generate_routes(struct httpd_state *s))
@@ -255,57 +250,59 @@ PT_THREAD(generate_routes(struct httpd_state *s))
   uint8_t i=0;
   PSOCK_BEGIN(&s->sout);
 
-  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, TOP1);
-  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, TOP2);
+  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, (char *) TOP1);
+  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, (char *) TOP2);
 
-#if UIP_CONF_IPV6     //allow ip4 builds
+#if NETSTACK_CONF_WITH_IPV6     //allow ip4 builds
   blen = 0;
-  ADD("<h2>Neighbors [%u max]</h2>",UIP_DS6_NBR_NB);
+  ADD("<h2>Neighbors [%u max]</h2>",NBR_TABLE_CONF_MAX_NEIGHBORS);
   PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
   blen = 0;
-  for(i = 0; i < UIP_DS6_NBR_NB; i++) {
-    if(uip_ds6_nbr_cache[i].isused) {
-      ipaddr_add(&uip_ds6_nbr_cache[i].ipaddr);
+  uip_ds6_nbr_t *nbr;
+  for(nbr = nbr_table_head(ds6_neighbors);
+      nbr != NULL;
+      nbr = nbr_table_next(ds6_neighbors, nbr)) {
+      ipaddr_add(&nbr->ipaddr);
       ADD("<br>");
 //    if(blen > sizeof(buf) - 45) {
         PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
         blen = 0;
 //    }
-    }
   }
 
   ADD("<h2>Routes [%u max]</h2>",UIP_DS6_ROUTE_NB);
   PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
   blen = 0;
-  for(i = 0; i < UIP_DS6_ROUTE_NB; i++) {
-    if(uip_ds6_routing_table[i].isused) {
-      ipaddr_add(&uip_ds6_routing_table[i].ipaddr);
-      ADD("/%u (via ", uip_ds6_routing_table[i].length);
- 	  PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);
+  uip_ds6_route_t *route;
+  for(route = uip_ds6_route_head();
+      route != NULL;
+      route = uip_ds6_route_next(route)) {
+    ipaddr_add(&route->ipaddr);
+    ADD("/%u (via ", route->length);
+    PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);
+    blen=0;
+    ipaddr_add(uip_ds6_route_nexthop(route));
+    if(route->state.lifetime < 600) {
+      PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);
       blen=0;
-      ipaddr_add(&uip_ds6_routing_table[i].nexthop);
-      if(uip_ds6_routing_table[i].state.lifetime < 600) {
-        PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);
-        blen=0;
-        ADD(") %lus<br>", uip_ds6_routing_table[i].state.lifetime);
-      } else {
-        ADD(")<br>");
-      }
-	  PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
-      blen = 0;
+      ADD(") %lus<br>", route->state.lifetime);
+    } else {
+      ADD(")<br>");
     }
+    PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);
+    blen = 0;
   }
   if(blen > 0) {
 	PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
     blen = 0;
   }
-#else /* UIP_CONF_IPV6 */
+#else /* NETSTACK_CONF_WITH_IPV6 */
   blen = 0;i++;
   ADD("<h2>Hey, you got ip4 working!</h2>");
   PSOCK_GENERATOR_SEND(&s->sout, generate_string, buf);  
-#endif /* UIP_CONF_IPV6 */
+#endif /* NETSTACK_CONF_WITH_IPV6 */
 
-  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, BOTTOM);  
+  PSOCK_GENERATOR_SEND(&s->sout, generate_string_P, (char *) BOTTOM);  
 
   PSOCK_END(&s->sout);
 }
@@ -317,9 +314,9 @@ httpd_simple_get_script(const char *name)
   return generate_routes;
 }
 /*---------------------------------------------------------------------------*/
-char http_header_200[] PROGMEM = "HTTP/1.0 200 OK\r\nServer: Jackdaw\r\nConnection: close\r\n";
-char http_header_404[] PROGMEM = "HTTP/1.0 404 Not found\r\nServer: Jackdaw\r\nConnection: close\r\n";
-char NOT_FOUND[] PROGMEM = "<html><body bgcolor=\"white\"><center><h1>404 - file not found</h1></center></body></html>";
+const char http_header_200[] PROGMEM = "HTTP/1.0 200 OK\r\nServer: Jackdaw\r\nConnection: close\r\n";
+const char http_header_404[] PROGMEM = "HTTP/1.0 404 Not found\r\nServer: Jackdaw\r\nConnection: close\r\n";
+const char NOT_FOUND[] PROGMEM = "<html><body bgcolor=\"white\"><center><h1>404 - file not found</h1></center></body></html>";
 static
 PT_THREAD(handle_output(struct httpd_state *s))
 {

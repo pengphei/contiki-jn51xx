@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: about-dsc.h,v 1.1 2006/06/17 22:41:10 adamdunkels Exp $
  *
  */
-#ifndef __ABOUT_DSC_H__
-#define __ABOUT_DSC_H__
+#ifndef ABOUT_DSC_H_
+#define ABOUT_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(about_dsc);
 
-#endif /* __ABOUT_DSC_H__ */
+#endif /* ABOUT_DSC_H_ */

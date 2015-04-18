@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: shell-dsc.h,v 1.1 2006/06/17 22:41:12 adamdunkels Exp $
  *
  */
-#ifndef __SHELL_DSC_H__
-#define __SHELL_DSC_H__
+#ifndef SHELL_DSC_H_
+#define SHELL_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(shell_dsc);
 
-#endif /* __SHELL_DSC_H__ */
+#endif /* SHELL_DSC_H_ */

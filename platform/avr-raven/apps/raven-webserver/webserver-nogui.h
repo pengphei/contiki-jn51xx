@@ -29,11 +29,10 @@
  *
  * This file is part of the Contiki OS
  *
- * $Id: webserver-nogui.h,v 1.1 2009/03/12 19:15:25 adamdunkels Exp $
  *
  */
-#ifndef __WEBSERVER_NOGUI_H__
-#define __WEBSERVER_NOGUI_H__
+#ifndef WEBSERVER_NOGUI_H_
+#define WEBSERVER_NOGUI_H_
 
 #include "contiki-net.h"
 
@@ -43,4 +42,4 @@ PROCESS_NAME(raven_lcd_process);
 void webserver_log(char *msg);
 void webserver_log_file(uip_ipaddr_t *requester, char *file);
 
-#endif /* __WEBSERVER_H__ */
+#endif /* WEBSERVER_H_ */

@@ -1,5 +1,5 @@
-/** @file board.c
- * @brief Board file x STM32W108 Kits boards 
+/** @file cpu/stm32w108/hal/micro/cortexm3/board.c
+ * @brief Board file x STM32W108 Kits boards
  *
  * This file implements a software layer to support all the ST kits boards
  * and deal with the difference in leds, buttons and sensors connected to the board.
@@ -138,22 +138,22 @@ const MemsResourceType memsSensor = {
 
 const BoardIOType ioMB851A = {
   LedsMB851A,
-  ButtonsMB851A,  
+  ButtonsMB851A,
 };
 
 const BoardIOType ioMB954A = {
   LedsMB954A,
-  ButtonsMB954A,  
+  ButtonsMB954A,
 };
 
 const BoardIOType ioMB950A = {
   LedsMB954A,
-  ButtonsMB950A,  
+  ButtonsMB950A,
 };
 
 const BoardIOType ioMB951A = {
   LedsMB954A,
-  ButtonsMB951A,  
+  ButtonsMB951A,
 };
 
 const BoardResourcesType MB851A = {
@@ -250,7 +250,7 @@ BoardResourcesType const *boardDescription = NULL;
 void halBoardInit(void)
 {
   char boardName[16];
-  int8s i;
+  int8_t i;
   boardDescription = NULL;
 #ifdef EMBERZNET_HAL
   halCommonGetToken(boardName, TOKEN_MFG_BOARD_NAME);
@@ -264,7 +264,7 @@ void halBoardInit(void)
     i--;
   }
 
-  for (i = 0; i < (sizeof(boardList)/4) ; i++) 
+  for (i = 0; i < (sizeof(boardList)/4) ; i++)
     if (strcmp(boardName, (boardList[i])->name) == 0) {
       boardDescription = (BoardResourcesType *) boardList[i];
       break;
@@ -318,7 +318,7 @@ void halBoardPowerDown(void)
   /* Configure GPIO for BUTTONSs */
   {
     ButtonResourceType *buttons = (ButtonResourceType *) boardDescription->io->buttons;
-    int8u i;
+    uint8_t i;
     for (i = 0; i < boardDescription->buttons; i++) {
         halGpioConfig(PORTx_PIN(buttons[i].gpioPort, buttons[i].gpioPin), GPIOCFG_IN_PUD);
         halGpioSet(PORTx_PIN(buttons[i].gpioPort, buttons[i].gpioPin), GPIOOUT_PULLUP);
@@ -328,7 +328,7 @@ void halBoardPowerDown(void)
   /* Configure GPIO for LEDs */
   {
     LedResourceType *leds = (LedResourceType *) boardDescription->io->leds;
-    int8u i;
+    uint8_t i;
     for (i = 0; i < boardDescription->leds; i++) {
           /* LED default off */
       halGpioConfig(PORTx_PIN(leds[i].gpioPort, leds[i].gpioPin), GPIOCFG_OUT);
@@ -394,7 +394,7 @@ void halBoardPowerUp(void)
   /* Configure GPIO for LEDs */
   {
     LedResourceType *leds = (LedResourceType *) boardDescription->io->leds;
-    int8u i;
+    uint8_t i;
     for (i = 0; i < boardDescription->leds; i++) {
           /* LED default off */
       halGpioConfig(PORTx_PIN(leds[i].gpioPort, leds[i].gpioPin), GPIOCFG_OUT);
@@ -404,7 +404,7 @@ void halBoardPowerUp(void)
   /* Configure GPIO for BUTTONSs */
   {
     ButtonResourceType *buttons = (ButtonResourceType *) boardDescription->io->buttons;
-    int8u i;
+    uint8_t i;
     for (i = 0; i < boardDescription->buttons; i++) {
         halGpioConfig(PORTx_PIN(buttons[i].gpioPort, buttons[i].gpioPin), GPIOCFG_IN_PUD);
         halGpioSet(PORTx_PIN(buttons[i].gpioPort, buttons[i].gpioPin), GPIOOUT_PULLUP);
@@ -448,7 +448,7 @@ void printButtons (ButtonResourceType *buttons)
 
 void boardPrintStringDescription(void)
 {
-  int8u i = 0;
+  uint8_t i = 0;
 
   while (boardList[i] != NULL) {
     if ((boardDescription == boardList[i]) || (boardDescription == NULL)) {

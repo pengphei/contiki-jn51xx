@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: tcprudolph0.c,v 1.13 2010/10/19 18:29:05 adamdunkels Exp $
  */
 
 #include <stdio.h>
@@ -38,7 +37,7 @@
 #include "sys/etimer.h"
 #include "loader/elfloader.h"
 
-#include "net/uip.h"
+#include "net/ip/uip.h"
 
 #include "dev/leds.h"
 

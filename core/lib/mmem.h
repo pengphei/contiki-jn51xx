@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: mmem.h,v 1.2 2008/10/15 14:17:28 nvt-se Exp $
  */
 /**
  * \addtogroup mem
@@ -57,8 +56,8 @@
  * 
  */
 
-#ifndef __MMEM_H__
-#define __MMEM_H__
+#ifndef MMEM_H_
+#define MMEM_H_
 
 /*---------------------------------------------------------------------------*/
 /**
@@ -88,7 +87,7 @@ int  mmem_alloc(struct mmem *m, unsigned int size);
 void mmem_free(struct mmem *);
 void mmem_init(void);
 
-#endif /* __MMEM_H__ */
+#endif /* MMEM_H_ */
 
 /** @} */
 /** @} */

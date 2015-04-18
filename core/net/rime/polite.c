@@ -1,8 +1,3 @@
-/**
- * \addtogroup rimepolite
- * @{
- */
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: polite.c,v 1.10 2010/02/23 18:38:05 adamdunkels Exp $
  */
 
 /**
@@ -43,7 +37,12 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#include "net/rime.h"
+/**
+ * \addtogroup rimepolite
+ * @{
+ */
+
+#include "net/rime/rime.h"
 #include "net/rime/polite.h"
 #include "lib/random.h"
 

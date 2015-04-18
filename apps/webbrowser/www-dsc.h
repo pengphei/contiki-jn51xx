@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: www-dsc.h,v 1.1 2006/06/17 22:41:14 adamdunkels Exp $
  *
  */
-#ifndef __WWW_DSC_H__
-#define __WWW_DSC_H__
+#ifndef WWW_DSC_H_
+#define WWW_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(www_dsc);
 
-#endif /* __WWW_DSC_H__ */
+#endif /* WWW_DSC_H_ */

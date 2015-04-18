@@ -1,8 +1,3 @@
-/**
- * \addtogroup ctimer
- * @{
- */
-
 /*
  * Copyright (c) 2006, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: ctimer.c,v 1.1 2010/06/14 07:34:36 adamdunkels Exp $
  */
 
 /**
@@ -41,6 +35,11 @@
  *         Callback timer implementation
  * \author
  *         Adam Dunkels <adam@sics.se>
+ */
+
+/**
+ * \addtogroup ctimer
+ * @{
  */
 
 #include "sys/ctimer.h"
@@ -112,7 +111,6 @@ ctimer_set(struct ctimer *c, clock_time_t t,
     c->etimer.timer.interval = t;
   }
 
-  list_remove(ctimer_list, c);
   list_add(ctimer_list, c);
 }
 /*---------------------------------------------------------------------------*/
@@ -125,7 +123,6 @@ ctimer_reset(struct ctimer *c)
     PROCESS_CONTEXT_END(&ctimer_process);
   }
 
-  list_remove(ctimer_list, c);
   list_add(ctimer_list, c);
 }
 /*---------------------------------------------------------------------------*/
@@ -138,7 +135,6 @@ ctimer_restart(struct ctimer *c)
     PROCESS_CONTEXT_END(&ctimer_process);
   }
 
-  list_remove(ctimer_list, c);
   list_add(ctimer_list, c);
 }
 /*---------------------------------------------------------------------------*/

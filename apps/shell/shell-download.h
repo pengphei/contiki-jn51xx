@@ -28,14 +28,13 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-download.h,v 1.1 2009/04/16 14:33:47 fros4943 Exp $
  */
 
-#ifndef __SHELL_DOWNLOAD_H__
-#define __SHELL_DOWNLOAD_H__
+#ifndef SHELL_DOWNLOAD_H_
+#define SHELL_DOWNLOAD_H_
 
 #include "shell.h"
 
 void shell_download_init(void);
 
-#endif /* __SHELL_DOWNLOAD_H__ */
+#endif /* SHELL_DOWNLOAD_H_ */

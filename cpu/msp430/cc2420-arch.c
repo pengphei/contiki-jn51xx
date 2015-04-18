@@ -26,17 +26,14 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#)$Id: cc2420-arch.c,v 1.10 2010/12/16 22:49:33 adamdunkels Exp $
  */
-
-#include <io.h>
-#include <signal.h>
 
 #include "contiki.h"
 #include "contiki-net.h"
 
 #include "dev/spi.h"
-#include "dev/cc2420.h"
+#include "cc2420.h"
+#include "isr_compat.h"
 
 #ifdef CC2420_CONF_SFD_TIMESTAMPS
 #define CONF_SFD_TIMESTAMPS CC2420_CONF_SFD_TIMESTAMPS
@@ -51,8 +48,7 @@
 #endif
 
 /*---------------------------------------------------------------------------*/
-interrupt(CC2420_IRQ_VECTOR)
-cc24240_port1_interrupt(void)
+ISR(CC2420_IRQ, cc2420_port1_interrupt)
 {
   ENERGEST_ON(ENERGEST_TYPE_IRQ);
 
@@ -62,7 +58,6 @@ cc24240_port1_interrupt(void)
 
   ENERGEST_OFF(ENERGEST_TYPE_IRQ);
 }
-
 /*---------------------------------------------------------------------------*/
 void
 cc2420_arch_init(void)

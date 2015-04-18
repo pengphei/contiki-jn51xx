@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: chameleon-bitopt.h,v 1.2 2008/07/03 07:38:52 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __CHAMELEON_BITOPT_H__
-#define __CHAMELEON_BITOPT_H__
+#ifndef CHAMELEON_BITOPT_H_
+#define CHAMELEON_BITOPT_H_
 
 #include "sys/cc.h"
 
 extern CC_CONST_FUNCTION struct chameleon_module chameleon_bitopt;
 
-#endif /* __CHAMELEON_BITOPT_H__ */
+#endif /* CHAMELEON_BITOPT_H_ */

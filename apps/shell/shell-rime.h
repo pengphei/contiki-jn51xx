@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rime.h,v 1.7 2010/09/13 13:29:30 adamdunkels Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_RIME_H__
-#define __SHELL_RIME_H__
+#ifndef SHELL_RIME_H_
+#define SHELL_RIME_H_
 
 #include "shell.h"
 
@@ -87,4 +86,4 @@ void shell_rime_init(void);
 
 extern struct collect_conn shell_collect_conn;
 
-#endif /* __SHELL_RIME_H__ */
+#endif /* SHELL_RIME_H_ */

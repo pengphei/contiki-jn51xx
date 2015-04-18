@@ -1,8 +1,3 @@
-/**
- * \addtogroup rimeneighbordiscovery
- * @{
- */
-
 /*
  * Copyright (c) 2006, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: neighbor-discovery.c,v 1.19 2010/03/19 13:21:48 adamdunkels Exp $
  */
 
 /**
@@ -43,9 +37,14 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/**
+ * \addtogroup rimeneighbordiscovery
+ * @{
+ */
+
 #include "contiki.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/neighbor-discovery.h"
 
 #include "dev/radio-sensor.h"
@@ -88,31 +87,30 @@ send_adv(void *ptr)
     c->u->sent(c);
   }
   PRINTF("%d.%d: sending neighbor advertisement with val %d\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	 c->val);
 }
 /*---------------------------------------------------------------------------*/
 static void
-adv_packet_received(struct broadcast_conn *ibc, const rimeaddr_t *from)
+adv_packet_received(struct broadcast_conn *ibc, const linkaddr_t *from)
 {
   struct neighbor_discovery_conn *c = (struct neighbor_discovery_conn *)ibc;
-  struct adv_msg *msg = packetbuf_dataptr();
-  uint16_t val;
+  struct adv_msg msg;
 
-  memcpy(&val, &msg->val, sizeof(val));
+  memcpy(&msg, packetbuf_dataptr(), sizeof(struct adv_msg));
 
   PRINTF("%d.%d: adv_packet_received from %d.%d with val %d\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	 from->u8[0], from->u8[1], val);
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	 from->u8[0], from->u8[1], msg.val);
   
   /* If we receive an announcement with a lower value than ours, we
      cancel our own announcement. */
-  if(val < c->val) {
+  if(msg.val < c->val) {
     /*    ctimer_stop(&c->send_timer);*/
   }
 
   if(c->u->recv) {
-    c->u->recv(c, from, val);
+    c->u->recv(c, from, msg.val);
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -164,7 +162,7 @@ neighbor_discovery_open(struct neighbor_discovery_conn *c, uint16_t channel,
 			const struct neighbor_discovery_callbacks *cb)
 {
   PRINTF("%d.%d: neighbor discovery open channel %d\n",
-         rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+         linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	 channel);
   broadcast_open(&c->c, channel, &broadcast_callbacks);
   c->u = cb;

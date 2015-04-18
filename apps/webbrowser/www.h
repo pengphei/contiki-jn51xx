@@ -29,11 +29,10 @@
  *
  * This file is part of the Contiki desktop environment for the C64.
  *
- * $Id: www.h,v 1.4 2008/11/09 10:58:06 adamdunkels Exp $
  *
  */
-#ifndef __WWW_H__
-#define __WWW_H__
+#ifndef WWW_H_
+#define WWW_H_
 
 #ifndef WWW_CONF_WEBPAGE_WIDTH
 #define WWW_CONF_WEBPAGE_WIDTH 80
@@ -42,33 +41,27 @@
 #define WWW_CONF_WEBPAGE_HEIGHT 20
 #endif
 #ifndef WWW_CONF_HISTORY_SIZE
-#define WWW_CONF_HISTORY_SIZE 40
+#define WWW_CONF_HISTORY_SIZE 10
 #endif
 #ifndef WWW_CONF_MAX_URLLEN
-#define WWW_CONF_MAX_URLLEN 200
+#define WWW_CONF_MAX_URLLEN 300
 #endif
-#ifndef WWW_CONF_MAX_NUMPAGEWIDGETS
-#define WWW_CONF_MAX_NUMPAGEWIDGETS 20
-#endif
-#ifndef WWW_CONF_RENDERSTATE
-#define WWW_CONF_RENDERSTATE 1
+#ifndef WWW_CONF_PAGEATTRIB_SIZE
+#define WWW_CONF_PAGEATTRIB_SIZE 2000
 #endif
 #ifndef WWW_CONF_FORMS
 #define WWW_CONF_FORMS 1
 #endif
 #ifndef WWW_CONF_MAX_FORMACTIONLEN
-#define WWW_CONF_MAX_FORMACTIONLEN 200
-#endif
-#ifndef WWW_CONF_MAX_FORMNAMELEN
-#define WWW_CONF_MAX_FORMNAMELEN 200
+#define WWW_CONF_MAX_FORMACTIONLEN 150
 #endif
 #ifndef WWW_CONF_MAX_INPUTNAMELEN
-#define WWW_CONF_MAX_INPUTNAMELEN 200
+#define WWW_CONF_MAX_INPUTNAMELEN 50
 #endif
 #ifndef WWW_CONF_MAX_INPUTVALUELEN
-#define WWW_CONF_MAX_INPUTVALUELEN 200
+#define WWW_CONF_MAX_INPUTVALUELEN 100
 #endif
 
 PROCESS_NAME(www_process);
 
-#endif /* __WWW_H__ */
+#endif /* WWW_H_ */

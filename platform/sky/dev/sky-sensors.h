@@ -27,7 +27,6 @@
  * SUCH DAMAGE.
  *
  * This file is part of the Contiki operating system.
- * $Id: sky-sensors.h,v 1.2 2010/08/25 19:30:53 nifi Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -37,11 +36,11 @@
  *           $Revision: 1.2 $
  */
 
-#ifndef __SKY_SENSORS_H__
-#define __SKY_SENSORS_H__
+#ifndef SKY_SENSORS_H_
+#define SKY_SENSORS_H_
 
 int  sky_sensors_status(uint16_t input, int type);
 int  sky_sensors_configure(uint16_t input, uint8_t reference,
                            int type, int value);
 
-#endif /* __SKY_SENSORS_H__ */
+#endif /* SKY_SENSORS_H_ */

@@ -28,24 +28,21 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: raven-lcd.c,v 1.11 2010/12/22 17:09:03 dak664 Exp $
-*/
-
-/**
- *  \brief This module contains code to interface a Contiki-based
- *  project on the AVR Raven platform's ATMega1284P chip to the LCD
- *  driver chip (ATMega3290P) on the Raven.
- *  
- *  \author Blake Leverett <bleverett@gmail.com>
- *
 */
 
 /**  \addtogroup raven
- * @{ 
+ * @{
  */
 
 /**
  *  \defgroup ravenserial Serial interface between Raven processors
+ *
+ *  \brief This module contains code to interface a Contiki-based
+ *  project on the AVR Raven platform's ATMega1284P chip to the LCD
+ *  driver chip (ATMega3290P) on the Raven.
+ *
+ *  \author Blake Leverett <bleverett@gmail.com>
+ *
  * @{
  */
 /**
@@ -76,17 +73,17 @@
 #include <avr/sleep.h>
 #include <dev/watchdog.h>
 
-static u8_t count = 0;
-static u8_t seqno;
+static uint8_t count = 0;
+static uint8_t seqno;
 uip_ipaddr_t dest_addr;
 
 #define MAX_CMD_LEN 20
 static struct{
-    u8_t frame[MAX_CMD_LEN];
-    u8_t ndx;
-    u8_t len;
-    u8_t cmd;
-    u8_t done;
+    uint8_t frame[MAX_CMD_LEN];
+    uint8_t ndx;
+    uint8_t len;
+    uint8_t cmd;
+    uint8_t done;
 } cmd;
 
 #define UIP_IP_BUF                ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
@@ -101,7 +98,11 @@ void rs232_send(uint8_t port, unsigned char c);
 void
 raven_ping6(void)
 {
-#define PING_GOOGLE 0
+#if UIP_CONF_IPV6_RPL||1
+/* No default router, so pick on someone else */
+#define PING_GOOGLE 1
+seqno++;
+#endif
 
     UIP_IP_BUF->vtc = 0x60;
     UIP_IP_BUF->tcflow = 1;
@@ -118,7 +119,7 @@ raven_ping6(void)
 	} else {
 //	   uip_ip6addr(&UIP_IP_BUF->destipaddr,0x2001,0x0420,0x5FFF,0x007D,0x02D0,0xB7FF,0xFE23,0xE6DB);  //?.cisco.com
 	   uip_ip6addr(&UIP_IP_BUF->destipaddr,0x2001,0x0420,0x0000,0x0010,0x0250,0x8bff,0xfee8,0xf800);  //six.cisco.com
-	}	
+	}
 #else
 	  uip_ipaddr_copy(&UIP_IP_BUF->destipaddr, uip_ds6_defrt_choose());    //the default router
 #endif
@@ -131,16 +132,16 @@ raven_ping6(void)
     /* put one byte of data */
     memset((void *)UIP_ICMP_BUF + UIP_ICMPH_LEN + UIP_ICMP6_ECHO_REQUEST_LEN,
            count, PING6_DATALEN);
-     
-    
+
+
     uip_len = UIP_ICMPH_LEN + UIP_ICMP6_ECHO_REQUEST_LEN + UIP_IPH_LEN + PING6_DATALEN;
-    UIP_IP_BUF->len[0] = (u8_t)((uip_len - 40) >> 8);
-    UIP_IP_BUF->len[1] = (u8_t)((uip_len - 40) & 0x00FF);
-    
+    UIP_IP_BUF->len[0] = (uint8_t)((uip_len - 40) >> 8);
+    UIP_IP_BUF->len[1] = (uint8_t)((uip_len - 40) & 0x00FF);
+
     UIP_ICMP_BUF->icmpchksum = 0;
     UIP_ICMP_BUF->icmpchksum = ~uip_icmp6chksum();
-   
-    
+
+
     tcpip_ipv6_output();
 }
 #if defined(__AVR_ATmega128RFA1__)
@@ -175,7 +176,7 @@ char serial_char_received;
  *
  * Until someone figures out how to get UART to wake from powerdown,
  * a three second powersave cycle is used with exit based on any character received.
- 
+
  * The system clock is adjusted to reflect the sleep time.
  */
 
@@ -202,7 +203,7 @@ void micro_sleep(uint8_t howlong)
         SREG = saved_sreg;                      // Restore interrupt state.
 //      UCSR(USART,B)&= ~(1<<RXCIE(USART))      // Disable the RX Complete interrupt;
 //      UCSR0B|=(1<<RXCIE0);                    // Enable UART0 RX complete interrupt
-//      UCSR1B|=(1<<RXCIE1);                    // Enable UART1 RX complete interrupt 
+//      UCSR1B|=(1<<RXCIE1);                    // Enable UART1 RX complete interrupt
 //      TCNT2 = 0;                              // Reset TIMER2 timer counter value.
 //      while(ASSR & (1 << TCN2UB));            // Wait for TCNT2 write to finish before entering sleep.
 //      TIMSK2 |= (1 << OCIE2A);                // Enable TIMER2 output compare interrupt.
@@ -220,8 +221,8 @@ void micro_sleep(uint8_t howlong)
        sleep_mode();                            // Sleep
 
        /* Adjust clock.c for the time spent sleeping */
-       extern void clock_adjust_seconds(uint8_t howmany);
-       clock_adjust_seconds(howlong);
+       extern void clock_adjust_ticks(uint16_t howmany);
+       clock_adjust_ticks(howlong * CLOCK_SECOND);
 
 //     if (TIMSK2&(1<<OCIE2A)) break;           // Exit sleep if not awakened by TIMER2
        PRINTF(".");
@@ -258,17 +259,17 @@ ISR(TIMER2_COMPA_vect)
 #endif /* !AVR_CONF_USE32KCRYSTAL */
 
 #if DEBUGSERIAL
-u8_t serialcount;
+uint8_t serialcount;
 char dbuf[30];
-#endif 
+#endif
 
 /*---------------------------------------------------------------------------*/
 extern uint16_t ledtimer;
-static u8_t
+static uint8_t
 raven_gui_loop(process_event_t ev, process_data_t data)
 {
     uint8_t i,activeconnections,radio_state;
-    
+
 // PRINTF("\nevent %d ",ev);
 #if DEBUGSERIAL
     printf_P(PSTR("Buffer [%d]="),serialcount);
@@ -291,7 +292,9 @@ raven_gui_loop(process_event_t ev, process_data_t data)
     case ICMP6_ECHO_REQUEST:
         /* We have received a ping request over the air. Tell the 3290 */
  //       send_frame(REPORT_PING_BEEP, 0, 0);
+#if RF230BB_CONF_LEDONPORTE1
           PORTE|=(1<<PE1);ledtimer=1000; //turn on led, set counter for turnoff
+#endif
         break;
     case ICMP6_ECHO_REPLY:
         /* We have received a ping reply over the air.  Send frame back to 3290 */
@@ -299,7 +302,7 @@ raven_gui_loop(process_event_t ev, process_data_t data)
         break;
 
     } else switch (ev) {
-     case SERIAL_CMD:        
+     case SERIAL_CMD:
         /* Check for command from serial port, execute it. */
         /* Note cmd frame is written in an interrupt - delays here can cause overwriting by next command */
         PRINTF("\nCommand %d length %d done %d",cmd.cmd,cmd.len,cmd.done);
@@ -368,7 +371,7 @@ raven_gui_loop(process_event_t ev, process_data_t data)
 }
 
 /*---------------------------------------------------------------------------*/
-/* Process an input character from serial port.  
+/* Process an input character from serial port.
  *  ** This is called from an ISR!!
 */
 
@@ -383,7 +386,7 @@ int raven_lcd_serial_input(unsigned char ch)
 #endif
     /* Don't overwrite an unprocessed command */
 //    if (cmd.done) return 0;
-    
+
     /* Parse frame,  */
     switch (cmd.ndx){
     case 0:
@@ -397,7 +400,7 @@ int raven_lcd_serial_input(unsigned char ch)
             return 0;
         }
         break;
-    case 1: 
+    case 1:
         /* Second byte, length of payload */
         cmd.len = ch;
         break;
@@ -436,7 +439,7 @@ int raven_lcd_serial_input(unsigned char ch)
         }
         break;
     }
-    
+
     cmd.ndx++;
     return 0;
 }
@@ -453,7 +456,7 @@ raven_lcd_show_text(char *text) {
 static void
 lcd_show_servername(void) {
 
-//extern uint8_t mac_address[8];     //These are defined in httpd-fsdata.c via makefsdata.h 
+//extern uint8_t mac_address[8];     //These are defined in httpd-fsdata.c via makefsdata.h
 extern uint8_t server_name[16];
 //extern uint8_t domain_name[30];
 char buf[sizeof(server_name)+1];
@@ -475,14 +478,15 @@ PROCESS_THREAD(raven_lcd_process, ev, data)
 
   /* Get ICMP6 callbacks from uip6 stack, perform 3290p action on pings, responses, etc. */
   if(icmp6_new(NULL) == 0) {
-  
+
     while(1) {
       PROCESS_YIELD();
 //      if (ev != ?)      //trap frequent strobes?
         raven_gui_loop(ev, data);
-    } 
+    }
   }
   PROCESS_END();
 }
 
+/** @} */
 /** @} */

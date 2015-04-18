@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-profile.h,v 1.1 2008/02/04 23:42:17 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_PROFILE_H__
-#define __SHELL_PROFILE_H__
+#ifndef SHELL_PROFILE_H_
+#define SHELL_PROFILE_H_
 
 #include "shell.h"
 
 void shell_profile_init(void);
 
-#endif /* __SHELL_PROFILE_H__ */
+#endif /* SHELL_PROFILE_H_ */

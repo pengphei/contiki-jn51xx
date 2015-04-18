@@ -28,12 +28,11 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd.h,v 1.4 2009/07/24 15:41:52 dak664 Exp $
  *
  */
 
-#ifndef __HTTPD_H__
-#define __HTTPD_H__
+#ifndef HTTPD_H_
+#define HTTPD_H_
 
 
 #include "contiki-net.h"
@@ -91,4 +90,4 @@ struct httpd_state {
 void httpd_init(void);
 void httpd_appcall(void *state);
 
-#endif /* __HTTPD_H__ */
+#endif /* HTTPD_H_ */

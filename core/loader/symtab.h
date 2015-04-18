@@ -28,11 +28,10 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: symtab.h,v 1.4 2007/01/12 13:55:05 bg- Exp $
  */
-#ifndef __SYMTAB_H__
-#define __SYMTAB_H__
+#ifndef SYMTAB_H_
+#define SYMTAB_H_
 
 void *symtab_lookup(const char *name);
 
-#endif /* __SYMTAB_H__ */
+#endif /* SYMTAB_H_ */

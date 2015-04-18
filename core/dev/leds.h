@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: leds.h,v 1.1 2006/06/17 22:41:16 adamdunkels Exp $
  */
 /**
  * \addtogroup dev
@@ -45,8 +44,11 @@
  * @{
  */
 
-#ifndef __LEDS_H__
-#define __LEDS_H__
+#ifndef LEDS_H_
+#define LEDS_H_
+
+/* Allow platform to override LED numbering */
+#include "contiki-conf.h"
 
 void leds_init(void);
 
@@ -75,13 +77,13 @@ void leds_blink(void);
 #endif /* LEDS_CONF_ALL */
 
 /**
- * Returns the current status of all leds (respects invert)
+ * Returns the current status of all leds
  */
 unsigned char leds_get(void);
+void leds_set(unsigned char leds);
 void leds_on(unsigned char leds);
 void leds_off(unsigned char leds);
 void leds_toggle(unsigned char leds);
-void leds_invert(unsigned char leds);
 
 /**
  * Leds implementation
@@ -90,4 +92,7 @@ void leds_arch_init(void);
 unsigned char leds_arch_get(void);
 void leds_arch_set(unsigned char leds);
 
-#endif /* __LEDS_H__ */
+#endif /* LEDS_H_ */
+
+/** @} */
+/** @} */

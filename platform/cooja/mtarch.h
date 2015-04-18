@@ -28,14 +28,13 @@
  *
  * This file is part of the Contiki operating system.
  * 
- * $Id: mtarch.h,v 1.1 2007/05/19 14:47:17 fros4943 Exp $
  */
 
-#ifndef __MTARCH_H__
-#define __MTARCH_H__
+#ifndef MTARCH_H_
+#define MTARCH_H_
 
 struct mtarch_thread {
   void *mt_thread;
 };
 
-#endif /* __MTARCH_H__ */
+#endif /* MTARCH_H_ */

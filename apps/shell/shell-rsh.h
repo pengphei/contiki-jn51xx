@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rsh.h,v 1.1 2008/02/04 23:42:17 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_RSH_H__
-#define __SHELL_RSH_H__
+#ifndef SHELL_RSH_H_
+#define SHELL_RSH_H_
 
 #include "shell.h"
 
 void shell_rsh_init(void);
 
-#endif /* __SHELL_RSH_H__ */
+#endif /* SHELL_RSH_H_ */

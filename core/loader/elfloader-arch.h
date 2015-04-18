@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: elfloader-arch.h,v 1.4 2007/03/24 15:21:34 oliverschmidt Exp $
  */
 /**
  * \addtogroup elfloader
@@ -63,8 +62,8 @@
  *
  */
 
-#ifndef __ELFLOADER_ARCH_H__
-#define __ELFLOADER_ARCH_H__
+#ifndef ELFLOADER_ARCH_H_
+#define ELFLOADER_ARCH_H_
 
 #include "loader/elfloader.h"
 
@@ -134,7 +133,7 @@ void elfloader_arch_relocate(int fd, unsigned int sectionoffset,
  */
 void elfloader_arch_write_rom(int fd, unsigned short textoff, unsigned int size, char *mem);
 
-#endif /* __ELFLOADER_ARCH_H__ */
+#endif /* ELFLOADER_ARCH_H_ */
 
 /** @} */
 /** @} */

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: sky-shell.c,v 1.27 2010/11/12 13:17:45 nifi Exp $
  */
 
 /**
@@ -43,7 +42,7 @@
 #include "serial-shell.h"
 #include "collect-view.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 /*---------------------------------------------------------------------------*/
 PROCESS(sky_shell_process, "Sky Contiki shell");
@@ -72,8 +71,8 @@ PROCESS_THREAD(sky_shell_process, ev, data)
   shell_blink_init();
   /*  shell_file_init();
       shell_coffee_init();*/
-  /*  shell_download_init();
-      shell_rime_sendcmd_init();*/
+  /*  shell_download_init();*/
+  shell_rime_sendcmd_init();
   /*  shell_ps_init();*/
   shell_reboot_init();
   shell_rime_init();
@@ -83,11 +82,11 @@ PROCESS_THREAD(sky_shell_process, ev, data)
   shell_rime_debug_runicast_init();*/
   /*  shell_rime_sniff_init();*/
   shell_sky_init();
+  shell_power_init();
   shell_powertrace_init();
   /*  shell_base64_init();*/
   shell_text_init();
   shell_time_init();
-  /*  shell_checkpoint_init();*/
   /*  shell_sendtest_init();*/
 
   shell_collect_view_init();

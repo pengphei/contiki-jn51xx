@@ -31,15 +31,14 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: tapdev.h,v 1.2 2007/05/20 21:32:24 oliverschmidt Exp $
  */
 
-#ifndef __TAPDEV_H__
-#define __TAPDEV_H__
+#ifndef TAPDEV_H_
+#define TAPDEV_H_
 
 void tapdev_init(void);
-u16_t tapdev_poll(void);
+uint16_t tapdev_poll(void);
 void tapdev_send(void);
 void tapdev_exit(void);
 
-#endif /* __TAPDEV_H__ */
+#endif /* TAPDEV_H_ */

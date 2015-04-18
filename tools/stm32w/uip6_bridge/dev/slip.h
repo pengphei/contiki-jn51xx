@@ -29,11 +29,10 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: slip.h,v 1.1 2010/10/25 10:42:41 salvopitru Exp $
  */
 
-#ifndef __SLIP_H__
-#define __SLIP_H__
+#ifndef SLIP_H_
+#define SLIP_H_
 
 #include "contiki.h"
 
@@ -90,4 +89,4 @@ void slip_set_tcpip_input_callback(void (*callback)(void));
 void slip_arch_init(unsigned long ubr);
 void slip_arch_writeb(unsigned char c);
 
-#endif /* __SLIP_H__ */
+#endif /* SLIP_H_ */

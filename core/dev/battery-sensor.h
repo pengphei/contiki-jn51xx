@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: battery-sensor.h,v 1.1 2007/11/13 20:36:40 adamdunkels Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -36,8 +35,8 @@
  *           $Revision: 1.1 $
  */
 
-#ifndef __BATTERY_SENSOR_H__
-#define __BATTERY_SENSOR_H__
+#ifndef BATTERY_SENSOR_H_
+#define BATTERY_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -45,4 +44,4 @@ extern const struct sensors_sensor battery_sensor;
 
 #define BATTERY_SENSOR "Battery"
 
-#endif /* __BATTERY_SENSOR_H__ */
+#endif /* BATTERY_SENSOR_H_ */

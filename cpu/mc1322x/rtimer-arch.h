@@ -40,22 +40,22 @@
  *         Mariano Alvira <mar@devl.org>
  */
 
-#ifndef __RTIMER_ARCH_H__
-#define __RTIMER_ARCH_H__
+#ifndef RTIMER_ARCH_H_
+#define RTIMER_ARCH_H_
 
 /* contiki */
 #include "sys/rtimer.h"
 
 /* mc1322x */
-#include "crm.h"
-#include "utils.h"
+#include "mc1322x.h"
 
 #if USE_32KHZ_XTAL
 #define RTIMER_ARCH_SECOND 32768
 #else
-#define RTIMER_ARCH_SECOND 2000 /* bogus value --- you should set xmac_config after calibration */
+#define RTIMER_ARCH_SECOND 2000
 #endif
 
-#define rtimer_arch_now() (*CRM_RTC_COUNT)
+#define rtimer_arch_now() (CRM->RTC_COUNT)
 
-#endif /* __RTIMER_ARCH_H__ */
+
+#endif /* RTIMER_ARCH_H_ */

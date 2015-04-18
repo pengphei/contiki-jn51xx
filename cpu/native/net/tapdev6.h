@@ -31,17 +31,16 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: tapdev6.h,v 1.1 2008/10/14 09:47:15 julienabeille Exp $
  *
  */
-#ifndef __TAPDEV_H__
-#define __TAPDEV_H__
+#ifndef TAPDEV_H_
+#define TAPDEV_H_
 
 #include "contiki-net.h"
 
 void tapdev_init(void);
-u8_t tapdev_send(uip_lladdr_t *lladdr);
-u16_t tapdev_poll(void);
+uint8_t tapdev_send(const uip_lladdr_t *lladdr);
+uint16_t tapdev_poll(void);
 void tapdev_do_send(void);
 void tapdev_exit(void); //math
-#endif /* __TAPDEV_H__ */
+#endif /* TAPDEV_H_ */

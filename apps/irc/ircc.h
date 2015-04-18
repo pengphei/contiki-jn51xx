@@ -30,10 +30,9 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: ircc.h,v 1.2 2008/11/28 00:14:57 adamdunkels Exp $
  */
-#ifndef __IRCC_H__
-#define __IRCC_H__
+#ifndef IRCC_H_
+#define IRCC_H_
 
 #include "contiki-net.h"
 
@@ -76,4 +75,4 @@ void ircc_closed(struct ircc_state *s);
 
 void ircc_quit(struct ircc_state *s);
 
-#endif /* __IRCC_H__ */
+#endif /* IRCC_H_ */

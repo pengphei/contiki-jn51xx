@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: bridge-conf.h,v 1.8 2010/03/19 12:58:17 nifi Exp $
  */
 
 /**
@@ -37,8 +36,8 @@
  *         Joakim Eriksson <joakime@sics.se>
  */
 
-#ifndef __BRIDGE_CONF_H__
-#define __BRIDGE_CONF_H__
+#ifndef BRIDGE_CONF_H_
+#define BRIDGE_CONF_H_
 
 #undef UIP_CONF_ROUTER
 
@@ -52,4 +51,4 @@
 
 #undef UIP_CONF_BUFFER_SIZE
 #define UIP_CONF_BUFFER_SIZE  256
-#endif /* __BRIDGE_CONF_H__ */
+#endif /* BRIDGE_CONF_H_ */

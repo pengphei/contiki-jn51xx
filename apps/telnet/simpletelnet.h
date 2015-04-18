@@ -29,11 +29,10 @@
  *
  * This file is part of the Contiki desktop environment for the C64.
  *
- * $Id: simpletelnet.h,v 1.3 2007/11/17 22:27:09 oliverschmidt Exp $
  *
  */
-#ifndef __SIMPLETELNET_H__
-#define __SIMPLETELNET_H__
+#ifndef SIMPLETELNET_H_
+#define SIMPLETELNET_H_
 
 #ifdef TELNET_CONF_WINDOW_WIDTH
 #define TELNET_WINDOW_WIDTH TELNET_CONF_WINDOW_WIDTH
@@ -64,4 +63,4 @@
 
 void simpletelnet_init(char *arg);
 
-#endif /* __SIMPLETELNET_H__ */
+#endif /* SIMPLETELNET_H_ */

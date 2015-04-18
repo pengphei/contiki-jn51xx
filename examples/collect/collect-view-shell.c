@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: collect-view-shell.c,v 1.1 2010/11/12 17:46:56 nifi Exp $
  */
 
 /**
@@ -74,7 +73,6 @@ PROCESS_THREAD(collect_view_shell_process, ev, data)
   /* shell_base64_init(); */
   shell_text_init();
   shell_time_init();
-  /* shell_checkpoint_init(); */
   /* shell_sendtest_init(); */
 
 #if CONTIKI_TARGET_SKY

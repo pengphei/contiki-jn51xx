@@ -29,7 +29,6 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: netconf.c,v 1.9 2010/05/31 15:22:08 nifi Exp $
  *
  */
 
@@ -73,7 +72,7 @@ static void makestrings(void);
 
 /*-----------------------------------------------------------------------------------*/
 static char *
-makebyte(u8_t byte, char *str)
+makebyte(uint8_t byte, char *str)
 {
   if(byte >= 100) {
     *str++ = (byte / 100 ) % 10 + '0';
@@ -114,7 +113,7 @@ makestrings(void)
   makeaddr(&addr, gateway);
 
 #if UIP_UDP
-  addrptr = resolv_getserver();
+  addrptr = uip_nameserver_get(0);
   if(addrptr != NULL) {
     makeaddr(addrptr, dnsserver);
   }
@@ -153,7 +152,7 @@ apply_tcpipconfig(void)
 #if UIP_UDP
   nullterminate(dnsserver);
   if(uiplib_ipaddrconv(dnsserver, &addr)) {
-    resolv_conf(&addr);
+    uip_nameserver_update(&addr, UIP_NAMESERVER_INFINITE_LIFETIME);
   }
 #endif /* UIP_UDP */
 }

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: serial-line.h,v 1.1 2009/03/17 15:56:33 adamdunkels Exp $
  */
 /**
  * \file
@@ -37,8 +36,8 @@
  * Adam Dunkels
  *
  */
-#ifndef __SERIAL_LINE_H__
-#define __SERIAL_LINE_H__
+#ifndef SERIAL_LINE_H_
+#define SERIAL_LINE_H_
 
 #include "contiki.h"
 
@@ -74,4 +73,4 @@ void serial_line_init(void);
 
 PROCESS_NAME(serial_line_process);
 
-#endif /* __SERIAL_LINE_H__ */
+#endif /* SERIAL_LINE_H_ */

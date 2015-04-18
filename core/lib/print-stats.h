@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: print-stats.h,v 1.1 2007/09/27 22:22:40 adamdunkels Exp $
  */
 
 /**
@@ -38,9 +37,9 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __PRINT_STATS_H__
-#define __PRINT_STATS_H__
+#ifndef PRINT_STATS_H_
+#define PRINT_STATS_H_
 
 void print_stats(void);
 
-#endif /* __PRINT_STATS_H__ */
+#endif /* PRINT_STATS_H_ */

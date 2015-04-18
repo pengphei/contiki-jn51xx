@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: collect-common.c,v 1.2 2010/11/06 11:55:15 adamdunkels Exp $
  */
 
 /**
@@ -44,13 +43,16 @@
 #include "collect-common.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 
 static unsigned long time_offset;
 static int send_active = 1;
 
+#ifndef PERIOD
 #define PERIOD 60
-#define RANDWAIT 60
+#endif
+#define RANDWAIT (PERIOD)
 
 /*---------------------------------------------------------------------------*/
 PROCESS(collect_common_process, "collect common process");
@@ -79,7 +81,7 @@ collect_common_set_send_active(int active)
 }
 /*---------------------------------------------------------------------------*/
 void
-collect_common_recv(const rimeaddr_t *originator, uint8_t seqno, uint8_t hops,
+collect_common_recv(const linkaddr_t *originator, uint8_t seqno, uint8_t hops,
                     uint8_t *payload, uint16_t payload_len)
 {
   unsigned long time;

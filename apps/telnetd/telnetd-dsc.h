@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: telnetd-dsc.h,v 1.1 2006/06/17 22:41:13 adamdunkels Exp $
  *
  */
-#ifndef __TELNETD_DSC_H__
-#define __TELNETD_DSC_H__
+#ifndef TELNETD_DSC_H_
+#define TELNETD_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(telnetd_dsc);
 
-#endif /* __TELNETD_DSC_H__ */
+#endif /* TELNETD_DSC_H_ */

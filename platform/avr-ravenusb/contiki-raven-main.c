@@ -98,7 +98,7 @@
 #include "radio/rf230bb/rf230bb.h"
 #include "net/mac/frame802154.h"
 #define UIP_IP_BUF ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-rimeaddr_t macLongAddr;
+linkaddr_t macLongAddr;
 #define	tmp_addr	macLongAddr
 #else                 //legacy radio driver using Atmel/Cisco 802.15.4'ish MAC
 #include <stdbool.h>
@@ -151,7 +151,7 @@ const struct uip_fallback_interface rpl_interface = {
 #include "net/rpl/rpl.h"
 
 // avr-objdump --section .bss -x ravenusbstick.elf
-uint16_t dag_id[] PROGMEM = {0x1111, 0x1100, 0, 0, 0, 0, 0, 0x0011};
+const uint16_t dag_id[] PROGMEM = {0x1111, 0x1100, 0, 0, 0, 0, 0, 0x0011};
 
 PROCESS(border_router_process, "RPL Border Router");
 PROCESS_THREAD(border_router_process, ev, data)
@@ -164,7 +164,7 @@ PROCESS_THREAD(border_router_process, ev, data)
 { rpl_dag_t *dag;
   char buf[sizeof(dag_id)];
   memcpy_P(buf,dag_id,sizeof(dag_id));
-  dag = rpl_set_root((uip_ip6addr_t *)buf);
+  dag = rpl_set_root(RPL_DEFAULT_INSTANCE,(uip_ip6addr_t *)buf);
 
 /* Assign separate addresses to the jackdaw uip stack and the host network interface, but with the same prefix */
 /* E.g. bbbb::200 to the jackdaw and bbbb::1 to the host network interface with $ip -6 address add bbbb::1/64 dev usb0 */
@@ -192,8 +192,6 @@ PROCESS_THREAD(border_router_process, ev, data)
   while(1) {
     PROCESS_YIELD();
     /* Local and global dag repair can be done from the jackdaw menu */
- //   rpl_set_prefix(rpl_get_dag(RPL_ANY_INSTANCE), &ipaddr, 64);
- //   rpl_repair_dag(rpl_get_dag(RPL_ANY_INSTANCE));
 
   }
 
@@ -222,26 +220,26 @@ SIGNATURE = {
 FUSES ={.low = 0xde, .high = 0x99, .extended = 0xff,};
 
 /* Save the default settings into program flash memory */
-uint8_t default_mac_address[8] PROGMEM = {0x02, 0x12, 0x13, 0xff, 0xfe, 0x14, 0x15, 0x16};
+const uint8_t default_mac_address[8] PROGMEM = {0x02, 0x12, 0x13, 0xff, 0xfe, 0x14, 0x15, 0x16};
 #ifdef CHANNEL_802_15_4
-uint8_t default_channel PROGMEM = CHANNEL_802_15_4;
+const uint8_t default_channel PROGMEM = CHANNEL_802_15_4;
 #else
-uint8_t default_channel PROGMEM = 26;
+const uint8_t default_channel PROGMEM = 26;
 #endif
 #ifdef IEEE802154_PANID
-uint16_t default_panid PROGMEM = IEEE802154_PANID;
+const uint16_t default_panid PROGMEM = IEEE802154_PANID;
 #else
-uint16_t default_panid PROGMEM = 0xABCD;
+const uint16_t default_panid PROGMEM = 0xABCD;
 #endif
 #ifdef IEEE802154_PANADDR
-uint16_t default_panaddr PROGMEM = IEEE802154_PANID;
+const uint16_t default_panaddr PROGMEM = IEEE802154_PANID;
 #else
-uint16_t default_panaddr PROGMEM = 0;
+const uint16_t default_panaddr PROGMEM = 0;
 #endif
 #ifdef RF230_MAX_TX_POWER
-uint8_t default_txpower PROGMEM = RF230_MAX_TX_POWER;
+const uint8_t default_txpower PROGMEM = RF230_MAX_TX_POWER;
 #else
-uint8_t default_txpower PROGMEM = 0;
+const uint8_t default_txpower PROGMEM = 0;
 #endif
 
 #if JACKDAW_CONF_RANDOM_MAC
@@ -280,7 +278,7 @@ uint16_t eemem_panid EEMEM = IEEE802154_PANID;
 uint16_t eemem_panid EEMEM = 0xABCD;
 #endif
 #ifdef IEEE802154_PANADDR
-uint16_t eemem_panaddr EEMEM = IEEE802154_PANID;
+uint16_t eemem_panaddr EEMEM = IEEE802154_PANADDR;
 #else
 uint16_t eemem_panaddr EEMEM = 0;
 #endif
@@ -422,6 +420,18 @@ uint16_t p=(uint16_t)&__bss_end;
   /* Led0 Blue Led1 Red Led2 Green Led3 Yellow */
   Leds_init();
   Led1_on();
+
+/* Get a random (or probably different) seed for the 802.15.4 packet sequence number.
+ * Some layers will ignore duplicates found in a history (e.g. Contikimac)
+ * causing the initial packets to be ignored after a short-cycle restart.
+ */
+  ADMUX =0x1E;              //Select AREF as reference, measure 1.1 volt bandgap reference.
+  ADCSRA=1<<ADEN;           //Enable ADC, not free running, interrupt disabled, fastest clock
+  ADCSRA|=1<<ADSC;          //Start conversion
+  while (ADCSRA&(1<<ADSC)); //Wait till done
+  PRINTD("ADC=%d\n",ADC);
+  random_init(ADC);
+  ADCSRA=0;                 //Disable ADC
   
 #if USB_CONF_RS232
   /* Use rs232 port for serial out (tx, rx, gnd are the three pads behind jackdaw leds */
@@ -483,14 +493,14 @@ uint16_t p=(uint16_t)&__bss_end;
 
   /* Set addresses BEFORE starting tcpip process */
 
-  memset(&tmp_addr, 0, sizeof(rimeaddr_t));
+  memset(&tmp_addr, 0, sizeof(linkaddr_t));
 
   if(get_eui64_from_eeprom(tmp_addr.u8));
    
   //Fix MAC address
   init_net();
 
-#if UIP_CONF_IPV6
+#if NETSTACK_CONF_WITH_IPV6
   memcpy(&uip_lladdr.addr, &tmp_addr.u8, 8);
 #endif
 
@@ -503,7 +513,7 @@ uint16_t p=(uint16_t)&__bss_end;
   rf230_set_channel(get_channel_from_eeprom());
   rf230_set_txpower(get_txpower_from_eeprom());
 
-  rimeaddr_set_node_addr(&tmp_addr); 
+  linkaddr_set_node_addr(&tmp_addr); 
 
   /* Initialize stack protocols */
   queuebuf_init();
@@ -542,7 +552,9 @@ uint16_t p=(uint16_t)&__bss_end;
 #else  /* RF230BB */
 /* The order of starting these is important! */
   process_start(&mac_process, NULL);
+#if NETSTACK_CONF_WITH_IPV6 || NETSTACK_CONF_WITH_IPV4
   process_start(&tcpip_process, NULL);
+#endif
 #endif /* RF230BB */
 
   /* Start ethernet network and storage process */
@@ -642,12 +654,12 @@ if ((rtime%PINGS)==1) {
 
 #if ROUTES && UIP_CONF_IPV6_RPL
 if ((rtime%ROUTES)==2) {
-      
-extern uip_ds6_nbr_t uip_ds6_nbr_cache[];
-extern uip_ds6_route_t uip_ds6_routing_table[];
+
 extern uip_ds6_netif_t uip_ds6_if;
 
   uint8_t i,j;
+  uip_ds6_nbr_t *nbr;
+
   PRINTA("\nAddresses [%u max]\n",UIP_DS6_ADDR_NB);
   for (i=0;i<UIP_DS6_ADDR_NB;i++) {
     if (uip_ds6_if.addr_list[i].isused) {
@@ -655,23 +667,27 @@ extern uip_ds6_netif_t uip_ds6_if;
       PRINTA("\n");
     }
   }
-  PRINTA("\nNeighbors [%u max]\n",UIP_DS6_NBR_NB);
-  for(i = 0,j=1; i < UIP_DS6_NBR_NB; i++) {
-    if(uip_ds6_nbr_cache[i].isused) {
-      uip_debug_ipaddr_print(&uip_ds6_nbr_cache[i].ipaddr);
-      PRINTA("\n");
-      j=0;
-    }
+  PRINTA("\nNeighbors [%u max]\n",NBR_TABLE_MAX_NEIGHBORS);
+
+  for(nbr = nbr_table_head(ds6_neighbors);
+      nbr != NULL;
+      nbr = nbr_table_next(ds6_neighbors, nbr)) {
+    uip_debug_ipaddr_print(&nbr->ipaddr);
+    PRINTA("\n");
+    j=0;
   }
   if (j) PRINTA("  <none>");
   PRINTA("\nRoutes [%u max]\n",UIP_DS6_ROUTE_NB);
-  for(i = 0,j=1; i < UIP_DS6_ROUTE_NB; i++) {
-    if(uip_ds6_routing_table[i].isused) {
-      uip_debug_ipaddr_print(&uip_ds6_routing_table[i].ipaddr);
-      PRINTA("/%u (via ", uip_ds6_routing_table[i].length);
-      uip_debug_ipaddr_print(&uip_ds6_routing_table[i].nexthop);
- //     if(uip_ds6_routing_table[i].state.lifetime < 600) {
-        PRINTA(") %lus\n", uip_ds6_routing_table[i].state.lifetime);
+  uip_ds6_route_t *r;
+  for(r = uip_ds6_route_head();
+      r != NULL;
+      r = uip_ds6_route_next(r)) {
+    if(r->isused) {
+      uip_debug_ipaddr_print(&r->ipaddr);
+      PRINTA("/%u (via ", r->length);
+      uip_debug_ipaddr_print(uip_ds6_route_nexthop(r));
+ //     if(r->state.lifetime < 600) {
+        PRINTA(") %lus\n", r->state.lifetime);
  //     } else {
  //       PRINTA(")\n");
  //     }

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: print-stats.c,v 1.5 2010/03/09 14:14:36 nvt-se Exp $
  */
 
 /**
@@ -40,30 +39,39 @@
 
 #include "lib/print-stats.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "sys/energest.h"
 
 #include <stdio.h>
+
+#ifdef __AVR__
+#include <avr/pgmspace.h>
+#define PRINTA(FORMAT,args...) printf_P(PSTR(FORMAT),##args)
+#else
+#define PRINTA(...) printf(__VA_ARGS__)
+#endif
 
 /*---------------------------------------------------------------------------*/
 void
 print_stats(void)
 {
-  printf("S %d.%d clock %lu tx %lu rx %lu rtx %lu rrx %lu rexmit %lu acktx %lu noacktx %lu ackrx %lu timedout %lu badackrx %lu toolong %lu tooshort %lu badsynch %lu badcrc %lu contentiondrop %lu sendingdrop %lu lltx %lu llrx %lu\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	 (unsigned long)clock_time() / CLOCK_SECOND,
-	 rimestats.tx, rimestats.rx,
-	 rimestats.reliabletx, rimestats.reliablerx,
-	 rimestats.rexmit, rimestats.acktx, rimestats.noacktx,
-	 rimestats.ackrx, rimestats.timedout, rimestats.badackrx,
-	 rimestats.toolong, rimestats.tooshort,
-	 rimestats.badsynch, rimestats.badcrc,
-	 rimestats.contentiondrop, rimestats.sendingdrop,
-	 rimestats.lltx, rimestats.llrx);
+#if RIMESTATS_CONF_ENABLED
+  PRINTA("S %d.%d clock %lu tx %lu rx %lu rtx %lu rrx %lu rexmit %lu acktx %lu noacktx %lu ackrx %lu timedout %lu badackrx %lu toolong %lu tooshort %lu badsynch %lu badcrc %lu contentiondrop %lu sendingdrop %lu lltx %lu llrx %lu\n",
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	 clock_seconds(),
+	 RIMESTATS_GET(tx), RIMESTATS_GET(rx),
+	 RIMESTATS_GET(reliabletx), RIMESTATS_GET(reliablerx),
+	 RIMESTATS_GET(rexmit), RIMESTATS_GET(acktx), RIMESTATS_GET(noacktx),
+	 RIMESTATS_GET(ackrx), RIMESTATS_GET(timedout), RIMESTATS_GET(badackrx),
+	 RIMESTATS_GET(toolong), RIMESTATS_GET(tooshort),
+	 RIMESTATS_GET(badsynch), RIMESTATS_GET(badcrc),
+	 RIMESTATS_GET(contentiondrop), RIMESTATS_GET(sendingdrop),
+	 RIMESTATS_GET(lltx), RIMESTATS_GET(llrx));
+#endif /* RIMESTATS_CONF_ENABLED */
 #if ENERGEST_CONF_ON
-  printf("E %d.%d clock %lu cpu %lu lpm %lu irq %lu gled %lu yled %lu rled %lu tx %lu listen %lu sensors %lu serial %lu\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	 (unsigned long)(clock_time() / CLOCK_SECOND),
+  PRINTA("E %d.%d clock %lu cpu %lu lpm %lu irq %lu gled %lu yled %lu rled %lu tx %lu listen %lu sensors %lu serial %lu\n",
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	 clock_seconds(),
 	 energest_total_time[ENERGEST_TYPE_CPU].current,
 	 energest_total_time[ENERGEST_TYPE_LPM].current,
 	 energest_total_time[ENERGEST_TYPE_IRQ].current,

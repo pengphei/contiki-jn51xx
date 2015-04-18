@@ -30,7 +30,6 @@
  * 
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: contiki-main.c,v 1.21 2010/10/27 22:17:39 oliverschmidt Exp $
  */
 
 #define WIN32_LEAN_AND_MEAN
@@ -96,9 +95,24 @@ log_message(const char *part1, const char *part2)
   debug_printf("%s%s\n", part1, part2);
 }
 /*-----------------------------------------------------------------------------------*/
+int contiki_argc = 0;
+char **contiki_argv;
+
 int
-main(void)
+main(int argc, char **argv)
 {
+  contiki_argc = argc;
+  contiki_argv = argv;
+
+  /* The first one or two args are used for wpcap configuration */
+  /* so this needs to be "removed" from  contiki_args.          */
+  contiki_argc--;
+  contiki_argv++;
+#ifdef UIP_FALLBACK_INTERFACE
+  contiki_argc--;
+  contiki_argv++;
+#endif
+
   process_init();
 
   procinit_init();
@@ -110,27 +124,27 @@ main(void)
 
   autostart_start(autostart_processes);
 
-#if !UIP_CONF_IPV6
+#if !NETSTACK_CONF_WITH_IPV6
   {
     uip_ipaddr_t addr;
-    uip_ipaddr(&addr, 10,1,1,1);
+    uip_ipaddr(&addr, 192,168,0,111);
     uip_sethostaddr(&addr);
     log_message("IP Address:  ", inet_ntoa(*(struct in_addr*)&addr));
 
-    uip_ipaddr(&addr, 255,0,0,0);
+    uip_ipaddr(&addr, 255,255,255,0);
     uip_setnetmask(&addr);
     log_message("Subnet Mask: ", inet_ntoa(*(struct in_addr*)&addr));
 
-    uip_ipaddr(&addr, 10,1,1,100);
+    uip_ipaddr(&addr, 192,168,0,1);
     uip_setdraddr(&addr);
     log_message("Def. Router: ", inet_ntoa(*(struct in_addr*)&addr));
 
-    uip_ipaddr(&addr, 10,1,1,100);
-    resolv_conf(&addr);
+    uip_ipaddr(&addr, 192,168,0,1);
+    uip_nameserver_update(&addr, UIP_NAMESERVER_INFINITE_LIFETIME);
     log_message("DNS Server:  ", inet_ntoa(*(struct in_addr*)&addr));
   }
 
-#else /* UIP_CONF_IPV6 */
+#else /* NETSTACK_CONF_WITH_IPV6 */
 
 #if !UIP_CONF_IPV6_RPL
 #ifdef HARD_CODED_ADDRESS
@@ -160,11 +174,11 @@ main(void)
     /* Allow user-mode APC to execute. */
     SleepEx(10, TRUE);
 
-#if WITH_GUI
+#ifdef PLATFORM_BUILD
     if(console_resize()) {
 	ctk_restore();
     }
-#endif /* WITH_GUI */
+#endif /* PLATFORM_BUILD */
   }
 }
 /*-----------------------------------------------------------------------------------*/

@@ -1,24 +1,3 @@
-/**
- * \addtogroup rime
- * @{
- */
-
-/**
- * \defgroup rimemesh Mesh routing
- * @{
- *
- * The mesh module sends packets using multi-hop routing to a specified
- * receiver somewhere in the network.
- *
- *
- * \section channels Channels
- *
- * The mesh module uses 3 channel; one for the multi-hop forwarding
- * (\ref rimemultihop "multihop") and two for the route disovery (\ref
- * routediscovery "route-discovery").
- *
- */
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -49,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: mesh.h,v 1.16 2010/06/14 19:19:17 adamdunkels Exp $
  */
 
 /**
@@ -59,8 +37,29 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __MESH_H__
-#define __MESH_H__
+/**
+ * \addtogroup rime
+ * @{
+ */
+
+/**
+ * \defgroup rimemesh Mesh routing
+ * @{
+ *
+ * The mesh module sends packets using multi-hop routing to a specified
+ * receiver somewhere in the network.
+ *
+ *
+ * \section mesh-channels Channels
+ *
+ * The mesh module uses 3 channel; one for the multi-hop forwarding
+ * (\ref rimemultihop "multihop") and two for the route disovery (\ref
+ * routediscovery "route-discovery").
+ *
+ */
+
+#ifndef MESH_H_
+#define MESH_H_
 
 #include "net/queuebuf.h"
 #include "net/rime/multihop.h"
@@ -73,7 +72,7 @@ struct mesh_conn;
  */
 struct mesh_callbacks {
   /** Called when a packet is received. */
-  void (* recv)(struct mesh_conn *c, const rimeaddr_t *from, uint8_t hops);
+  void (* recv)(struct mesh_conn *c, const linkaddr_t *from, uint8_t hops);
   /** Called when a packet, sent with mesh_send(), is actually transmitted. */
   void (* sent)(struct mesh_conn *c);
   /** Called when a packet, sent with mesh_send(), times out and is dropped. */
@@ -84,7 +83,7 @@ struct mesh_conn {
   struct multihop_conn multihop;
   struct route_discovery_conn route_discovery_conn;
   struct queuebuf *queued_data;
-  rimeaddr_t queued_data_dest;
+  linkaddr_t queued_data_dest;
   const struct mesh_callbacks *cb;
 };
 
@@ -132,8 +131,16 @@ void mesh_close(struct mesh_conn *c);
  *             must have previously been set up with mesh_open().
  *
  */
-int mesh_send(struct mesh_conn *c, const rimeaddr_t *dest);
+int mesh_send(struct mesh_conn *c, const linkaddr_t *dest);
 
-#endif /* __MESH_H__ */
+/**
+ * \brief      Test if mesh is ready to send a packet (or packet is queued)
+ * \param c    The mesh connection on which is to be tested
+ * \retval 0   Packet queued
+ * \retval !0  Ready
+ */
+int mesh_ready(struct mesh_conn *c);
+
+#endif /* MESH_H_ */
 /** @} */
 /** @} */

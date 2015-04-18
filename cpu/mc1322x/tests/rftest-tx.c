@@ -70,7 +70,7 @@ void main(void) {
 	/* trim the reference osc. to 24MHz */
 	trim_xtal();
 
-	uart_init(INC, MOD, SAMP);
+	uart_init(UART1, 115200);
 
 	vreg_init();
 
@@ -94,7 +94,7 @@ void main(void) {
 		check_maca();
 
 		while((p = rx_packet())) {
-			if(p) free_packet(p);
+			if(p) maca_free_packet(p);
 		}
 
 		p = get_free_packet();

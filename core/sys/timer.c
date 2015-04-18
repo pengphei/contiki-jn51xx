@@ -1,15 +1,3 @@
-/**
- * \addtogroup timer
- * @{
- */
-
-/**
- * \file
- * Timer library implementation.
- * \author
- * Adam Dunkels <adam@sics.se>
- */
-
 /*
  * Copyright (c) 2004, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -42,7 +30,18 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
- * $Id: timer.c,v 1.8 2010/06/21 19:07:24 joxe Exp $
+ */
+
+/**
+ * \file
+ * Timer library implementation.
+ * \author
+ * Adam Dunkels <adam@sics.se>
+ */
+
+/**
+ * \addtogroup timer
+ * @{
  */
 
 #include "contiki-conf.h"
@@ -77,8 +76,9 @@ timer_set(struct timer *t, clock_time_t interval)
  * function will cause the timer to be stable over time, unlike the
  * timer_restart() function.
  *
- * \param t A pointer to the timer.
+ * \note Must not be executed before timer expired
  *
+ * \param t A pointer to the timer.
  * \sa timer_restart()
  */
 void

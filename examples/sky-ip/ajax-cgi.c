@@ -28,7 +28,6 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: ajax-cgi.c,v 1.7 2010/04/09 13:19:05 nifi Exp $
  *
  */
 
@@ -84,7 +83,7 @@ PT_THREAD(nodeidcall(struct httpd_state *s, char *ptr))
   static char buf[10];
   PSOCK_BEGIN(&s->sout);
   snprintf(buf, sizeof(buf), "%d.%d",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1]);
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
   PSOCK_SEND_STR(&s->sout, buf);
   PSOCK_END(&s->sout);
 }
@@ -104,7 +103,7 @@ httpd_cgi_add(struct httpd_cgi_call *c)
 }
 /*---------------------------------------------------------------------------*/
 #if CONTIKI_TARGET_SKY
-#include "dev/sht11-sensor.h"
+#include "dev/sht11/sht11-sensor.h"
 #include "dev/light-sensor.h"
 #endif /* CONTIKI_TARGET_SKY */
 
@@ -204,7 +203,7 @@ PT_THREAD(neighborscall(struct httpd_state *s, char *ptr))
 /*---------------------------------------------------------------------------*/
 
 static void
-received_announcement(struct announcement *a, const rimeaddr_t *from,
+received_announcement(struct announcement *a, const linkaddr_t *from,
 	     uint16_t id, uint16_t value)
 {
   struct collect_neighbor *n;

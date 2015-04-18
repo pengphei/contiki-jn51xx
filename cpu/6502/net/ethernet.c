@@ -30,7 +30,6 @@
  *
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * @(#)$Id: ethernet.c,v 1.7 2010/09/28 23:02:16 oliverschmidt Exp $
  */
 
 #include <modload.h>
@@ -46,11 +45,15 @@
 struct {
   char                signature[4];
   struct uip_eth_addr ethernet_address;
-  u8_t                *buffer;
-  u16_t		      buffer_size;
-  void __fastcall__   (* init)(u16_t reg);
-  u16_t               (* poll)(void);
-  void __fastcall__   (* send)(u16_t len);
+  uint8_t             *buffer;
+  uint16_t            buffer_size;
+  char                jmp_init;
+  char __fastcall__   (* init)(uint16_t reg);
+  char                jmp_poll;
+  uint16_t            (* poll)(void);
+  char                jmp_send;
+  void __fastcall__   (* send)(uint16_t len);
+  char                jmp_exit;
   void                (* exit)(void);
 } *module;
 
@@ -63,7 +66,7 @@ ethernet_init(struct ethernet_config *config)
 #ifndef ETHERNET
 
   struct mod_ctrl module_control = {cfs_read};
-  u8_t byte;
+  uint8_t byte;
 
   module_control.callerdata = cfs_open(config->name, CFS_READ);
   if(module_control.callerdata < 0) {
@@ -74,7 +77,7 @@ ethernet_init(struct ethernet_config *config)
   byte = mod_load(&module_control);
   if(byte != MLOAD_OK) {
     log_message(config->name, byte == MLOAD_ERR_MEM? ": Out of memory":
-						     ": No module");
+                                                     ": No module");
     error_exit();
   }
 
@@ -98,12 +101,15 @@ ethernet_init(struct ethernet_config *config)
 
   module->buffer = uip_buf;
   module->buffer_size = UIP_BUFSIZE;
-  module->init(config->addr);
+  if(module->init(config->addr)) {
+    log_message(config->name, ": No hardware");
+    error_exit();
+  }
 
   uip_setethaddr(module->ethernet_address);
 }
 /*---------------------------------------------------------------------------*/
-u16_t
+uint16_t
 ethernet_poll(void)
 {
   return module->poll();

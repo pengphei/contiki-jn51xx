@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#)$Id: xmem.c,v 1.13 2011/01/18 14:03:55 nvt-se Exp $
  */
 
 /**
@@ -39,13 +38,10 @@
  *         unwritten data will read as zeros (UNIX style).
  */
 
-#include <stdio.h>
-#include <string.h>
-
-#include <io.h>
-#include <signal.h>
 
 #include "contiki.h"
+#include <stdio.h>
+#include <string.h>
 
 #include "dev/spi.h"
 #include "dev/xmem.h"

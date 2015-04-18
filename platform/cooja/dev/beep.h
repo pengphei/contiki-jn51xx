@@ -26,11 +26,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: beep.h,v 1.1 2006/08/21 12:11:19 fros4943 Exp $
  */
 
-#ifndef __BEEP_H__
-#define __BEEP_H__
+#ifndef BEEP_H_
+#define BEEP_H_
 
 #include "sys/clock.h"
 
@@ -58,4 +57,4 @@ void beep_long(clock_time_t len);
 
 void beep_quick(int num);
 
-#endif /* __BEEP_H__ */
+#endif /* BEEP_H_ */

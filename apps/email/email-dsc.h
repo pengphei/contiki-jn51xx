@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: email-dsc.h,v 1.1 2006/06/17 22:41:11 adamdunkels Exp $
  *
  */
-#ifndef __EMAIL_DSC_H__
-#define __EMAIL_DSC_H__
+#ifndef EMAIL_DSC_H_
+#define EMAIL_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(email_dsc);
 
-#endif /* __EMAIL_DSC_H__ */
+#endif /* EMAIL_DSC_H_ */

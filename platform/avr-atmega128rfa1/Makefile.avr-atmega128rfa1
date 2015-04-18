@@ -2,7 +2,7 @@ CONTIKI_TARGET_DIRS = . apps net loader
 
 CONTIKI_CORE=contiki-main
 CONTIKI_TARGET_MAIN = ${CONTIKI_CORE}.o
-CONTIKI_TARGET_SOURCEFILES += contiki-main.c
+CONTIKI_TARGET_SOURCEFILES += contiki-main.c params.c
 #Needed for slip
 CONTIKI_TARGET_SOURCEFILES += button-sensor.c sensors.c slip_uart0.c slip.c
 
@@ -26,7 +26,9 @@ AVRDUDE_PORT=usb:00B000000D79
 # Additional avrdude options
 # Verify off
 AVRDUDE_OPTIONS=-V
+AVRDUDE_MCU=m128rfa1
 
 
 include $(CONTIKIAVR)/Makefile.avr
 include $(CONTIKIAVR)/radio/Makefile.radio
+MODULES += core/net/mac core/net core/net/mac/sicslowmac core/net/mac/contikimac

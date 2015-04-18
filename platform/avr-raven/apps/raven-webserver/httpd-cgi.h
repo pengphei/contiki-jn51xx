@@ -28,12 +28,11 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd-cgi.h,v 1.3 2010/02/12 16:42:59 dak664 Exp $
  *
  */
 
-#ifndef __HTTPD_CGI_H__
-#define __HTTPD_CGI_H__
+#ifndef HTTPD_CGI_H_
+#define HTTPD_CGI_H_
 
 #include "contiki.h"
 #include "httpd.h"
@@ -58,4 +57,4 @@ void web_set_temp(char *s);
 void web_set_voltage(char *s);
 uint8_t httpd_cgi_sprint_ip6(uip_ip6addr_t addr, char * result);
 
-#endif /* __HTTPD_CGI_H__ */
+#endif /* HTTPD_CGI_H_ */

@@ -1,3 +1,8 @@
+/**
+ * \addtogroup mbxxx-platform
+ *
+ * @{
+ */
 /*
  * Copyright (c) 2010, STMicroelectronics.
  * All rights reserved.
@@ -28,7 +33,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-sensors.h,v 1.1 2010/10/25 09:03:39 salvopitru Exp $
  */
 
 /**
@@ -38,11 +42,12 @@
  *         Salvatore Pitrulli <salvopitru@users.sourceforge.net>
  */
 
-#ifndef __SHELL_SENSORS_H__
-#define __SHELL_SENSORS_H__
+#ifndef SHELL_SENSORS_H_
+#define SHELL_SENSORS_H_
 
 #include "shell.h"
 
 void shell_sensors_init(void);
 
-#endif /* __SHELL_SENSORS_H__ */
+#endif /* SHELL_SENSORS_H_ */
+/** @} */

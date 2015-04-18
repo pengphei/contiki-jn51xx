@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
  * SUCH DAMAGE. 
  *
- * @(#)$Id: cc2420_spi.c,v 1.2 2010/06/23 10:44:41 joxe Exp $
  */
 
 #include <avr/io.h>
@@ -35,7 +34,7 @@
 #include "contiki-net.h"
 
 #include "dev/spi.h"
-#include "dev/cc2420.h"
+#include "cc2420.h"
 
 void
 __cc2420_arch_init(void)

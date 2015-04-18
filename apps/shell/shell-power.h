@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-power.h,v 1.1 2009/03/05 21:12:03 adamdunkels Exp $
  */
 
 /**
@@ -38,9 +37,9 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_POWER_H__
-#define __SHELL_POWER_H__
+#ifndef SHELL_POWER_H_
+#define SHELL_POWER_H_
 
 void shell_power_init(void);
 
-#endif /* __SHELL_POWER_H__ */
+#endif /* SHELL_POWER_H_ */

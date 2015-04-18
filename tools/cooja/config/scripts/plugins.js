@@ -24,7 +24,7 @@ while (counter<10) {
   YIELD_THEN_WAIT_UNTIL(msg.equals("wait"));
 
   /* Toggle Log Listener filter */
-  plugin = mote.getSimulation().getGUI().getStartedPlugin("se.sics.cooja.plugins.LogListener");
+  plugin = mote.getSimulation().getCooja().getStartedPlugin("org.contikios.cooja.plugins.LogListener");
   if (plugin != null) {
     plugins++;
     log.log("LogListener: Setting filter: " + plugin.getFilter() + "\n");
@@ -38,23 +38,25 @@ while (counter<10) {
   GENERATE_MSG(1000, "wait");
   YIELD_THEN_WAIT_UNTIL(msg.equals("wait"));
 
-  /* Extract Timeline statistics */
-  plugin = mote.getSimulation().getGUI().getStartedPlugin("se.sics.cooja.plugins.TimeLine");
+  /* Extract PowerTracker statistics */
+  plugin = mote.getSimulation().getCooja().getStartedPlugin("PowerTracker");
   if (plugin != null) {
     plugins++;
-    stats = plugin.extractStatistics();
+    stats = plugin.radioStatistics();
     if (stats.length() > 40) {
       /* Stripping */
       stats = stats.substring(0, 40) + "...";
     }
-    log.log("Timeline: Extracted statistics:\n" + stats + "\n");
+    log.log("PowerTracker: Extracted statistics:\n" + stats + "\n");
+  } else {
+    log.log("No PowerTracker plugin\n");
   }
 
   GENERATE_MSG(1000, "wait");
   YIELD_THEN_WAIT_UNTIL(msg.equals("wait"));
 
   /* Select time in Radio Logger */
-  plugin = mote.getSimulation().getGUI().getStartedPlugin("se.sics.cooja.plugins.RadioLogger");
+  plugin = mote.getSimulation().getCooja().getStartedPlugin("org.contikios.cooja.plugins.RadioLogger");
   if (plugin != null) {
     plugins++;
     log.log("RadioLogger: Showing logged radio packet at mid simulation\n");

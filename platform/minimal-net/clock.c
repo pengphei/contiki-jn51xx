@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: clock.c,v 1.2 2008/07/10 17:10:39 adamdunkels Exp $
  */
 
 /**
@@ -39,6 +38,7 @@
  */
 
 #include "sys/clock.h"
+#include <stdlib.h>
 #include <sys/time.h>
 
 static long startsecs=0,startmsecs=0;

@@ -1,23 +1,3 @@
-/** \addtogroup apps
- * @{ */
-
-/**
- * \defgroup shell The Contiki shell
- * @{
- *
- * The Contiki shell provides both interactive and batch processing
- * for Contiki.
- *
- * The shell consists of two parts: the shell application and a shell
- * back-end. The shell application contains all the logic of the
- * shell, whereas the shell back-end provides I/O for the
- * shell. Examples of shell back-ends are a serial I/O shell back-end,
- * that allows the shell to operate over a serial connection, and a
- * telnet server back-end, that allows the shell to operate over a
- * TCP/IP telnet connection.
- *
- */
-
 /*
  * Copyright (c) 2008, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -48,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell.h,v 1.24 2010/10/20 15:21:43 adamdunkels Exp $
  */
 
 /**
@@ -58,8 +37,28 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_H__
-#define __SHELL_H__
+/** \addtogroup apps
+ * @{ */
+
+/**
+ * \defgroup shell The Contiki shell
+ * @{
+ *
+ * The Contiki shell provides both interactive and batch processing
+ * for Contiki.
+ *
+ * The shell consists of two parts: the shell application and a shell
+ * back-end. The shell application contains all the logic of the
+ * shell, whereas the shell back-end provides I/O for the
+ * shell. Examples of shell back-ends are a serial I/O shell back-end,
+ * that allows the shell to operate over a serial connection, and a
+ * telnet server back-end, that allows the shell to operate over a
+ * TCP/IP telnet connection.
+ *
+ */
+
+#ifndef SHELL_H_
+#define SHELL_H_
 
 #include "sys/process.h"
 
@@ -375,7 +374,6 @@ struct shell_input {
 
 #include "shell-base64.h"
 #include "shell-blink.h"
-#include "shell-checkpoint.h"
 #include "shell-collect-view.h"
 #include "shell-coffee.h"
 #include "shell-download.h"
@@ -404,17 +402,15 @@ struct shell_input {
 #include "shell-rsh.h"
 #include "shell-run.h"
 #include "shell-sendtest.h"
-#include "shell-sensortweet.h"
 #include "shell-sky.h"
 #include "shell-tcpsend.h"
 #include "shell-text.h"
 #include "shell-time.h"
-#include "shell-tweet.h"
 #include "shell-udpsend.h"
 #include "shell-vars.h"
 #include "shell-wget.h"
 
-#endif /* __SHELL_H__ */
+#endif /* SHELL_H_ */
 
 
 /** @} */

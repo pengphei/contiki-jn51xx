@@ -29,7 +29,6 @@
  * This file is part of the Configurable Sensor Network Application
  * Architecture for sensor nodes running the Contiki operating system.
  *
- * $Id: temperature-sensor.h,v 1.1 2006/06/17 22:41:31 adamdunkels Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -39,8 +38,8 @@
  *           $Revision: 1.1 $
  */
 
-#ifndef __TEMPERATURE_SENSOR_H__
-#define __TEMPERATURE_SENSOR_H__
+#ifndef TEMPERATURE_SENSOR_H_
+#define TEMPERATURE_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -48,4 +47,4 @@ extern const struct sensors_sensor temperature_sensor;
 
 #define TEMPERATURE_SENSOR "Temperature"
 
-#endif /* __TEMPERATURE_SENSOR_H__ */
+#endif /* TEMPERATURE_SENSOR_H_ */

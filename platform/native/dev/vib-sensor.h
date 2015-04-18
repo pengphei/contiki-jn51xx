@@ -29,7 +29,6 @@
  * This file is part of the Configurable Sensor Network Application
  * Architecture for sensor nodes running the Contiki operating system.
  *
- * $Id: vib-sensor.h,v 1.1 2006/06/17 22:41:31 adamdunkels Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -39,8 +38,8 @@
  *           $Revision: 1.1 $
  */
 
-#ifndef __VIB_SENSOR_H__
-#define __VIB_SENSOR_H__
+#ifndef VIB_SENSOR_H_
+#define VIB_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -50,4 +49,4 @@ extern const struct sensors_sensor vib_sensor;
 
 void vib_sensor_changed(void);
 
-#endif /* __VIB_SENSOR_H__ */
+#endif /* VIB_SENSOR_H_ */

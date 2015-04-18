@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-memdebug.h,v 1.1 2010/02/02 15:28:53 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_MEMDEBUG_H__
-#define __SHELL_MEMDEBUG_H__
+#ifndef SHELL_MEMDEBUG_H_
+#define SHELL_MEMDEBUG_H_
 
 #include "shell.h"
 
 void shell_memdebug_init(void);
 
-#endif /* __SHELL_MEMDEBUG_H__ */
+#endif /* SHELL_MEMDEBUG_H_ */
