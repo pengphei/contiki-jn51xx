@@ -55,7 +55,7 @@
 #endif
 
 /* also used by auxiliary functions defined in ieee802_aux.c */
-static void (*lqicb)(const rimeaddr_t*, uint8_t) = NULL;
+static void (*lqicb)(const linkaddr_t*, uint8_t) = NULL;
 
 #include "net/rime.h"
 #include "string.h"
@@ -99,7 +99,7 @@ typedef enum { NONPRESENT, RESERVED, SHORT, LONG } addrmode;
 #define UNALLOCATED_SHORT_ADDR           (0xFFFE)
 
 void
-ieee_register_lqi_callback(void (*func)(const rimeaddr_t*, uint8_t))
+ieee_register_lqi_callback(void (*func)(const linkaddr_t*, uint8_t))
 {
   lqicb = func;
 }
@@ -132,7 +132,7 @@ ieee_send(mac_callback_t cb, void *ptr)
   req.uParam.sReqData.sFrame.u8TxOptions = packetbuf_attr(PACKETBUF_ATTR_RELIABLE) ? MAC_TX_OPTION_ACK : 0;
 
   /* fill in destination address. */
-  if(rimeaddr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER), &rimeaddr_null))
+  if(linkaddr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER), &linkaddr_null))
   {
     req.uParam.sReqData.sFrame.sDstAddr.u8AddrMode     = SHORT;
     req.uParam.sReqData.sFrame.sDstAddr.u16PanId       = BROADCAST_PANID;
@@ -242,8 +242,8 @@ ieee_register_beacon_callback(void (*func)(MAC_MlmeIndBeacon_s*))
   beaconrxcb = func;
 }
 
-static rimeaddr_t*
-asrimeaddr(MAC_ExtAddr_s *addr, rimeaddr_t *rime)
+static linkaddr_t*
+aslinkaddr(MAC_ExtAddr_s *addr, linkaddr_t *rime)
 {
   CTASSERT(sizeof(*rime) == sizeof(*addr));
   ((MAC_ExtAddr_s*) rime)->u32H = addr->u32L;
@@ -300,7 +300,7 @@ static void
 ieee_mcpspt(MAC_McpsDcfmInd_s *ev)
   /* packet input and output thread */
 {
-  rimeaddr_t rime;
+  linkaddr_t rime;
   switch(ev->u8Type)
   {
     case MAC_MCPS_IND_DATA:
@@ -310,24 +310,24 @@ ieee_mcpspt(MAC_McpsDcfmInd_s *ev)
           asdataframe(ev).u8SduLength);
       packetbuf_set_datalen(asdataframe(ev).u8SduLength);
       packetbuf_set_addr(PACKETBUF_ADDR_SENDER,
-          asrimeaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime));
+          aslinkaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime));
 
       if(asdataframe(ev).sDstAddr.u8AddrMode==LONG) {
         /* addressed frame */
         packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER,
-            asrimeaddr(&asdataframe(ev).sDstAddr.uAddr.sExt, &rime));
+            aslinkaddr(&asdataframe(ev).sDstAddr.uAddr.sExt, &rime));
       } else if(asdataframe(ev).sDstAddr.u8AddrMode==SHORT &&
          asdataframe(ev).sDstAddr.u16PanId==BROADCAST_PANID &&
          asdataframe(ev).sDstAddr.uAddr.u16Short==BROADCAST_ADDR) {
         /* broadcast frame */
-        packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER, &rimeaddr_null);
+        packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER, &linkaddr_null);
       }
 
       /* update lqi stuff and call lqi callback */
       packetbuf_set_attr(PACKETBUF_ATTR_RSSI, asdataframe(ev).u8LinkQuality);
 
       if (asdataframe(ev).sSrcAddr.u8AddrMode == LONG && lqicb)
-        lqicb(asrimeaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime),
+        lqicb(aslinkaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime),
               asdataframe(ev).u8LinkQuality);
       else if (lqicb)
         lqicb(NULL, asdataframe(ev).u8LinkQuality);

@@ -35,7 +35,7 @@
 static bool
 rsp_associate(MAC_MlmeIndAssociate_s *ind)
 {
-  static uint16_t node_addr = 1;
+  static uint16 node_addr = 1;
   MAC_MlmeReqRsp_s  mlmereq;
   MAC_MlmeSyncCfm_s mlmecfm;
 
@@ -55,7 +55,7 @@ rsp_associate(MAC_MlmeIndAssociate_s *ind)
 }
 
 static void
-req_start(uint8_t chan, bool coord)
+req_start(uint8 chan, bool coord)
   /* this function configures the coordinator.
    * NOTE: when in periodic mode, active scan will NOT be answered immediatly.
    */
@@ -84,11 +84,11 @@ req_start(uint8_t chan, bool coord)
   vAppApiMlmeRequest(&mlmereq, &mlmecfm);
 }
 
-static uint8_t
-ieee_findsilentchan(MAC_MlmeDcfmInd_s *ind, uint32_t channelmask)
+static uint8
+ieee_findsilentchan(MAC_MlmeDcfmInd_s *ind, uint32 channelmask)
 {
   MAC_MlmeCfmScan_s *scan = &ind->uParam.sDcfmScan;
-  uint8_t i, minchan=0;
+  uint8 i, minchan=0;
 
   if(ind->u8Type      != MAC_MLME_DCFM_SCAN ||
      scan->u8ScanType != MAC_MLME_SCAN_TYPE_ENERGY_DETECT ||
@@ -115,11 +115,11 @@ PT_THREAD(ieee_mlmept(MAC_MlmeDcfmInd_s *ev))
   PRINTF("ieee_task: starting as coord\n");
 
 #if (RADIO_CHANNEL==0)
-  uint32_t channels = SCAN_ALL_CHANNELS;
+  uint32 channels = SCAN_ALL_CHANNELS;
 
   do
   {
-    uint8_t i=0;
+    uint8 i=0;
 
     PRINTF("ieee_task: requesting active scan\n");
     req_scan(MAC_MLME_SCAN_TYPE_ACTIVE, SCAN_DURATION);

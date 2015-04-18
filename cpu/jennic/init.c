@@ -381,7 +381,7 @@ init_hardware()
 }
 
 void
-sys_baudrate_init(uint16_t baudrate)
+sys_baudrate_init(uint16 baudrate)
 {
 #ifdef __BA2__
 #ifdef JENNIC_CHIP_FAMILY_JN516x

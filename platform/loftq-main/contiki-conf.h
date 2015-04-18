@@ -62,6 +62,7 @@ typedef unsigned short uip_stats_t;
 #define LOG_CONF_ENABLED         0
 #define UIP_CONF_UDP_CHECKSUMS   1
 #define UIP_CONF_LOGGING         0
+#define UIP_CONF_IPV6            1
 
 #if UIP_CONF_IPV6
 #define NETSTACK_CONF_NETWORK         sicslowpan_driver
@@ -97,7 +98,7 @@ typedef unsigned short uip_stats_t;
 #define JENNIC_CONF_USB_IRQPIN        E_AHI_DIO8_INT
 #define JENNIC_CONF_USB_SPISLAVE      E_AHI_SPIM_SLAVE_ENBLE_1
 
-#define RIMEADDR_CONF_SIZE            8
+#define LINKADDR_CONF_SIZE            8
 #define UIP_CONF_LL_802154            1
 #define UIP_CONF_LLH_LEN              14
 

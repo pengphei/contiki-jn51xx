@@ -1,5 +1,5 @@
 #include "contiki-net.h"
-#include "net/ieee802.h"
+#include "ieee802.h"
 #include "gdb2.h"
 #include "init.h"
 #include "jts.h"

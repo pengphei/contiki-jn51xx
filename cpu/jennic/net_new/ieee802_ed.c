@@ -57,12 +57,12 @@ req_associate(MAC_PanDescr_s *pan)
   pib->bAutoRequest = false;
 }
 
-static uint8_t
+static uint8
 ieee_findpan(MAC_MlmeDcfmInd_s *ind, MAC_PanDescr_s **pan)
 {
   MAC_MlmeCfmScan_s *scan = &ind->uParam.sDcfmScan;
   bool found = false;
-  uint8_t i=0;
+  uint8 i=0;
 
   *pan = NULL;
 
@@ -160,11 +160,11 @@ PT_THREAD(ieee_mlmept(MAC_MlmeDcfmInd_s *ev))
         }
 
         {
-          rimeaddr_t rime;
+          linkaddr_t rime;
 
           if (asbeacon(ev).sPANdescriptor.sCoord.u8AddrMode == LONG && lqicb)
           {
-            lqicb(asrimeaddr(&asbeacon(ev).sPANdescriptor.sCoord.uAddr.sExt, &rime),
+            lqicb(aslinkaddr(&asbeacon(ev).sPANdescriptor.sCoord.uAddr.sExt, &rime),
                   asbeacon(ev).sPANdescriptor.u8LinkQuality);
           }
           else if (lqicb)

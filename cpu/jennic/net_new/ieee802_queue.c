@@ -54,7 +54,7 @@ static MAC_MlmeDcfmInd_s rxbuf[RX_QUEUE_SIZE] __attribute__((aligned(4)));
 
 /* receive queue, queueing handled here */
 static struct {
-  volatile uint8_t head, tail, types[RX_QUEUE_SIZE];
+  volatile uint8 head, tail, types[RX_QUEUE_SIZE];
 } rxq;
 
 /* rx queue handling functions */
@@ -121,7 +121,7 @@ rxq_mcps_alloc(void *p)
 static void
 rxq_tail_complete()
 {
-  uint16_t cur;
+  uint16 cur;
 
   if (rxq.tail==0) cur = RX_QUEUE_SIZE-1;
   else             cur = rxq.tail-1;
