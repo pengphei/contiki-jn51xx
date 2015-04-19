@@ -156,7 +156,7 @@ void uart0_init(uint16 br)
   vAHI_UartReset(E_AHI_UART_0, true, true);
 
   uart0_set_br(br);
-  //vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
+  vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
 
   vAHI_Uart0RegisterCallback(irq);
   vAHI_UartSetInterrupt(E_AHI_UART_0, false,  /* modem status         */
@@ -165,6 +165,6 @@ void uart0_init(uint16 br)
                               true,   /* rx data there        */
                               E_AHI_UART_FIFO_LEVEL_1);
 
-  //vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
+  vAHI_UartSetRTSCTS(E_AHI_UART_0, false);
   vAHI_UartReset(E_AHI_UART_0, false, false);
 }
