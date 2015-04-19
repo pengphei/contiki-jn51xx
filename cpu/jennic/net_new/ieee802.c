@@ -48,7 +48,7 @@
 #include "net/netstack.h"
 #include "net/packetbuf.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 # define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -384,7 +384,9 @@ ieee_init()
   MAC_Pib_s *pib;
 
   if (process_is_running(&ieee_process))
+  {
     return;
+  }
 
   /* initialize ieee_eventhandler and event queue*/
   rxq_init();
@@ -424,7 +426,13 @@ ieee_get_mac()
 #ifdef __BA1__
   return (void*) 0x4001000;
 #elif defined(__BA2__)
+#ifdef JENNIC_CHIP_FAMILY_JN516x
+  static linkaddr_t addr;
+  bAHI_FullFlashRead(0x01001570, sizeof(addr), &addr);
+  return (void*) &addr;
+#else
   return (void*) 0x4000d00;
+#endif
 #else
 # error "unsupported processor or compiler"
 #endif
@@ -446,8 +454,7 @@ PROCESS_THREAD(ieee_process, ev, data)
   PT_INIT(&ieee_mcps); ieee_mcpshandler = ieee_mcpspt;
 
   /* start the mlme thread by requesting a scan. */
-  req_scan(MAC_MLME_SCAN_TYPE_ACTIVE,0);
-
+  req_scan(MAC_MLME_SCAN_TYPE_ACTIVE,2);
   PRINTF("ieee_process: started\n");
 
   /* run until this process is exiting */
