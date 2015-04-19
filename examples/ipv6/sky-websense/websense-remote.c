@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: websense-remote.c,v 1.2 2010/06/14 14:12:43 nifi Exp $
  */
 
 /**
@@ -41,7 +40,6 @@
 #include "dev/button-sensor.h"
 #include "dev/leds.h"
 #include "wget.h"
-#include "webserver-nogui.h"
 #include "httpd-simple.h"
 #include <stdio.h>
 
@@ -59,8 +57,21 @@
 #define SET_LEDS_OFF "/0"
 
 PROCESS(websense_remote_process, "Websense Remote");
+PROCESS(webserver_nogui_process, "Web server");
+PROCESS_THREAD(webserver_nogui_process, ev, data)
+{
+  PROCESS_BEGIN();
 
-AUTOSTART_PROCESSES(&websense_remote_process);
+  httpd_init();
+
+  while(1) {
+    PROCESS_WAIT_EVENT_UNTIL(ev == tcpip_event);
+    httpd_appcall(data);
+  }
+
+  PROCESS_END();
+}
+AUTOSTART_PROCESSES(&websense_remote_process,&webserver_nogui_process);
 
 /*---------------------------------------------------------------------------*/
 static const char *TOP = "<html><head><title>Contiki Websense Remote</title></head><body>\n";
@@ -141,7 +152,6 @@ PROCESS_THREAD(websense_remote_process, ev, data)
 
   mode = 0;
   wget_init();
-  process_start(&webserver_nogui_process, NULL);
 
   SENSORS_ACTIVATE(button_sensor);
 

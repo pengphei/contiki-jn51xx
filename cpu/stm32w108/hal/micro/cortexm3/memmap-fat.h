@@ -3,10 +3,10 @@
  *
  * <!--(C) COPYRIGHT 2010 STMicroelectronics. All rights reserved.        -->
  */
-#ifndef __MEMMAP_FAT_H__
-#define __MEMMAP_FAT_H__
+#ifndef MEMMAP_FAT_H_
+#define MEMMAP_FAT_H_
 
-#ifndef __MEMMAP_TABLES_H__
+#ifndef MEMMAP_TABLES_H_
   // if we weren't included via memmap-tables.h, define a dummy type for the BAT
   typedef void HalBootloaderAddressTableType;
 #endif
@@ -29,9 +29,9 @@ typedef struct {
   HalBootloaderAddressTableType *bootloaderAddressTable;
   void *startOfUnusedRam;
   // ** pointers to shared functions **
-  FibStatus (* fibFlashWrite)(int32u address, int8u *data,
-                              int32u writeLength, int32u verifyLength);
-  FibStatus (* fibFlashErase)(FibEraseType eraseType, int32u address);
+  FibStatus (* fibFlashWrite)(uint32_t address, uint8_t *data,
+                              uint32_t writeLength, uint32_t verifyLength);
+  FibStatus (* fibFlashErase)(FibEraseType eraseType, uint32_t address);
 } HalFixedAddressTableType;
 
 extern const HalFixedAddressTableType halFixedAddressTable; 
@@ -48,4 +48,4 @@ extern const HalFixedAddressTableType halFixedAddressTable;
 #define FAT_MAJOR_VERSION_MASK          (0xFF00)
 
 
-#endif //__MEMMAP_FAT_H__
+#endif //MEMMAP_FAT_H_

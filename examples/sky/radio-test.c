@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: radio-test.c,v 1.6 2010/01/15 10:32:36 nifi Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -45,10 +44,10 @@
  */
 
 #include "contiki.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "dev/leds.h"
 #include "dev/button-sensor.h"
-#include "dev/cc2420.h"
+#include "cc2420.h"
 #include <stdio.h>
 #include <string.h>
 

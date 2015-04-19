@@ -1,19 +1,23 @@
-/** @file micro-common.h
+/** @file cpu/stm32w108/hal/micro/micro-common.h
  * @brief Minimal Hal functions common across all microcontroller-specific files.
  * See @ref micro for documentation.
  *
  * <!--(C) COPYRIGHT 2010 STMicroelectronics. All rights reserved.        -->
  */
- 
-/** @addtogroup micro
+
+/**
+ * @addtogroup stm32w-cpu
+ * @{ */
+
+/** @defgroup micro
  * Many of the supplied example applications use these microcontroller functions.
  * See hal/micro/micro-common.h for source code.
  *
  *@{
  */
 
-#ifndef __MICRO_COMMON_H__
-#define __MICRO_COMMON_H__
+#ifndef MICRO_COMMON_H_
+#define MICRO_COMMON_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifndef __STSTATUS_TYPE__
@@ -21,7 +25,7 @@
   //This is necessary here because halSleepForQsWithOptions returns an
   //StStatus and not adding this typedef to this file breaks a
   //whole lot of builds.
-  typedef int8u StStatus;
+  typedef uint8_t StStatus;
 #endif //__STSTATUS_TYPE__
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
@@ -41,10 +45,10 @@ void halPowerUp(void);
 */
 void halPowerDown(void);
 
-/** @brief The value that must be passed as the single parameter to 
- *  ::halInternalDisableWatchDog() in order to sucessfully disable the watchdog 
+/** @brief The value that must be passed as the single parameter to
+ *  ::halInternalDisableWatchDog() in order to sucessfully disable the watchdog
  *  timer.
- */ 
+ */
 #define MICRO_DISABLE_WATCH_DOG_KEY 0xA5
 
 /** @brief Enables the watchdog timer.
@@ -53,12 +57,12 @@ void halInternalEnableWatchDog(void);
 
 /** @brief Disables the watchdog timer.
  *
- * @note To prevent the watchdog from being disabled accidentally, 
+ * @note To prevent the watchdog from being disabled accidentally,
  * a magic key must be provided.
- * 
+ *
  * @param magicKey  A value (::MICRO_DISABLE_WATCH_DOG_KEY) that enables the function.
  */
-void halInternalDisableWatchDog(int8u magicKey);
+void halInternalDisableWatchDog(uint8_t magicKey);
 
 /** @brief Determines whether the watchdog has been enabled or disabled.
  *
@@ -90,7 +94,7 @@ boolean halInternalWatchDogEnabled( void );
  */
 enum SleepModes
 #else
-typedef int8u SleepModes;
+typedef uint8_t SleepModes;
 enum
 #endif
 {
@@ -113,16 +117,16 @@ enum
  * be within 10us.  If the micro is running off of another type of oscillator
  * (e.g. RC) the timing accuracy will potentially be much worse.
  *
- * @param us  The specified time, in microseconds. 
+ * @param us  The specified time, in microseconds.
               Values should be between 1 and 65535 microseconds.
  */
-void halCommonDelayMicroseconds(int16u us);
+void halCommonDelayMicroseconds(uint16_t us);
 
 /** @brief Request the appplication to enter in bootloader mode
  *
  * This function will check whwther the user flash contains the bootloader
  * and if yes it will jump into it according to the user parameters.
- * 
+ *
  *
  * @param mode  The bootloader mode, 0 UART mode, 1 RF mode. All other
  * values are reserved
@@ -132,7 +136,7 @@ void halCommonDelayMicroseconds(int16u us);
  * default panID (only vaild for RF mode).
  * @return An error code or it will never return.
  */
-StStatus halBootloaderStart(int8u mode, int8u channel, int16u panId);
+StStatus halBootloaderStart(uint8_t mode, uint8_t channel, uint16_t panId);
 
 #ifdef CORTEXM3_STM32F103
 #include "micro/cortexm3/stm32f103ret/micro-specific.h"
@@ -141,7 +145,8 @@ StStatus halBootloaderStart(int8u mode, int8u channel, int16u panId);
 #include "micro/cortexm3/micro-common.h"
 #endif
 
-#endif //__MICRO_COMMON_H__
+#endif //MICRO_COMMON_H_
 
 /** @} END micro group  */
-  
+/** @} */
+

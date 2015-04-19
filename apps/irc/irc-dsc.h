@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki OS
  *
- * $Id: irc-dsc.h,v 1.1 2006/06/17 22:41:11 adamdunkels Exp $
  *
  */
-#ifndef __IRC_DSC_H__
-#define __IRC_DSC_H__
+#ifndef IRC_DSC_H_
+#define IRC_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(irc_dsc);
 
-#endif /* __IRC_DSC_H__ */
+#endif /* IRC_DSC_H_ */

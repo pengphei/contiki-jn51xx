@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-sendtest.h,v 1.1 2008/02/04 23:42:17 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_SENDTEST_H__
-#define __SHELL_SENDTEST_H__
+#ifndef SHELL_SENDTEST_H_
+#define SHELL_SENDTEST_H_
 
 #include "shell.h"
 
 void shell_sendtest_init(void);
 
-#endif /* __SHELL_SENDTEST_H__ */
+#endif /* SHELL_SENDTEST_H_ */

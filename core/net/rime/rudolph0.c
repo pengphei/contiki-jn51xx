@@ -1,8 +1,3 @@
-/**
- * \addtogroup rudolph0
- * @{
- */
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: rudolph0.c,v 1.11 2009/03/12 21:58:21 adamdunkels Exp $
  */
 
 /**
@@ -43,9 +37,14 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/**
+ * \addtogroup rudolph0
+ * @{
+ */
+
 #include <stddef.h> /* for offsetof */
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/rudolph0.h"
 
 #define STEADY_TIME CLOCK_SECOND * 2

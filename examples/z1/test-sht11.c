@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: test-sht11.c,v 1.3 2011/02/27 07:39:55 enricmcalvo $
  */
 
 /**
@@ -40,7 +39,7 @@
  */
 
 #include "contiki.h"
-#include "dev/sht11.h"
+#include "dev/sht11/sht11.h"
 
 #include <stdio.h>
 

@@ -1,8 +1,3 @@
-/**
- * \addtogroup compower
- * @{
- */
-
 /*
  * Copyright (c) 2009, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: compower.c,v 1.5 2010/06/14 19:19:17 adamdunkels Exp $
  */
 
 /**
@@ -41,6 +35,11 @@
  *         Communication power accounting module
  * \author
  *         Adam Dunkels <adam@sics.se>
+ */
+
+/**
+ * \addtogroup compower
+ * @{
  */
 
 #include "contiki-conf.h"

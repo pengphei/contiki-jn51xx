@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: wget.h,v 1.2 2010/06/14 14:12:43 nifi Exp $
  */
 
 /**
@@ -37,8 +36,8 @@
  *         Joakim Eriksson <joakime@sics.se>
  */
 
-#ifndef __WGET_H__
-#define __WGET_H__
+#ifndef WGET_H_
+#define WGET_H_
 
 #include "contiki.h"
 
@@ -60,4 +59,4 @@ enum {
   WGET_CLOSED
 };
 
-#endif /* __WGET_H__ */
+#endif /* WGET_H_ */

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-netfile.c,v 1.8 2009/02/27 14:28:02 nvt-se Exp $
  */
 
 /**
@@ -40,7 +39,7 @@
 
 #include "contiki.h"
 #include "shell-netfile.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/rudolph0.h"
 #include "dev/leds.h"
 

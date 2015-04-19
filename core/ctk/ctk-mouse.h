@@ -29,11 +29,10 @@
  *
  * This file is part of the "ctk" console GUI toolkit for cc65
  *
- * $Id: ctk-mouse.h,v 1.2 2009/02/27 08:18:54 oliverschmidt Exp $
  *
  */
-#ifndef __CTK_MOUSE_H__
-#define __CTK_MOUSE_H__
+#ifndef CTK_MOUSE_H_
+#define CTK_MOUSE_H_
 
 #include "contiki-conf.h"
 
@@ -69,4 +68,4 @@ void ctk_mouse_show(void);
 
 #endif /* CTK_CONF_MOUSE_SUPPORT */
 
-#endif /* __CTK_MOUSE_H__ */
+#endif /* CTK_MOUSE_H_ */

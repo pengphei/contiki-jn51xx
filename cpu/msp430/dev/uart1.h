@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: uart1.h,v 1.4 2009/01/31 12:46:57 joxe Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __UART1_H__
-#define __UART1_H__
+#ifndef UART1_H_
+#define UART1_H_
 
 #include "contiki.h"
 
@@ -50,4 +49,4 @@ void uart1_writeb(unsigned char c);
 void uart1_init(unsigned long ubr);
 uint8_t uart1_active(void);
 
-#endif /* __UART1_H__ */
+#endif /* UART1_H_ */

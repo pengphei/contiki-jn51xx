@@ -29,7 +29,6 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: wget.c,v 1.4 2010/10/31 22:43:06 oliverschmidt Exp $
  *
  */
 
@@ -44,6 +43,9 @@
 PROCESS(wget_process, "Wget");
 
 AUTOSTART_PROCESSES(&wget_process);
+
+extern int contiki_argc;
+extern char **contiki_argv;
 
 static int file = -1;
 static char url[128];
@@ -81,7 +83,7 @@ start_get(void)
       --urlptr;
     }
     strncpy(url, http_http, 7);
-  } 
+  }
 
   /* Find host part of the URL. */
   urlptr = &url[7];  
@@ -114,15 +116,16 @@ start_get(void)
 #if UIP_UDP
   /* First check if the host is an IP address. */
   if(uiplib_ipaddrconv(host, &addr) == 0) {    
-    
+    uip_ipaddr_t *addrptr;
     /* Try to lookup the hostname. If it fails, we initiate a hostname
        lookup and print out an informative message on the
        statusbar. */
-    if(resolv_lookup(host) == NULL) {
+    if(resolv_lookup(host, &addrptr) != RESOLV_STATUS_CACHED) {
       resolv_query(host);
       puts("Resolving host...");
       return;
     }
+    uip_ipaddr_copy(&addr, addrptr);
   }
 #else /* UIP_UDP */
   uiplib_ipaddrconv(host, &addr);
@@ -143,6 +146,8 @@ app_quit(void)
   if(file != -1) {
     cfs_close(file);
   }
+  puts("Press any key to continue...");
+  getchar();
   process_exit(&wget_process);
   LOADER_UNLOAD();
 }
@@ -150,16 +155,29 @@ app_quit(void)
 PROCESS_THREAD(wget_process, ev, data)
 {
   static char name[32];
+  static unsigned char i;
 
   PROCESS_BEGIN();
 
-  PROCESS_PAUSE();
+  /* Allow other processes to initialize properly. */
+  for(i = 0; i < 10; ++i) {
+    PROCESS_PAUSE();
+  }
 
-  fputs("\nGet url:", stdout);
-  gets(url);
-  fputs("\nSave as:", stdout);
-  gets(name);
-  puts("");
+  fputs("Get url:", stdout);
+  if(contiki_argc > 1) {
+    strcpy(url, contiki_argv[1]);
+    puts(url);
+  } else {
+    gets(url);
+  }
+  fputs("Save as:", stdout);
+  if(contiki_argc > 2) {
+    strcpy(name, contiki_argv[2]);
+    puts(name);
+  } else {
+    gets(name);
+  }
   file = cfs_open(name, CFS_WRITE);
   if(file == -1) {
     printf("Open error with '%s'\n", name);
@@ -179,10 +197,10 @@ PROCESS_THREAD(wget_process, ev, data)
     } else if(ev == resolv_event_found) {
       /* Either found a hostname, or not. */
       if((char *)data != NULL &&
-	 resolv_lookup((char *)data) != NULL) {
-	start_get();
+        resolv_lookup((char *)data, NULL) == RESOLV_STATUS_CACHED) {
+        start_get();
       } else {
-	puts("Host not found");
+        puts("Host not found");
         app_quit();
       }
 #endif /* UIP_UDP */
@@ -236,7 +254,7 @@ webclient_connected(void)
  * has arrived.
  */
 void
-webclient_datahandler(char *data, u16_t len)
+webclient_datahandler(char *data, uint16_t len)
 {
   static unsigned long dload_bytes;
   int ret;
@@ -247,7 +265,7 @@ webclient_datahandler(char *data, u16_t len)
     if(file != -1) {
       ret = cfs_write(file, data, len);
       if(ret != len) {
-	printf("Wrote only %d bytes\n", ret);
+        printf("Wrote only %d bytes\n", ret);
       }
     }
   }

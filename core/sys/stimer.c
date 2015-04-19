@@ -1,15 +1,3 @@
-/**
- * \addtogroup stimer
- * @{
- */
-
-/**
- * \file
- * Timer of seconds library implementation.
- * \author
- * Adam Dunkels <adam@sics.se>, Nicolas Tsiftes <nvt@sics.se>
- */
-
 /*
  * Copyright (c) 2004, 2008, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -42,7 +30,18 @@
  *
  * Author: Adam Dunkels <adam@sics.se>, Nicolas Tsiftes <nvt@sics.se>
  *
- * $Id: stimer.c,v 1.3 2010/03/15 15:53:57 joxe Exp $
+ */
+
+/**
+ * \file
+ * Timer of seconds library implementation.
+ * \author
+ * Adam Dunkels <adam@sics.se>, Nicolas Tsiftes <nvt@sics.se>
+ */
+
+/**
+ * \addtogroup stimer
+ * @{
  */
 
 #include "contiki-conf.h"

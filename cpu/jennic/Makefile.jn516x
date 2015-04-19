@@ -1,5 +1,13 @@
-CONTIKI_CPU_DIRS     = . dev net_new sys
-CONTIKI_SOURCEFILES += clock.c timer-arch.c uart1.c uart0.c jts.c assert.c i2c.c irq.c sprintf.c watchdog.c init.c slip.c
+# $Id: Makefile.avr,v 1.27 2010/12/22 21:13:09 dak664 Exp $
+
+### Define the CPU directory of the Jennic port
+CONTIKI_CPU=$(CONTIKI)/cpu/jennic
+
+### These directories will be searched for the specified source files
+### TARGETLIBS are platform-specific routines in the contiki library path
+CONTIKI_CPU_DIRS    = . dev net_new sys
+CONTIKI_SOURCEFILES += clock.c timer-arch.c uart1.c uart0.c jts.c assert.c \
+			i2c.c irq.c sprintf.c watchdog.c init.c slip.c
 
 ### Compiler definitions
 CCPREFIX = ba-elf
@@ -71,10 +79,11 @@ CFLAGS += -msibcall -mno-multi -mno-setcc
 CFLAGS += -mno-carry -mno-subb -mno-sext
 CFLAGS += -mno-hard-div -mhard-mul -mbranch-cost=3 -msimple-mul
 CFLAGS += -march=ba2 -mredzone-size=4
-CFLAGS +=  -ffixed-r16 -ffixed-r17 -ffixed-r18 -ffixed-r19
-CFLAGS +=  -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
-CFLAGS +=  -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
-CFLAGS +=  -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
+CFLAGS += -ffixed-r16 -ffixed-r17 -ffixed-r18 -ffixed-r19
+CFLAGS += -ffixed-r20 -ffixed-r21 -ffixed-r22 -ffixed-r23
+CFLAGS += -ffixed-r24 -ffixed-r25 -ffixed-r26 -ffixed-r27
+CFLAGS += -ffixed-r28 -ffixed-r29 -ffixed-r30 -ffixed-r31
+CFLAGS += -fpack-struct
 
 # omit frame pointer by default
 CFLAGS += -fomit-frame-pointer
@@ -85,7 +94,7 @@ CFLAGS += -Os
 # Output each function and static data in their own sections
 CFLAGS += -fdata-sections -ffunction-sections
 
-LDFLAGS += -Wl,-u_AppColdStart -Wl,-u_AppWarmStart -Wl,-TAppBuildNone_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
+LDFLAGS += -Wl,-u_AppColdStart -Wl,-u_AppWarmStart -Wl,-TAppBuildMac_JN5168.ld -nostartfiles -mba2_elf -march=ba2 -Wl,-Map=contiki-$(TARGET).map
 
 
 ### Compilation rules

@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: gcr.h,v 1.1 2006/10/05 09:23:41 adamdunkels Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -36,8 +35,8 @@
  *           $Revision: 1.1 $
  */
 
-#ifndef __GCR_H__
-#define __GCR_H__
+#ifndef GCR_H_
+#define GCR_H_
 
 void gcr_init();
 unsigned char gcr_finished();
@@ -49,4 +48,4 @@ unsigned char gcr_get_encoded(unsigned char *raw_data);
 unsigned char gcr_get_decoded(unsigned char *raw_data);
 unsigned char gcr_valid();
 
-#endif /* __GCR_H__ */
+#endif /* GCR_H_ */

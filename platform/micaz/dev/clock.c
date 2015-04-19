@@ -129,17 +129,17 @@ clock_delay(unsigned int i)
 }
 
 /*---------------------------------------------------------------------------*/
-/**
+/*
  * Wait for a multiple of 1 / 128 sec = 7.8125 ms.
  *
  */
 void
-clock_wait(int i)
+clock_wait(clock_time_t i)
 {
   clock_time_t start;
 
   start = clock_time();
-  while(clock_time() - start < (clock_time_t)i);
+  while(clock_time() - start < i);
 }
 /*---------------------------------------------------------------------------*/
 void

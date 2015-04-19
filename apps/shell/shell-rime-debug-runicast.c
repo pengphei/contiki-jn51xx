@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rime-debug-runicast.c,v 1.3 2010/03/19 13:24:26 adamdunkels Exp $
  */
 
 /**
@@ -46,7 +45,7 @@
 
 #include "lib/random.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/route.h"
 #include "net/rime/trickle.h"
 
@@ -75,7 +74,7 @@ SHELL_COMMAND(runicast_command,
 PROCESS_THREAD(shell_runicast_process, ev, data)
 {
   struct shell_input *input;
-  static rimeaddr_t receiver;
+  static linkaddr_t receiver;
   int len;
   const char *nextptr;
   struct collect_msg *msg;
@@ -123,7 +122,7 @@ PROCESS_THREAD(shell_runicast_process, ev, data)
   PROCESS_END();
 }
 static void
-recv_ruc(struct runicast_conn *c, const rimeaddr_t *from, uint8_t seqno)
+recv_ruc(struct runicast_conn *c, const linkaddr_t *from, uint8_t seqno)
 {
   struct collect_msg *msg;
   rtimer_clock_t latency;
@@ -148,14 +147,14 @@ recv_ruc(struct runicast_conn *c, const rimeaddr_t *from, uint8_t seqno)
 	 msg->data);
 }
 static void
-sent_ruc(struct runicast_conn *c, const rimeaddr_t *to, uint8_t tx)
+sent_ruc(struct runicast_conn *c, const linkaddr_t *to, uint8_t tx)
 {
   printf("runicast message sent to %d.%d, %d transmissions\n",
 	 to->u8[0], to->u8[1],
 	 tx);
 }
 static void
-timedout_ruc(struct runicast_conn *c, const rimeaddr_t *to, uint8_t tx)
+timedout_ruc(struct runicast_conn *c, const linkaddr_t *to, uint8_t tx)
 {
   printf("runicast message to %d.%d timed out after %d transmissions\n",
 	 to->u8[0], to->u8[1],

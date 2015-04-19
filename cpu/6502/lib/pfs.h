@@ -30,11 +30,10 @@
  * 
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: pfs.h,v 1.1 2010/03/27 14:46:08 oliverschmidt Exp $
  */
 
-#ifndef __PFS_H__
-#define __PFS_H__
+#ifndef PFS_H_
+#define PFS_H_
 
 int  __fastcall__ pfs_open(const char* name, int flags);
 void __fastcall__ pfs_close(int fd);
@@ -43,4 +42,4 @@ int  __fastcall__ pfs_write(int fd, void* buf, unsigned int len);
 int  __fastcall__ pfs_seek(int fd, int offset, int whence);
 int  __fastcall__ pfs_remove(const char *name);
 
-#endif /* __PFS_H__ */
+#endif /* PFS_H_ */

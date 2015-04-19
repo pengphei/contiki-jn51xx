@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: process-list-dsc.h,v 1.1 2006/06/17 22:41:12 adamdunkels Exp $
  *
  */
-#ifndef __PROCESSES_DSC_H__
-#define __PROCESSES_DSC_H__
+#ifndef PROCESSES_DSC_H_
+#define PROCESSES_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(processes_dsc);
 
-#endif /* __PROCESSES_DSC_H__ */
+#endif /* PROCESSES_DSC_H_ */

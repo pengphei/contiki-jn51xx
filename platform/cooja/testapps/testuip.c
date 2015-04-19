@@ -26,11 +26,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: testuip.c,v 1.4 2010/01/14 19:19:50 nifi Exp $
  */
 
 #include <stdlib.h>
-#include "net/uip.h"
+#include "net/ip/uip.h"
 #include "dev/button-sensor.h"
 #include "dev/leds.h"
 

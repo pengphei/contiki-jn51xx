@@ -1,22 +1,3 @@
-/**
- * \addtogroup rime
- * @{
- */
-
-/**
- * \defgroup rudolph0 Single-hop reliable bulk data transfer
- * @{
- *
- * The rudolph0 module implements a single-hop reliable bulk data
- * transfer mechanism.
- *
- * \section channels Channels
- *
- * The rudolph0 module uses 2 channels; one for data packets and one
- * for NACK and repair packets.
- *
- */
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -47,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: rudolph0.h,v 1.10 2008/06/30 08:28:53 adamdunkels Exp $
  */
 
 /**
@@ -57,8 +37,27 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __RUDOLPH0_H__
-#define __RUDOLPH0_H__
+/**
+ * \addtogroup rime
+ * @{
+ */
+
+/**
+ * \defgroup rudolph0 Single-hop reliable bulk data transfer (rudolph0)
+ * @{
+ *
+ * The rudolph0 module implements a single-hop reliable bulk data
+ * transfer mechanism.
+ *
+ * \section rudolph0-channels Channels
+ *
+ * The rudolph0 module uses 2 channels; one for data packets and one
+ * for NACK and repair packets.
+ *
+ */
+
+#ifndef RUDOLPH0_H_
+#define RUDOLPH0_H_
 
 #include "net/rime/stbroadcast.h"
 #include "net/rime/polite.h"
@@ -117,7 +116,7 @@ void rudolph0_force_restart(struct rudolph0_conn *c);
 void rudolph0_set_version(struct rudolph0_conn *c, int version);
 int rudolph0_version(struct rudolph0_conn *c);
 
-#endif /* __RUDOLPH0_H__ */
+#endif /* RUDOLPH0_H_ */
 /** @} */
 /** @} */
     

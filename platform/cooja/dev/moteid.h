@@ -26,12 +26,11 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: moteid.h,v 1.1 2006/08/21 12:11:19 fros4943 Exp $
  */
 
-#ifndef __MOTEID_H__
-#define __MOTEID_H__
+#ifndef MOTEID_H_
+#define MOTEID_H_
 
 extern int simMoteID;
 
-#endif /* __MOTEID_H__ */
+#endif /* MOTEID_H_ */

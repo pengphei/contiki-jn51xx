@@ -3,8 +3,8 @@
  *
  * <!--(C) COPYRIGHT 2010 STMicroelectronics. All rights reserved.        -->
  */
-#ifndef __MEMMAP_H__
-#define __MEMMAP_H__
+#ifndef MEMMAP_H_
+#define MEMMAP_H_
 
 // Include the chip specific definitions
 #ifndef LOADER
@@ -53,8 +53,8 @@ typedef struct {
   void (*resetVector)(void);
   void (*nmiHandler)(void);
   void (*hardFaultHandler)(void);
-  int16u type;
-  int16u version;
+  uint16_t type;
+  uint16_t version;
   const HalVectorTableType *vectorTable;
   // Followed by more fields depending on the specific address table type
 } HalBaseAddressTableType;
@@ -62,5 +62,5 @@ typedef struct {
 // Hal only references the FAT
 #include "memmap-fat.h"
 
-#endif //__MEMMMAP_H__
+#endif //MEMMMAP_H_
 

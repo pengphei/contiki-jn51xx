@@ -37,11 +37,10 @@
  * \author
  *         Simon Barner <barner@in.tum.de>
  *
- * @(#)$Id: mtarch.h,v 1.2 2006/12/22 16:55:53 barner Exp $
  */
 
-#ifndef __MTARCH_H__
-#define __MTARCH_H__
+#ifndef MTARCH_H_
+#define MTARCH_H_
 
 #include "contiki-conf.h"
 
@@ -56,5 +55,5 @@ struct mtarch_thread {
   unsigned char *sp;
 };
 
-#endif /* __MTARCH_H__ */
+#endif /* MTARCH_H_ */
 	

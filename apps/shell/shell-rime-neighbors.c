@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rime-neighbors.c,v 1.4 2010/03/25 08:55:20 adamdunkels Exp $
  */
 
 /**
@@ -40,7 +39,7 @@
 
 #include <string.h>
 #include "shell.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 PROCESS(shell_neighbors_process, "neighbors");
 SHELL_COMMAND(neighbors_command,
@@ -52,7 +51,7 @@ static uint8_t listening_for_neighbors = 0;
 
 /*---------------------------------------------------------------------------*/
 static void
-received_announcement(struct announcement *a, const rimeaddr_t *from,
+received_announcement(struct announcement *a, const linkaddr_t *from,
 		      uint16_t id, uint16_t value)
 {
   struct {
@@ -65,7 +64,7 @@ received_announcement(struct announcement *a, const rimeaddr_t *from,
   if(listening_for_neighbors) {
     memset(&msg, 0, sizeof(msg));
     msg.len = 3;
-    rimeaddr_copy((rimeaddr_t *)&msg.addr, from);
+    linkaddr_copy((linkaddr_t *)&msg.addr, from);
     msg.rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
     msg.lqi = packetbuf_attr(PACKETBUF_ATTR_LINK_QUALITY);
     shell_output(&neighbors_command, &msg, sizeof(msg), "", 0);

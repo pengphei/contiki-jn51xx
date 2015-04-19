@@ -1,8 +1,9 @@
 CONTIKI_PROJECT = sky-webserver
-all: sky-webserver sky-telnet-server telnet-tweet 
+all: sky-webserver sky-telnet-server telnet 
 PLATFORM_BUILD=1 # This is needed to avoid the shell to include the httpd-cfs version of the webserver
-APPS = webserver twitter telnetd
-CFLAGS = -DWITH_UIP=1 -I.
+APPS = webserver telnetd
+CFLAGS = -I.
+SMALL=1
 DEFINES=NETSTACK_CONF_RDC=cxmac_driver,NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE=8
 
 # The webserver application normally contains a built-in file system and support
@@ -18,6 +19,8 @@ DEFINES=NETSTACK_CONF_RDC=cxmac_driver,NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE=8
 # endif
 
 CONTIKI = ../..
+CONTIKI_WITH_IPV4 = 1
+CONTIKI_WITH_RIME = 1
 include $(CONTIKI)/Makefile.include
 
 sky-webserver.$(TARGET): $(OBJECTDIR)/ajax-cgi.o

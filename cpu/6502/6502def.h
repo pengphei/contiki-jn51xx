@@ -30,11 +30,10 @@
  *
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * @(#)$Id: 6502def.h,v 1.27 2010/10/22 20:28:58 oliverschmidt Exp $
  */
 
-#ifndef __6502DEF_H__
-#define __6502DEF_H__
+#ifndef S502DEF_H_
+#define S502DEF_H_
 
 #include <ctype.h>
 #include <conio.h>
@@ -54,6 +53,8 @@ typedef int32_t  s32_t;
 #define CC_CONF_REGISTER_ARGS 1
 #define CC_CONF_FASTCALL      __fastcall__
 
+#define ARCH_DOESNT_NEED_ALIGNED_STRUCTS 1
+
 #define CCIF
 #define CLIF
 
@@ -68,8 +69,10 @@ typedef unsigned short uip_stats_t;
 #define UIP_ARCH_ADD32  1
 #define UIP_ARCH_CHKSUM 1
 
-#define MAC_CONF_CHANNEL_CHECK_RATE          1
-#define NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE 1
+#define UIP_CONF_LLH_LEN                      14
+#define RESOLV_CONF_SUPPORTS_MDNS              0
+#define RESOLV_CONF_SUPPORTS_RECORD_EXPIRATION 0
+#define NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE   1
 
 #define LOADER_CONF_ARCH "lib/unload.h"
 
@@ -158,4 +161,4 @@ typedef unsigned short uip_stats_t;
 #define cfs_remove   remove
 #endif /* WITH_PFS */
 
-#endif /* __6502DEF_H__ */
+#endif /* S502DEF_H_ */

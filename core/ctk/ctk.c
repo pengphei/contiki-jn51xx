@@ -1,18 +1,3 @@
-/**
- * \defgroup ctk CTK graphical user interface
- *
- * The Contiki Toolkit (CTK) provides the graphical user interface for
- * the Contiki system.
- *
- * @{
- */
-
-/**
- * \file
- * The Contiki Toolkit CTK, the Contiki GUI.
- * \author Adam Dunkels <adam@dunkels.com>
- */
-
 /*
  * Copyright (c) 2002-2003, Adam Dunkels.
  * All rights reserved.
@@ -44,8 +29,22 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: ctk.c,v 1.26 2010/09/09 20:21:26 oliverschmidt Exp $
  *
+ */
+
+/**
+ * \file
+ * The Contiki Toolkit CTK, the Contiki GUI.
+ * \author Adam Dunkels <adam@dunkels.com>
+ */
+
+/**
+ * \defgroup ctk CTK graphical user interface
+ *
+ * The Contiki Toolkit (CTK) provides the graphical user interface for
+ * the Contiki system.
+ *
+ * @{
  */
 
 #include <string.h>

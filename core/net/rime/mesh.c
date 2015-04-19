@@ -1,8 +1,3 @@
-/**
- * \addtogroup rimemesh
- * @{
- */
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: mesh.c,v 1.20 2009/12/18 14:57:15 nvt-se Exp $
  */
 
 /**
@@ -43,8 +37,13 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/**
+ * \addtogroup rimemesh
+ * @{
+ */
+
 #include "contiki.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/route.h"
 #include "net/rime/mesh.h"
 
@@ -63,8 +62,8 @@
 /*---------------------------------------------------------------------------*/
 static void
 data_packet_received(struct multihop_conn *multihop,
-		     const rimeaddr_t *from,
-		     const rimeaddr_t *prevhop, uint8_t hops)
+		     const linkaddr_t *from,
+		     const linkaddr_t *prevhop, uint8_t hops)
 {
   struct mesh_conn *c = (struct mesh_conn *)
     ((char *)multihop - offsetof(struct mesh_conn, multihop));
@@ -82,11 +81,11 @@ data_packet_received(struct multihop_conn *multihop,
   }
 }
 /*---------------------------------------------------------------------------*/
-static rimeaddr_t *
+static linkaddr_t *
 data_packet_forward(struct multihop_conn *multihop,
-		    const rimeaddr_t *originator,
-		    const rimeaddr_t *dest,
-		    const rimeaddr_t *prevhop, uint8_t hops)
+		    const linkaddr_t *originator,
+		    const linkaddr_t *dest,
+		    const linkaddr_t *prevhop, uint8_t hops)
 {
   struct route_entry *rt;
   struct mesh_conn *c = (struct mesh_conn *)
@@ -94,7 +93,15 @@ data_packet_forward(struct multihop_conn *multihop,
 
   rt = route_lookup(dest);
   if(rt == NULL) {
+    if(c->queued_data != NULL) {
+      queuebuf_free(c->queued_data);
+    }
+
+    PRINTF("data_packet_forward: queueing data, sending rreq\n");
+    c->queued_data = queuebuf_new_from_packetbuf();
+    linkaddr_copy(&c->queued_data_dest, dest);
     route_discovery_discover(&c->route_discovery_conn, dest, PACKET_TIMEOUT);
+
     return NULL;
   } else {
     route_refresh(rt);
@@ -104,20 +111,30 @@ data_packet_forward(struct multihop_conn *multihop,
 }
 /*---------------------------------------------------------------------------*/
 static void
-found_route(struct route_discovery_conn *rdc, const rimeaddr_t *dest)
+found_route(struct route_discovery_conn *rdc, const linkaddr_t *dest)
 {
+  struct route_entry *rt;
   struct mesh_conn *c = (struct mesh_conn *)
     ((char *)rdc - offsetof(struct mesh_conn, route_discovery_conn));
 
+  PRINTF("found_route\n");
+
   if(c->queued_data != NULL &&
-     rimeaddr_cmp(dest, &c->queued_data_dest)) {
+     linkaddr_cmp(dest, &c->queued_data_dest)) {
     queuebuf_to_packetbuf(c->queued_data);
     queuebuf_free(c->queued_data);
     c->queued_data = NULL;
-    if(multihop_send(&c->multihop, dest)) {
-      c->cb->sent(c);
+
+    rt = route_lookup(dest);
+    if(rt != NULL) {
+      multihop_resend(&c->multihop, &rt->nexthop);
+      if(c->cb->sent != NULL) {
+        c->cb->sent(c);
+      }
     } else {
-      c->cb->timedout(c);
+      if(c->cb->timedout != NULL) {
+        c->cb->timedout(c);
+      }
     }
   }
 }
@@ -164,30 +181,31 @@ mesh_close(struct mesh_conn *c)
 }
 /*---------------------------------------------------------------------------*/
 int
-mesh_send(struct mesh_conn *c, const rimeaddr_t *to)
+mesh_send(struct mesh_conn *c, const linkaddr_t *to)
 {
   int could_send;
 
   PRINTF("%d.%d: mesh_send to %d.%d\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	 to->u8[0], to->u8[1]);
   
   could_send = multihop_send(&c->multihop, to);
 
   if(!could_send) {
-    if(c->queued_data != NULL) {
-      queuebuf_free(c->queued_data);
-    }
-
-    PRINTF("mesh_send: queueing data, sending rreq\n");
-    c->queued_data = queuebuf_new_from_packetbuf();
-    rimeaddr_copy(&c->queued_data_dest, to);
-    route_discovery_discover(&c->route_discovery_conn, to,
-			     PACKET_TIMEOUT);
+    PRINTF("mesh_send: could not send\n");
     return 0;
   }
-  c->cb->sent(c);
+  if(c->cb->sent != NULL) {
+    c->cb->sent(c);
+  }
   return 1;
 }
 /*---------------------------------------------------------------------------*/
+int
+mesh_ready(struct mesh_conn *c)
+{
+  return (c->queued_data == NULL);
+}
+
+
 /** @} */

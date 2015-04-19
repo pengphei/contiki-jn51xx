@@ -1,17 +1,3 @@
-/**
- * \file
- * The program handler, used for loading programs and starting the
- * screensaver. 
- * \author Adam Dunkels <adam@dunkels.com>
- *
- * The Contiki program handler is responsible for the Contiki menu and
- * the desktop icons, as well as for loading programs and displaying a
- * dialog with a message telling which program that is loading.
- *
- * The program handler also is responsible for starting the
- * screensaver when the CTK detects that it should be started.
- */
- 
 /*
  * Copyright (c) 2003, Adam Dunkels.
  * All rights reserved. 
@@ -43,16 +29,30 @@
  *
  * This file is part of the Contiki desktop OS
  *
- * $Id: program-handler.c,v 1.10 2008/02/15 17:31:44 oliverschmidt Exp $
  *
  */
 
+/**
+ * \file
+ * The program handler, used for loading programs and starting the
+ * screensaver. 
+ * \author Adam Dunkels <adam@dunkels.com>
+ *
+ * The Contiki program handler is responsible for the Contiki menu and
+ * the desktop icons, as well as for loading programs and displaying a
+ * dialog with a message telling which program that is loading.
+ *
+ * The program handler also is responsible for starting the
+ * screensaver when the CTK detects that it should be started.
+ */
+ 
 #include <string.h>
 #include <stdlib.h>
 
 #include "contiki.h"
 #include "ctk/ctk.h"
 #include "ctk/ctk-draw.h"
+#include "sys/log.h"
 
 #include "program-handler.h"
 

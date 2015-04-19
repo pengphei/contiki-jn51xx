@@ -26,11 +26,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: project-conf.h,v 1.1 2010/10/21 18:23:44 joxe Exp $
  */
 
-#ifndef __PROJECT_ROUTER_CONF_H__
-#define __PROJECT_ROUTER_CONF_H__
+#ifndef PROJECT_ROUTER_CONF_H_
+#define PROJECT_ROUTER_CONF_H_
 
 #ifndef UIP_FALLBACK_INTERFACE
 #define UIP_FALLBACK_INTERFACE rpl_interface
@@ -52,4 +51,4 @@
 #define WEBSERVER_CONF_CFS_CONNS 2
 #endif
 
-#endif /* __PROJECT_ROUTER_CONF_H__ */
+#endif /* PROJECT_ROUTER_CONF_H_ */

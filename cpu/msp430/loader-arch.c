@@ -28,13 +28,12 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: loader-arch.c,v 1.2 2010/10/19 18:29:04 adamdunkels Exp $
  */
 
 #include "contiki.h"
 #include "sys/clock.h"
 
-#include "net/uip.h"
+#include "net/ip/uip.h"
 
 #include "dev/leds.h"
 #include "dev/eeprom.h"

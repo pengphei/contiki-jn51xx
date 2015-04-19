@@ -28,10 +28,9 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: procinit.h,v 1.2 2007/08/22 10:49:48 ksb Exp $
  */
-#ifndef __PROCINIT_H__
-#define __PROCINIT_H__
+#ifndef PROCINIT_H_
+#define PROCINIT_H_
 
 #include "sys/process.h"
 
@@ -42,4 +41,4 @@ const struct process *procinit[] = {__VA_ARGS__, NULL}
 
 void procinit_init(void);
 
-#endif /* __PROCINIT_H__ */
+#endif /* PROCINIT_H_ */

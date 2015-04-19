@@ -30,14 +30,13 @@
  * 
  * Author: Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: mtarch.h,v 1.1 2007/04/03 00:40:51 oliverschmidt Exp $
  */
 
-#ifndef __MTARCH_H__
-#define __MTARCH_H__
+#ifndef MTARCH_H_
+#define MTARCH_H_
 
 struct mtarch_thread {
   void *mt_thread;
 };
 
-#endif /* __MTARCH_H__ */
+#endif /* MTARCH_H_ */

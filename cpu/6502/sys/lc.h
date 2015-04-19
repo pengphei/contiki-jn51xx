@@ -30,14 +30,13 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>, Oliver Schmidt <ol.sc@web.de>
  *
- * $Id: lc.h,v 1.1 2006/12/31 14:26:03 oliverschmidt Exp $
  */
 /* Local continuations: a form of continuation that only works locally
    within a function.
 */
 
-#ifndef __LC_H__
-#define __LC_H__
+#ifndef LC_H_
+#define LC_H_
 
 typedef void * lc_t;
 
@@ -49,4 +48,4 @@ void __fastcall__ lc_resume(lc_t *lc);
 #define LC_INIT(lc)   (lc) = NULL
 #define LC_END(lc)
 
-#endif /* __LC_H__ */
+#endif /* LC_H_ */

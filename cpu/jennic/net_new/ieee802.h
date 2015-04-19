@@ -35,6 +35,7 @@
 #ifndef __JEN_IEEE802_H__
 #define __JEN_IEEE802_H__
 # include "contiki.h"
+# include "contiki-conf.h"
 # include "mac.h"
 # include "uip.h"
 # include "rime.h"
@@ -90,7 +91,7 @@ struct ieee_callbacks {
 void ieee_register_beacon_callback(void (*func)(MAC_MlmeIndBeacon_s*));
 
 /* register a callback function called when on each new rssi value */
-void ieee_register_lqi_callback(void (*func)(const rimeaddr_t*, uint8_t));
+void ieee_register_lqi_callback(void (*func)(const linkaddr_t*, uint8));
 
 process_event_t ieee_event;
 enum ieee_events { IEEE_STARTED, IEEE_STOPPED, IEEE_PAUSE, IEEE_UNPAUSE };

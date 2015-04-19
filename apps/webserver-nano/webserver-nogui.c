@@ -35,9 +35,7 @@
 #include <stdio.h>
 
 #include "contiki.h"
-#include "sys/log.h"
 
-//#include "http-strings.h"
 #include "webserver-nogui.h"
 #include "httpd.h"
 
@@ -59,14 +57,14 @@ PROCESS_THREAD(webserver_nogui_process, ev, data)
   
   PROCESS_END();
 }
+#if WEBSERVER_CONF_LOG
 /*---------------------------------------------------------------------------*/
 void
 webserver_log_file(uip_ipaddr_t *requester, char *file)
 {
-#if LOG_CONF_ENABLED
   /* Print out IP address of requesting host. */
 
-#if UIP_CONF_IPV6
+#if NETSTACK_CONF_WITH_IPV6
 #if WEBSERVER_CONF_ADDRESSES
   char buf[48];
   uint8_t j;
@@ -80,15 +78,15 @@ webserver_log_file(uip_ipaddr_t *requester, char *file)
   char buf[20];
   sprintf(buf, "%d.%d.%d.%d: ", requester->u8[0], requester->u8[1],
                                 requester->u8[2], requester->u8[3]);
-#endif /* UIP_CONF_IPV6 */
-
-  log_message(buf, file);
-#endif /* LOG_CONF_ENABLED */
+#endif /* NETSTACK_CONF_WITH_IPV6 */
+//log_message(buf, file);
+  printf("%s%s\n", buf, file);
 }
 /*---------------------------------------------------------------------------*/
 void
 webserver_log(char *msg)
 {
-  log_message(msg, "");
+//log_message(msg, "");
+  printf("%s\n", msg);
 }
-/*---------------------------------------------------------------------------*/
+#endif /* WEBSERVER_CONF_LOG */

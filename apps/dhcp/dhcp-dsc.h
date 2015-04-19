@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: dhcp-dsc.h,v 1.1 2006/06/17 22:41:10 adamdunkels Exp $
  *
  */
-#ifndef __DHCP_DSC_H__
-#define __DHCP_DSC_H__
+#ifndef DHCP_DSC_H_
+#define DHCP_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(dhcp_dsc);
 
-#endif /* __DHCP_DSC_H__ */
+#endif /* DHCP_DSC_H_ */

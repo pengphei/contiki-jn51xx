@@ -27,7 +27,6 @@
  * SUCH DAMAGE.
  *
  *
- * $Id: light-sensor.h,v 1.2 2010/01/14 20:23:02 adamdunkels Exp $
  *
  * -----------------------------------------------------------------
  *
@@ -37,8 +36,8 @@
  *           $Revision: 1.2 $
  */
 
-#ifndef __LIGHT_SENSOR_H__
-#define __LIGHT_SENSOR_H__
+#ifndef LIGHT_SENSOR_H_
+#define LIGHT_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -48,4 +47,4 @@ extern const struct sensors_sensor light_sensor;
 #define LIGHT_SENSOR_TOTAL_SOLAR    1
 
 
-#endif /* __LIGHT-SENSOR_H__ */
+#endif /* LIGHT-SENSOR_H_ */

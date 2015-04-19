@@ -29,14 +29,13 @@
  * This file is part of the Configurable Sensor Network Application
  * Architecture for sensor nodes running the Contiki operating system.
  *
- * $Id: init-net.h,v 1.1 2007/05/18 13:49:15 fros4943 Exp $
  *
  */
 
-#ifndef __INIT_NET_H__
-#define __INIT_NET_H__
+#ifndef INIT_NET_H_
+#define INIT_NET_H_
 
 void
 init_net(void);
 
-#endif /* __INIT_NET_H__ */
+#endif /* INIT_NET_H_ */

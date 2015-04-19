@@ -28,13 +28,12 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: urlconv.h,v 1.3 2010/08/30 19:44:38 oliverschmidt Exp $
  */
 
-#ifndef __URLCONV_H__
-#define __URLCONV_H__
+#ifndef URLCONV_H_
+#define URLCONV_H_
 
 void urlconv_init(void);
 void urlconv_tofilename(char *dest, char *source, unsigned char maxlen);
 
-#endif /* __URLCONV_H__ */
+#endif /* URLCONV_H_ */

@@ -26,11 +26,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: simEnvChange.h,v 1.9 2010/03/09 08:14:31 fros4943 Exp $
  */
 
-#ifndef __SIMENVCHANGE_H__
-#define __SIMENVCHANGE_H__
+#ifndef SIMENVCHANGE_H_
+#define SIMENVCHANGE_H_
 
 #include "contiki.h"
 
@@ -65,4 +64,4 @@ const struct simInterface *simInterfaces[] = {__VA_ARGS__, NULL};
 void doActionsBeforeTick();
 void doActionsAfterTick();
 
-#endif /* __SIMENVCHANGE_H__ */
+#endif /* SIMENVCHANGE_H_ */

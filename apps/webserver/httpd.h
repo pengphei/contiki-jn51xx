@@ -28,12 +28,11 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd.h,v 1.6 2009/08/12 18:23:37 dak664 Exp $
  *
  */
 
-#ifndef __HTTPD_H__
-#define __HTTPD_H__
+#ifndef HTTPD_H_
+#define HTTPD_H_
 
 
 #include "contiki-net.h"
@@ -60,8 +59,8 @@ struct httpd_state {
 void httpd_init(void);
 void httpd_appcall(void *state);
 
-#if UIP_CONF_IPV6
+#if NETSTACK_CONF_WITH_IPV6
 uint8_t httpd_sprint_ip6(uip_ip6addr_t addr, char * result);
-#endif /* UIP_CONF_IPV6 */
+#endif /* NETSTACK_CONF_WITH_IPV6 */
 
-#endif /* __HTTPD_H__ */
+#endif /* HTTPD_H_ */

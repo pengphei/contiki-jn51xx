@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: csma.h,v 1.1 2010/01/25 11:46:44 adamdunkels Exp $
  */
 
 /**
@@ -39,8 +38,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __CSMA_H__
-#define __CSMA_H__
+#ifndef CSMA_H_
+#define CSMA_H_
 
 #include "net/mac/mac.h"
 #include "dev/radio.h"
@@ -49,4 +48,4 @@ extern const struct mac_driver csma_driver;
 
 const struct mac_driver *csma_init(const struct mac_driver *r);
 
-#endif /* __CSMA_H__ */
+#endif /* CSMA_H_ */

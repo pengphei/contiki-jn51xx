@@ -28,10 +28,9 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: radio-sensor.h,v 1.1 2007/03/15 21:27:09 adamdunkels Exp $
  */
-#ifndef __RADIO_SENSOR_H__
-#define __RADIO_SENSOR_H__
+#ifndef RADIO_SENSOR_H_
+#define RADIO_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -44,4 +43,4 @@ extern const struct sensors_sensor radio_sensor;
 
 extern unsigned int radio_sensor_signal;
 
-#endif /* __RADIO_SENSOR_H__ */
+#endif /* RADIO_SENSOR_H_ */

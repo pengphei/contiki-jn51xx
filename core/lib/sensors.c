@@ -28,19 +28,17 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: sensors.c,v 1.5 2010/01/14 20:04:38 nifi Exp $
  */
 /* exeperimental code, will be renamed to sensors.c when done */
 
 
 #include <string.h>
-#include <stdbool.h>
 
 #include "contiki.h"
 
 #include "lib/sensors.h"
 
-extern struct sensors_sensor *sensors[];
+const extern struct sensors_sensor *sensors[];
 extern unsigned char sensors_flags[];
 
 #define FLAG_CHANGED    0x80
@@ -50,8 +48,6 @@ process_event_t sensors_event;
 static unsigned char num_sensors;
 
 PROCESS(sensors_process, "Sensors");
-
-#define MIN(a,b) ((a) < (b)? (a): (b))
 
 /*---------------------------------------------------------------------------*/
 static int
@@ -63,16 +59,16 @@ get_sensor_index(const struct sensors_sensor *s)
       return i;
     }
   }
-  return 0;
+  return i;
 }
 /*---------------------------------------------------------------------------*/
-struct sensors_sensor *
+const struct sensors_sensor *
 sensors_first(void)
 {
   return sensors[0];
 }
 /*---------------------------------------------------------------------------*/
-struct sensors_sensor *
+const struct sensors_sensor *
 sensors_next(const struct sensors_sensor *s)
 {
   return sensors[get_sensor_index(s) + 1];
@@ -84,21 +80,19 @@ sensors_changed(const struct sensors_sensor *s)
   sensors_flags[get_sensor_index(s)] |= FLAG_CHANGED;
   process_poll(&sensors_process);
 }
-
 /*---------------------------------------------------------------------------*/
-struct sensors_sensor *
+const struct sensors_sensor *
 sensors_find(const char *prefix)
 {
   int i;
+  unsigned short len;
 
-  while(*prefix && isblank(*prefix)) {
-    prefix++;
-  }
+  /* Search through all processes and search for the specified process
+     name. */
+  len = strlen(prefix);
 
-  /* see if there is a sensor of type prefix */
   for(i = 0; i < num_sensors; ++i) {
-    u16_t len = MIN(strlen(prefix), strlen(sensors[i]->type));
-    if(memcmp(prefix, sensors[i]->type, len) == 0) {
+    if(strncmp(prefix, sensors[i]->type, len) == 0) {
       return sensors[i];
     }
   }
@@ -127,13 +121,13 @@ PROCESS_THREAD(sensors_process, ev, data)
     do {
       events = 0;
       for(i = 0; i < num_sensors; ++i) {
-        if(sensors_flags[i] & FLAG_CHANGED) {
-          if(process_post(PROCESS_BROADCAST, sensors_event, sensors[i]) == PROCESS_ERR_OK) {
-            PROCESS_WAIT_EVENT_UNTIL(ev == sensors_event);
-          }
-          sensors_flags[i] &= ~FLAG_CHANGED;
-          events++;
-        }
+	if(sensors_flags[i] & FLAG_CHANGED) {
+	  if(process_post(PROCESS_BROADCAST, sensors_event, (void *)sensors[i]) == PROCESS_ERR_OK) {
+	    PROCESS_WAIT_EVENT_UNTIL(ev == sensors_event);
+	  }
+	  sensors_flags[i] &= ~FLAG_CHANGED;
+	  events++;
+	}
       }
     } while(events);
   }

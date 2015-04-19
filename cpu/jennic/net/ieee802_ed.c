@@ -160,11 +160,11 @@ PT_THREAD(ieee_mlmept(MAC_MlmeDcfmInd_s *ev))
         }
 
         {
-          rimeaddr_t rime;
+          linkaddr_t rime;
 
           if (asbeacon(ev).sPANdescriptor.sCoord.u8AddrMode == LONG && lqicb)
           {
-            lqicb(asrimeaddr(&asbeacon(ev).sPANdescriptor.sCoord.uAddr.sExt, &rime),
+            lqicb(aslinkaddr(&asbeacon(ev).sPANdescriptor.sCoord.uAddr.sExt, &rime),
                   asbeacon(ev).sPANdescriptor.u8LinkQuality);
           }
           else if (lqicb)

@@ -28,12 +28,11 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd-cgi.h,v 1.3 2008/10/14 11:07:57 adamdunkels Exp $
  *
  */
 
-#ifndef __HTTPD_CGI_H__
-#define __HTTPD_CGI_H__
+#ifndef HTTPD_CGI_H_
+#define HTTPD_CGI_H_
 
 #include "contiki.h"
 #include "httpd.h"
@@ -54,4 +53,4 @@ void httpd_cgi_add(struct httpd_cgi_call *c);
 static struct httpd_cgi_call name = {NULL, str, function}
 
 void httpd_cgi_init(void);
-#endif /* __HTTPD_CGI_H__ */
+#endif /* HTTPD_CGI_H_ */

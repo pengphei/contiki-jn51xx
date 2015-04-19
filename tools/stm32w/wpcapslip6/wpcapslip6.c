@@ -30,7 +30,6 @@
 *
 * This file is part of the uIP TCP/IP stack.
 *
-* $Id: wpcapslip6.c,v 1.3 2011/01/19 09:22:23 salvopitru Exp $
 */
 
  /**
@@ -70,7 +69,7 @@
 #include <windows.h>
 
 
-#include "net/uip_arp.h"
+#include "net/ipv4/uip_arp.h"
 
 #include "ip-process.h"
 
@@ -86,7 +85,7 @@ int ssystem(const char *fmt, ...)
 __attribute__((__format__ (__printf__, 1, 2)));
 void write_to_serial(void *inbuf, int len);
 
-#define PRINTF(...) if(verbose)printf(__VA_ARGS__)
+#define PRINTF(...) if(verbose)fprintf(stderr,__VA_ARGS__)
 
 //#define PROGRESS(s) fprintf(stderr, s)
 #define PROGRESS(s) do { } while (0)
@@ -113,6 +112,7 @@ static bool clean_route = false;
 static bool clean_neighb = false;
 static struct uip_eth_addr adapter_eth_addr;
 static char * if_name;
+static int timestamp = 1;
 
 OSVERSIONINFO osVersionInfo;
 
@@ -150,6 +150,7 @@ void print_help()
     fprintf(stderr, "Options:\r\n");
     fprintf(stderr, "-s siodev\tDevice that identifies the bridge or the boder router.\r\n");
     fprintf(stderr, "-B baudrate\tBaudrate of the serial port (default:115200).\r\n");
+    fprintf(stderr, "-L Log time\t-L1 HH:MM:SS -L2 HH:MM:SS.xxx -L3 SSSS -L4 SSSS.xxxx\r\n");
     fprintf(stderr, " One between:\n");
     fprintf(stderr, "  -a ipaddress/[prefixlen]  The address to be assigned to the local interface.\r\n");
     fprintf(stderr, "\t\tadapter.\r\n");
@@ -236,7 +237,52 @@ execProcess(LPDWORD exitCode,const char *fmt, ...)
 
 }
 
+void
+stamptime(void)
+{
+  static long startsecs=0,startmsecs=0;
+  long secs,msecs;
+  struct timeval tv;
+  time_t t;
+  struct tm *tmp;
+  char timec[20];
 
+  gettimeofday(&tv, NULL) ;
+  msecs=tv.tv_usec/1000;
+  secs=tv.tv_sec;
+  if (startsecs) {
+    if (timestamp<3) {
+	  t=time(NULL);
+      tmp=localtime(&t);
+      strftime(timec,sizeof(timec),"%T",tmp);
+	  if (timestamp==2) {
+        fprintf(stderr,"%s.%03lu ",timec,msecs);
+	  } else {
+	    fprintf(stderr,"%s ",timec);
+	  }
+	} else {
+      secs -=startsecs;
+      msecs-=startmsecs;
+      if (msecs<0) {secs--;msecs+=1000;}
+	  if (timestamp==3) {
+	    fprintf(stderr,"%04lu ", secs);
+	  } else {
+        fprintf(stderr,"%04lu.%03lu ", secs, msecs);
+	  }
+	}
+  } else {
+    startsecs=secs;
+    startmsecs=msecs;
+    t=time(NULL);
+    tmp=localtime(&t);
+    strftime(timec,sizeof(timec),"%T",tmp);
+	if ((timestamp==2) || (timestamp>3)) {
+	  fprintf(stderr,"\n%s.%03lu ",timec,msecs);
+	} else {
+      fprintf(stderr,"\n%s ",timec);
+	}
+  }
+}
 
 
 #define SLIP_END     0300
@@ -257,7 +303,7 @@ print_packet(u_int8_t *p, int len) {
     }
     printf("\n");
 }*/
-
+#if 0
 int
 is_sensible_string(const unsigned char *s, int len)
 {
@@ -266,12 +312,13 @@ is_sensible_string(const unsigned char *s, int len)
 		if(s[i] == 0 || s[i] == '\r' || s[i] == '\n' || s[i] == '\t') {
 			continue;
 		} else if(s[i] < ' ' || '~' < s[i]) {
+		printf("\nbad character at %d:%x\n",i,s[i]);
 			return 0;
 		}
 	}
 	return 1;
 }
-
+#endif
 
 /*
 * Read from serial, when we have a packet write it to tun. No output
@@ -283,10 +330,10 @@ is_sensible_string(const unsigned char *s, int len)
 void
 serial_to_wpcap(FILE *inslip)
 {
-	u16_t buf_aligned[BUF_SIZE/2 + 42]; //extra for possible eth_hdr and ip_process expansion
-	u8_t *buf = (u8_t *)buf_aligned;
+	uint16_t buf_aligned[BUF_SIZE/2 + 42]; //extra for possible eth_hdr and ip_process expansion
+	uint8_t *buf = (uint8_t *)buf_aligned;
 
-    static int inbufptr = 0;
+    static int inbufptr = 0, issensiblestring=1;
     int ret;
 	unsigned char c;
 
@@ -313,6 +360,7 @@ read_more:
 	if(ret == 0) {
 		clearerr(inslip);
 		return;
+		if (timestamp) stamptime();
 		fprintf(stderr, "serial_to_tun: EOF\n");
 		exit(1);
 	}
@@ -333,7 +381,8 @@ read_more:
 					  }
 				  }
 				  macs64[pos] = '\0';
-				  printf("*** Gateway's MAC address: %s\n", macs64);
+				  if (timestamp) stamptime();
+				  fprintf(stderr, "*** Gateway's MAC address: %s\n", macs64);
 				  mac_received = true;
 				  
 				  sscanf(macs64, "%2X-%2X-%2X-%2X-%2X-%2X-%2X-%2X",
@@ -361,13 +410,13 @@ read_more:
                             dev_eth_addr.addr[3],
                             dev_eth_addr.addr[4],
                             dev_eth_addr.addr[5]);
-
-                  printf("Fictitious MAC-48: %s\n", macs48);
-
+				  if (timestamp) stamptime();
+                  fprintf(stderr,"Fictitious MAC-48: %s\n", macs48);
 
 				  if(autoconf){
 
                       if(IPAddrFromPrefix(autoconf_addr, ipprefix, macs64)!=0){
+					      if (timestamp) stamptime();
                           fprintf(stderr, "Invalid IPv6 address.\n");
 						  exit(1);
                       }
@@ -379,6 +428,7 @@ read_more:
                       /* RPL Border Router mode. Add route towards LoWPAN. */
 
                       if(IPAddrFromPrefix(rem_ipaddr, br_prefix, macs64)!=0){
+					      if (timestamp) stamptime();
                           fprintf(stderr, "Invalid IPv6 address.\n");
 						  exit(1);
                       }
@@ -404,11 +454,31 @@ read_more:
 			   }
 		  }
 		  else if(inpktbuf[0] == DEBUG_LINE_MARKER) {
+		    /* Dont insert timestamp on wireshark packet dumps starting with 0000 */
+			  if (timestamp) {
+			     if (inpktbuf[0]!='0' || inpktbuf[1]!=0 || inpktbuf[2]!=0 || inpktbuf[3]!=0) stamptime();
+			  }
 			  fwrite(inpktbuf + 1, inbufptr - 1, 1, stderr);
+			  issensiblestring=1;
 		  }
+#if 0
 		  else if(is_sensible_string(inpktbuf, inbufptr)) {
+		    /* Dont insert timestamp on wireshark packet dumps starting with 0000 */
+			  if (timestamp) {
+			     if (inpktbuf[0]!='0' || inpktbuf[1]!=0 || inpktbuf[2]!=0 || inpktbuf[3]!=0) stamptime();
+			  }
 			  fwrite(inpktbuf, inbufptr, 1, stderr);
 		  }
+#else
+		  else if(issensiblestring) {
+		    /* Dont insert timestamp on wireshark packet dumps starting with 0000 */
+			  if (timestamp) {
+			     if (inpktbuf[0]!='0' || inpktbuf[1]!=0 || inpktbuf[2]!=0 || inpktbuf[3]!=0) stamptime();
+			  }
+			  fwrite(inpktbuf, inbufptr, 1, stderr);
+			  
+		  }
+#endif
 		  else {
 
               PRINTF("Sending to wpcap\n");
@@ -436,6 +506,7 @@ read_more:
 			  /*      printf("After sending to wpcap\n");*/
 		  }
 		  inbufptr = 0;
+		  issensiblestring=1;
 	  }
 	  break;
 
@@ -458,6 +529,26 @@ read_more:
 	  /* FALLTHROUGH */
   default:
 	  inpktbuf[inbufptr++] = c;
+	  if (issensiblestring) {
+	    if(c == '\n') {
+		/* Dont insert timestamp on wireshark packet dumps starting with 0000 */
+		  if (timestamp) {
+			 if (inpktbuf[0]!='0' || inpktbuf[1]!=0 || inpktbuf[2]!=0 || inpktbuf[3]!=0) stamptime();
+		  }
+/* This could be a proper debug string starting with CR just a print to stdout */
+/* Trap the CR which would cause overwriting of the timestamp */
+//{int i;for (i=0;i<inbufptr;i++) fprintf(stderr,"%2x ",inpktbuf[i]);}
+		  if(inpktbuf[0] == DEBUG_LINE_MARKER) {
+		    fwrite(inpktbuf + 1, inbufptr - 1, 1, stderr);
+		  } else {
+	  	    fwrite(inpktbuf, inbufptr, 1, stderr);
+		  }
+		  inbufptr=0; 
+		} else if (c == 0 || c == '\t' || c == '\r') {
+	    } else if(c < ' ' || '~' < c) {
+	      issensiblestring=0;
+		}
+	  }
 	  break;
 	}
 
@@ -673,6 +764,7 @@ cleanup(void)
 void
 sigcleanup(int signo)
 {
+	if (timestamp) stamptime();
 	fprintf(stderr, "signal %d\n", signo);
 	exit(0);			/* exit(0) will call cleanup() */
 }
@@ -681,6 +773,7 @@ void
 sigalarm(int signo)
 {
 	if(!mac_received){
+		if (timestamp) stamptime();
 		fprintf(stderr, "Bridge/Router not found!\n");
 		exit(2);
 	}
@@ -763,7 +856,7 @@ void send_commands(void)
         int i;
 
         inet_pton(AF_INET6, br_prefix, &addr);
-
+		if (timestamp) stamptime();
         fprintf(stderr,"*** Address:%s => %02x%02x:%02x%02x:%02x%02x:%02x%02x\n",
             br_prefix, 
             addr.s6_addr[0], addr.s6_addr[1],
@@ -794,25 +887,30 @@ void addAddress(const char * ifname, const char * ipaddr)
 		strncpy(tmpaddr,ipaddr,sizeof(tmpaddr));
 
 		strtok(tmpaddr,"/"); // Remove possible prefix length.
+		if (timestamp) stamptime();
 		execProcess(&exitCode,"netsh interface ipv6 add address \"%s\" %s",if_name,tmpaddr);
 		substr = strtok(NULL,"/");
 		if(substr == NULL){ // A prefix length is not specified.
 			// Use a 64 bit prefix
 			strcat(tmpaddr,"/64");
+			if (timestamp) stamptime();
 			execProcess(NULL,"netsh interface ipv6 add route %s \"%s\"",tmpaddr,if_name);
 		}
 		else {
+			if (timestamp) stamptime();
 			execProcess(NULL,"netsh interface ipv6 add route %s \"%s\"",ipaddr,if_name);
 		}
 		
 	}
 	else{
+		if (timestamp) stamptime();
 		execProcess(&exitCode,"netsh interface ipv6 add address \"%s\" %s",if_name,ipaddr);
 	}
 	if(exitCode==0){
 		clean_addr = true;
 	}
 	else {
+	  if (timestamp) stamptime();
 	  fprintf(stderr, "WARNING: subprocess exited with code %ld\n", exitCode);
 	}
 }
@@ -823,15 +921,17 @@ void delAddress(const char * ifname, const char * ipaddr)
 
 	strncpy(tmpaddr,ipaddr,sizeof(tmpaddr));
 	strtok(tmpaddr,"/"); // Remove possible prefix length.
-	
+	if (timestamp) stamptime();	
+
 	if(osVersionInfo.dwMajorVersion < 6){ // < Windows Vista (i.e., Windows XP; check if this command is ok for Windows Server 2003 too).
 		char * substr;	
 		
 		execProcess(NULL,"netsh interface ipv6 delete address \"%s\" %s",if_name,tmpaddr);
+		if (timestamp) stamptime();
 		substr = strtok(NULL,"/");
 		if(substr == NULL){ // A prefix length is not specified.
 			// Use a 64 bit prefix
-			strcat(tmpaddr,"/64");
+			strcat(tmpaddr,"/64");	
 			execProcess(NULL,"netsh interface ipv6 delete route %s \"%s\"",tmpaddr,if_name);
 		}
 		else {
@@ -849,18 +949,20 @@ void delAddress(const char * ifname, const char * ipaddr)
 void addLoWPANRoute(const char * ifname, const char * net, const char * gw)
 {
 	DWORD exitCode = -1;
-
+	if (timestamp) stamptime();
 	execProcess(&exitCode,"netsh interface ipv6 add route %s/64 \"%s\" %s", net, if_name, gw);
     if(exitCode==0){
         clean_route = true;
     }
     else {
+	  if (timestamp) stamptime();
       fprintf(stderr, "WARNING: subprocess exited with code %ld\n", exitCode);
     }
 }
 
 void delLoWPANRoute(const char * ifname, const char * net)
 {
+	if (timestamp) stamptime();
     execProcess(NULL,"netsh interface ipv6 delete route %s/64 \"%s\"", net, if_name);
 }
 
@@ -869,11 +971,13 @@ void addNeighbor(const char * ifname, const char * neighb, const char * neighb_m
 	DWORD exitCode = -1;
 
 	if(osVersionInfo.dwMajorVersion >= 6){
+		if (timestamp) stamptime();
         execProcess(&exitCode,"netsh interface ipv6 add neighbor \"%s\" %s \"%s\"", if_name, neighb, neighb_mac);
         if(exitCode==0){
             clean_neighb = true;
         }
         else {
+		  if (timestamp) stamptime();
           fprintf(stderr, "WARNING: subprocess exited with code %ld\n", exitCode);
         }
 	}
@@ -881,6 +985,7 @@ void addNeighbor(const char * ifname, const char * neighb, const char * neighb_m
 
 void delNeighbor(const char * ifname, const char * neighb)
 {
+	if (timestamp) stamptime();
     execProcess(NULL,"netsh interface ipv6 delete neighbor \"%s\" %s", if_name, neighb);
 }
 
@@ -995,10 +1100,19 @@ main(int argc, char **argv)
 	osVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osVersionInfo);
 
-    while((c = getopt(argc, argv, "B:D:hs:c:ra:p:vtb:")) != -1) {
+    while((c = getopt(argc, argv, "B:D:L:hs:c:ra:p:vtb:")) != -1) {
 		switch (c) {
 	case 'B':
 		baudrate = atoi(optarg);
+		break;
+
+	case 'L':
+		if(strncmp("0", optarg, 1) == 0) {
+		  timestamp = 0;
+		} else {
+		  timestamp = atoi(optarg);
+		  if (timestamp==0) timestamp=1;
+		}
 		break;
 
 	case 's':
@@ -1035,6 +1149,7 @@ main(int argc, char **argv)
 		}
 		local_ipaddr = optarg;
         if (!validIPAddr(local_ipaddr, 0)){
+			if (timestamp) stamptime();
             fprintf(stderr, "Invalid IPv6 address: %s", local_ipaddr);
             exit(1);
         }
@@ -1047,6 +1162,7 @@ main(int argc, char **argv)
 		autoconf = true;
 		ipprefix = optarg;
         if (!validIPAddr(ipprefix, 0)){
+			if (timestamp) stamptime();
             fprintf(stderr, "Invalid IPv6 prefix: %s", ipprefix);
             exit(1);
         }
@@ -1067,6 +1183,7 @@ main(int argc, char **argv)
         tun = true;
 
         if (!validIPAddr(br_prefix, 64)){
+			if (timestamp) stamptime();
             fprintf(stderr, "Invalid IPv6 64-bit prefix: %s", br_prefix);
             exit(1);
         }
@@ -1088,6 +1205,7 @@ main(int argc, char **argv)
 	}
 
     if(autoconf == true && br_prefix != NULL){
+		if (timestamp) stamptime();
         fprintf(stderr, "-p and -b options cannot be used together.\r\n");
         print_help();
     }
@@ -1135,13 +1253,12 @@ main(int argc, char **argv)
 	}
 
 
-
 	slipfd = devopen(siodev, O_RDWR | O_NONBLOCK | O_NOCTTY | O_NDELAY | O_DIRECT | O_SYNC );
 	if(slipfd == -1) {
 		err(1, "can't open siodev ``/dev/%s''", siodev);
 	}
-
-	fprintf(stderr, "slip started on ``/dev/%s''\n", siodev);
+	if (timestamp) stamptime();
+	fprintf(stderr, "wpcapslip6 started on ``/dev/%s''\n", siodev);
 	stty_telos(slipfd);
 	slip_send(SLIP_END);
 	inslip = fdopen(slipfd, "r");
@@ -1204,7 +1321,7 @@ main(int argc, char **argv)
 			tv.tv_usec = 10;
 			ret = select(maxfd + 1, &rset, &wset, NULL, &tv);
 		}
-		if(ret == -1 && errno != EINTR) {
+		if(ret == -1 && errno != EINTR && errno != EAGAIN) {
 			err(1, "select");
 		}
 		else if(ret > 0) {

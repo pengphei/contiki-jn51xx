@@ -64,7 +64,7 @@ void main(void) {
 	/* trim the reference osc. to 24MHz */
 	trim_xtal();
 
-	uart_init(INC, MOD, SAMP);
+	uart_init(UART1, 115200);
 
 	vreg_init();
 
@@ -94,7 +94,7 @@ void main(void) {
 			/* print and free the packet */
 			printf("autoack-rx --- ");
 			print_packet(p);
-			free_packet(p);
+			maca_free_packet(p);
 		}
 
 		if(uart1_can_get()) {

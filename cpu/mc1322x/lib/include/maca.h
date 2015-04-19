@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _MACA_H_
-#define _MACA_H_
+#ifndef MACA_H_
+#define MACA_H_
 
 #include <packet.h>
 #include <stdint.h>
@@ -71,7 +71,7 @@ extern volatile uint8_t prm_mode;
 void tx_packet(volatile packet_t *p);
 volatile packet_t* rx_packet(void);
 volatile packet_t* get_free_packet(void);
-void free_packet(volatile packet_t *p);
+void maca_free_packet(volatile packet_t *p);
 void free_all_packets(void);
 
 extern volatile packet_t *rx_head, *tx_head;
@@ -88,6 +88,10 @@ void flyback_init(void);
 void ResumeMACASync(void);
 void radio_init(void);
 uint32_t init_from_flash(uint32_t addr);
+
+/* maca_pwr indicates whether the radio is on or off */
+/* Test it before accessing any radio function or the CPU may hang */
+extern volatile uint8_t maca_pwr;
 
 #define MAX_PACKET_SIZE (MAX_PAYLOAD_SIZE + 2) /* packet includes 2 bytes of checksum */
 
@@ -525,4 +529,4 @@ enum maca_status_bits {
 #define MACA_WRITE(reg, src) (reg = src)
 #define MACA_READ(reg)  reg
 
-#endif // _MACA_H_
+#endif //MACA_H_

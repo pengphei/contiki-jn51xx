@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#)$Id: temperature-sensor.h,v 1.1 2010/08/25 19:34:07 nifi Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Niclas Finne <nfi@sics.se>
  */
 
-#ifndef __TEMPERATURE_SENSOR_H__
-#define __TEMPERATURE_SENSOR_H__
+#ifndef TEMPERATURE_SENSOR_H_
+#define TEMPERATURE_SENSOR_H_
 
 #include "lib/sensors.h"
 
@@ -47,4 +46,4 @@ extern const struct sensors_sensor temperature_sensor;
 
 #define TEMPERATURE_SENSOR "Temperature"
 
-#endif /* __TEMPERATURE_SENSOR_H__ */
+#endif /* TEMPERATURE_SENSOR_H_ */

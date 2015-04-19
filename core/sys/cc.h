@@ -1,13 +1,3 @@
-/**
- * \file
- * Default definitions of C compiler quirk work-arounds.
- * \author Adam Dunkels <adam@dunkels.com>
- *
- * This file is used for making use of extra functionality of some C
- * compilers used for Contiki, and defining work-arounds for various
- * quirks and problems with some other C compilers.
- */
-
 /*
  * Copyright (c) 2003, Adam Dunkels.
  * All rights reserved.
@@ -39,11 +29,21 @@
  *
  * This file is part of the Contiki desktop OS
  *
- * $Id: cc.h,v 1.6 2008/07/02 08:35:29 adamdunkels Exp $
  *
  */
-#ifndef __CC_H__
-#define __CC_H__
+
+/**
+ * \file
+ * Default definitions of C compiler quirk work-arounds.
+ * \author Adam Dunkels <adam@dunkels.com>
+ *
+ * This file is used for making use of extra functionality of some C
+ * compilers used for Contiki, and defining work-arounds for various
+ * quirks and problems with some other C compilers.
+ */
+
+#ifndef CC_H_
+#define CC_H_
 
 #include "contiki-conf.h"
 
@@ -133,8 +133,8 @@
  * strings.
  *
  * We need use two macros (CC_CONCAT and CC_CONCAT2) in order to allow
- * concatenation of two #defined macros.
+ * concatenation of two \#defined macros.
  */
 #define CC_CONCAT(s1, s2) CC_CONCAT2(s1, s2)
 
-#endif /* __CC_H__ */
+#endif /* CC_H_ */

@@ -28,14 +28,13 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: ethernet-drv.c,v 1.3 2010/10/19 18:29:04 adamdunkels Exp $
  */
 
 #include <stdio.h>
 
 #include "contiki-net.h"
 #include "net/ethernet.h"
-#include "net/uip-neighbor.h"
+#include "net/ipv4/uip-neighbor.h"
 
 #include "net/ethernet-drv.h"
 
@@ -44,7 +43,7 @@
 PROCESS(ethernet_process, "Ethernet driver");
 
 /*---------------------------------------------------------------------------*/
-u8_t
+uint8_t
 ethernet_output(void)
 {
   uip_arp_out();
@@ -60,22 +59,22 @@ pollhandler(void)
   uip_len = ethernet_poll();
 
   if(uip_len > 0) {
-#if UIP_CONF_IPV6
+#if NETSTACK_CONF_WITH_IPV6
     if(BUF->type == uip_htons(UIP_ETHTYPE_IPV6)) {
       uip_neighbor_add(&IPBUF->srcipaddr, &BUF->src);
       tcpip_input();
     } else
-#endif /* UIP_CONF_IPV6 */
+#endif /* NETSTACK_CONF_WITH_IPV6 */
     if(BUF->type == uip_htons(UIP_ETHTYPE_IP)) {
       uip_len -= sizeof(struct uip_eth_hdr);
       tcpip_input();
     } else if(BUF->type == uip_htons(UIP_ETHTYPE_ARP)) {
       uip_arp_arpin();
       /* If the above function invocation resulted in data that
-	 should be sent out on the network, the global variable
-	 uip_len is set to a value > 0. */
+         should be sent out on the network, the global variable
+         uip_len is set to a value > 0. */
       if(uip_len > 0) {
-	ethernet_send();
+        ethernet_send();
       }
     }
   }

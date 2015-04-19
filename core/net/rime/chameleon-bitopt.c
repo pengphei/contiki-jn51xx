@@ -27,8 +27,6 @@
  * SUCH DAMAGE.
  *
  * This file is part of the Contiki operating system.
- *
- * $Id: chameleon-bitopt.c,v 1.9 2010/05/28 06:18:39 nifi Exp $
  */
 
 /**
@@ -40,7 +38,7 @@
 
 #include "net/rime/chameleon.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 
 #include <string.h>
 
@@ -137,10 +135,8 @@ header_size(const struct packetbuf_attrlist *a)
       continue;
     }
 #endif /* CHAMELEON_WITH_MAC_LINK_ADDRESSES */
-    /*    PRINTF("chameleon header_size: header type %s (%d) len %d\n",
-	   packetbuf_attr_strings[a->type],
-	   a->type,
-	   a->len);*/
+    /*    PRINTF("chameleon header_size: header type %d len %d\n",
+	   a->type, a->len);*/
     len = a->len;
     /*    if(len < 8) {
       len = 8;
@@ -269,9 +265,9 @@ pack_header(struct channel *c)
       continue;
     }
 #endif /* CHAMELEON_WITH_MAC_LINK_ADDRESSES */
-    PRINTF("%d.%d: pack_header type %s, len %d, bitptr %d, ",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	   packetbuf_attr_strings[a->type], a->len, bitptr);
+    PRINTF("%d.%d: pack_header type %d, len %d, bitptr %d, ",
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	   a->type, a->len, bitptr);
     /*    len = (a->len & 0xf8) + ((a->len & 7) ? 8: 0);*/
     len = a->len;
     byteptr = bitptr / 8;
@@ -279,7 +275,7 @@ pack_header(struct channel *c)
       set_bits(&hdrptr[byteptr], bitptr & 7,
 	       (uint8_t *)packetbuf_addr(a->type), len);
       PRINTF("address %d.%d\n",
-	    /*	    rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],*/
+	    /*	    linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],*/
 	    ((uint8_t *)packetbuf_addr(a->type))[0],
 	    ((uint8_t *)packetbuf_addr(a->type))[1]);
     } else {
@@ -288,7 +284,7 @@ pack_header(struct channel *c)
       set_bits(&hdrptr[byteptr], bitptr & 7,
 	       (uint8_t *)&val, len);
       PRINTF("value %d\n",
-	    /*rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],*/
+	    /*linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],*/
 	    val);
     }
     /*    printhdr(hdrptr, hdrbytesize);*/
@@ -339,29 +335,27 @@ unpack_header(void)
       continue;
     }
 #endif /* CHAMELEON_WITH_MAC_LINK_ADDRESSES */
-    PRINTF("%d.%d: unpack_header type %s, len %d, bitptr %d\n",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	   packetbuf_attr_strings[a->type], a->len, bitptr);
+    PRINTF("%d.%d: unpack_header type %d, len %d, bitptr %d\n",
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	   a->type, a->len, bitptr);
     /*    len = (a->len & 0xf8) + ((a->len & 7) ? 8: 0);*/
     len = a->len;
     byteptr = bitptr / 8;
     if(PACKETBUF_IS_ADDR(a->type)) {
-      rimeaddr_t addr;
+      linkaddr_t addr;
       get_bits((uint8_t *)&addr, &hdrptr[byteptr], bitptr & 7, len);
-      PRINTF("%d.%d: unpack_header type %s, addr %d.%d\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	     packetbuf_attr_strings[a->type],
-	     addr.u8[0], addr.u8[1]);
+      PRINTF("%d.%d: unpack_header type %d, addr %d.%d\n",
+	     linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	     a->type, addr.u8[0], addr.u8[1]);
       packetbuf_set_addr(a->type, &addr);
     } else {
       packetbuf_attr_t val = 0;
       get_bits((uint8_t *)&val, &hdrptr[byteptr], bitptr & 7, len);
 
       packetbuf_set_attr(a->type, val);
-      PRINTF("%d.%d: unpack_header type %s, val %d\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
-	     packetbuf_attr_strings[a->type],
-	     val);
+      PRINTF("%d.%d: unpack_header type %d, val %d\n",
+	     linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
+	     a->type, val);
     }
     /*    byteptr += len / 8;*/
     bitptr += len;

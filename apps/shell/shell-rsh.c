@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-rsh.c,v 1.3 2009/03/12 21:58:20 adamdunkels Exp $
  */
 
 /**
@@ -41,7 +40,7 @@
 #include "contiki.h"
 #include "shell.h"
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/meshconn.h"
 
 #include <stdio.h>
@@ -66,7 +65,7 @@ PROCESS(shell_rsh_server_process, "rsh server");
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(shell_rsh_process, ev, data)
 {
-  static rimeaddr_t receiver;
+  static linkaddr_t receiver;
   struct shell_input *input;
   const char *nextptr;
   char buf[40];

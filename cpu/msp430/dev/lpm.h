@@ -28,10 +28,9 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: lpm.h,v 1.1 2006/06/17 22:41:21 adamdunkels Exp $
  */
-#ifndef __LPM_H__
-#define __LPM_H__
+#ifndef LPM_H_
+#define LPM_H_
 
 #include "contiki-conf.h"
 
@@ -59,4 +58,4 @@ void lpm_off(void);
 #define LPM_STATUS_ON  1
 
 
-#endif /* __LPM_H__ */
+#endif /* LPM_H_ */

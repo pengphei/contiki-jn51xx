@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * @(#)$Id: slip_uart0.c,v 1.1 2010/08/24 16:23:20 joxe Exp $
  */
 
 /*
@@ -34,14 +33,6 @@
  */
 
 #include "contiki-conf.h"
-
-#ifdef __IAR_SYSTEMS_ICC__
-#include <msp430.h>
-#else
-#include <io.h>
-#include <signal.h>
-#endif
-
 #include "dev/slip.h"
 #include "dev/uart0.h"
 /*---------------------------------------------------------------------------*/
@@ -58,7 +49,7 @@ slip_arch_writeb(unsigned char c)
  *
  */
 /*---------------------------------------------------------------------------*/
-#if WITH_UIP
+#if NETSTACK_CONF_WITH_IPV4
 int
 putchar(int c)
 {
@@ -84,7 +75,7 @@ putchar(int c)
 
   return c;
 }
-#endif
+#endif /* NETSTACK_CONF_WITH_IPV4 */
 /*---------------------------------------------------------------------------*/
 /**
  * Initalize the RS232 port and the SLIP driver.

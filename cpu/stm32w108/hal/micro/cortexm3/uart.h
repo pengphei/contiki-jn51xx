@@ -5,8 +5,8 @@
  * <!--(C) COPYRIGHT 2010 STMicroelectronics. All rights reserved.        -->
  */
 
-#ifndef __UART_MIN_H__
-#define __UART_MIN_H__
+#ifndef UART_MIN_H_
+#define UART_MIN_H_
 #ifdef __ICCARM__
 #include <yfuns.h>
 #endif
@@ -36,7 +36,7 @@ typedef enum
  * @return stopbits The number of stop bits used for communication.
  *                  Valid values are 1 or 2
  */
-void uartInit(int32u baudrate, int8u databits, SerialParity parity, int8u stopbits);
+void uartInit(uint32_t baudrate, uint8_t databits, SerialParity parity, uint8_t stopbits);
 
 #ifdef __ICCARM__
 /**
@@ -63,10 +63,10 @@ size_t fflush(int handle);
 /**
  * @brief Read the input byte if any. 
  */
-boolean __io_getcharNonBlocking(int8u *data);
+boolean __io_getcharNonBlocking(uint8_t *data);
 void __io_putchar( char c );
 int __io_getchar(void);
 void __io_flush( void );
 
 
-#endif //__UART_MIN_H__
+#endif //UART_MIN_H_

@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
  * SUCH DAMAGE. 
  *
- * @(#)$Id: minileds.c,v 1.1 2006/12/22 17:05:31 barner Exp $
  *
  /**
  * \file
@@ -59,8 +58,4 @@ leds_off(unsigned char leds)
 void
 leds_toggle(unsigned char leds)
 {
-  /*
-   * Synonym: void leds_invert(unsigned char leds);
-   */
-  asm(".global leds_invert\nleds_invert:\n");
 }

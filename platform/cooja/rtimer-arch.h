@@ -28,11 +28,10 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: rtimer-arch.h,v 1.3 2010/03/23 13:13:17 fros4943 Exp $
  */
 
-#ifndef __RTIMER_ARCH_H__
-#define __RTIMER_ARCH_H__
+#ifndef RTIMER_ARCH_H_
+#define RTIMER_ARCH_H_
 
 #include "contiki-conf.h"
 #include "sys/clock.h"
@@ -44,4 +43,4 @@ int rtimer_arch_check(void);
 int rtimer_arch_pending(void);
 rtimer_clock_t rtimer_arch_next(void);
 
-#endif /* __RTIMER_ARCH_H__ */
+#endif /* RTIMER_ARCH_H_ */

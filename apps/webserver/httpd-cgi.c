@@ -28,7 +28,6 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: httpd-cgi.c,v 1.16 2010/10/19 18:29:03 adamdunkels Exp $
  *
  */
 
@@ -158,7 +157,7 @@ make_tcp_stats(void *arg)
   struct httpd_state *s = (struct httpd_state *)arg;
   conn = &uip_conns[s->u.count];
 
-#if UIP_CONF_IPV6
+#if NETSTACK_CONF_WITH_IPV6
   char buf[48];
   httpd_sprint_ip6(conn->ripaddr, buf);
   return snprintf((char *)uip_appdata, uip_mss(),
@@ -185,7 +184,7 @@ make_tcp_stats(void *arg)
          conn->timer,
         (uip_outstanding(conn))? '*':' ',
         (uip_stopped(conn))? '!':' ');
-#endif /* UIP_CONF_IPV6 */
+#endif /* NETSTACK_CONF_WITH_IPV6 */
 }
 /*---------------------------------------------------------------------------*/
 static
@@ -207,8 +206,8 @@ static unsigned short
 make_processes(void *p)
 {
   char name[40];
-
-  strncpy(name, ((struct process *)p)->name, 40);
+ 
+  strncpy(name, PROCESS_NAME_STRING((struct process *)p), 40);
   petsciiconv_toascii(name, 40);
 
   return snprintf((char *)uip_appdata, uip_mss(),
@@ -227,7 +226,7 @@ PT_THREAD(processes(struct httpd_state *s, char *ptr))
   }
   PSOCK_END(&s->sout);
 }
-#if WEBSERVER_CONF_STATUSPAGE && UIP_CONF_IPV6
+#if WEBSERVER_CONF_STATUSPAGE && NETSTACK_CONF_WITH_IPV6
 /* These cgi's are invoked by the status.shtml page in /apps/webserver/httpd-fs.
  * To keep the webserver build small that 160 byte page is not present in the
  * default httpd-fsdata.c file. Run the PERL script /../../tools/makefsdata from the
@@ -245,8 +244,6 @@ static const char httpd_cgi_addrh[] HTTPD_STRING_ATTR = "<code>";
 static const char httpd_cgi_addrf[] HTTPD_STRING_ATTR = "</code>[Room for %u more]";
 static const char httpd_cgi_addrb[] HTTPD_STRING_ATTR = "<br>";
 static const char httpd_cgi_addrn[] HTTPD_STRING_ATTR = "(none)<br>";
-extern uip_ds6_nbr_t uip_ds6_nbr_cache[];
-extern uip_ds6_route_t uip_ds6_routing_table[];
 extern uip_ds6_netif_t uip_ds6_if;
 
 static unsigned short
@@ -283,15 +280,16 @@ make_neighbors(void *p)
 uint8_t i,j=0;
 uint16_t numprinted;
   numprinted = httpd_snprintf((char *)uip_appdata, uip_mss(),httpd_cgi_addrh);
-  for (i=0; i<UIP_DS6_NBR_NB;i++) {
-    if (uip_ds6_nbr_cache[i].isused) {
-      j++;
-      numprinted += httpd_cgi_sprint_ip6(uip_ds6_nbr_cache[i].ipaddr, uip_appdata + numprinted);
-      numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrb); 
-    }
+  uip_ds6_nbr_t *nbr;
+  for(nbr = nbr_table_head(ds6_neighbors);
+      nbr != NULL;
+      nbr = nbr_table_next(ds6_neighbors, nbr)) {
+    j++;
+    numprinted += httpd_cgi_sprint_ip6(nbr->ipaddr, uip_appdata + numprinted);
+    numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrb);
   }
 //if (j==0) numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrn);
-  numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrf,UIP_DS6_NBR_NB-j);
+  numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrf,NBR_TABLE_MAX_NEIGHBORS-j);
   return numprinted;
 }
 /*---------------------------------------------------------------------------*/
@@ -308,23 +306,25 @@ PT_THREAD(neighbors(struct httpd_state *s, char *ptr))
 static unsigned short
 make_routes(void *p)
 {
-static const char httpd_cgi_rtes1[] HTTPD_STRING_ATTR = "(%u (via ";
-static const char httpd_cgi_rtes2[] HTTPD_STRING_ATTR = ") %us<br>";
-static const char httpd_cgi_rtes3[] HTTPD_STRING_ATTR = ")<br>";
-uint8_t i,j=0;
-uint16_t numprinted;
+  static const char httpd_cgi_rtes1[] HTTPD_STRING_ATTR = "(%u (via ";
+  static const char httpd_cgi_rtes2[] HTTPD_STRING_ATTR = ") %lus<br>";
+  static const char httpd_cgi_rtes3[] HTTPD_STRING_ATTR = ")<br>";
+  uint8_t i,j=0;
+  uint16_t numprinted;
+  uip_ds6_route_t *r;
+
   numprinted = httpd_snprintf((char *)uip_appdata, uip_mss(),httpd_cgi_addrh);
-  for (i=0; i<UIP_DS6_ROUTE_NB;i++) {
-    if (uip_ds6_routing_table[i].isused) {
-      j++;
-      numprinted += httpd_cgi_sprint_ip6(uip_ds6_routing_table[i].ipaddr, uip_appdata + numprinted);
-      numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes1, uip_ds6_routing_table[i].length);
-      numprinted += httpd_cgi_sprint_ip6(uip_ds6_routing_table[i].nexthop, uip_appdata + numprinted);
-      if(uip_ds6_routing_table[i].state.lifetime < 3600*24) {
-         numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes2, uip_ds6_routing_table[i].state.lifetime);
-      } else {
-         numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes3);
-      }
+  for(r = uip_ds6_route_head();
+      r != NULL;
+      r = uip_ds6_route_next(r)) {
+    j++;
+    numprinted += httpd_cgi_sprint_ip6(r->ipaddr, uip_appdata + numprinted);
+    numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes1, r->length);
+    numprinted += httpd_cgi_sprint_ip6(uip_ds6_route_nexthop(r), uip_appdata + numprinted);
+    if(r->state.lifetime < 3600) {
+      numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes2, r->state.lifetime);
+    } else {
+      numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_rtes3);
     }
   }
   if (j==0) numprinted += httpd_snprintf((char *)uip_appdata+numprinted, uip_mss()-numprinted, httpd_cgi_addrn);
@@ -357,7 +357,7 @@ httpd_cgi_add(struct httpd_cgi_call *c)
   }
 }
 /*---------------------------------------------------------------------------*/
-#if WEBSERVER_CONF_STATUSPAGE && UIP_CONF_IPV6
+#if WEBSERVER_CONF_STATUSPAGE && NETSTACK_CONF_WITH_IPV6
 static const char   adrs_name[] HTTPD_STRING_ATTR = "addresses";
 static const char   nbrs_name[] HTTPD_STRING_ATTR = "neighbors";
 static const char   rtes_name[] HTTPD_STRING_ATTR = "routes";
@@ -365,7 +365,7 @@ static const char   rtes_name[] HTTPD_STRING_ATTR = "routes";
 HTTPD_CGI_CALL(file, file_name, file_stats);
 HTTPD_CGI_CALL(tcp, tcp_name, tcp_stats);
 HTTPD_CGI_CALL(proc, proc_name, processes);
-#if WEBSERVER_CONF_STATUSPAGE && UIP_CONF_IPV6
+#if WEBSERVER_CONF_STATUSPAGE && NETSTACK_CONF_WITH_IPV6
 HTTPD_CGI_CALL(adrs, adrs_name, addresses);
 HTTPD_CGI_CALL(nbrs, nbrs_name, neighbors);
 HTTPD_CGI_CALL(rtes, rtes_name, routes);
@@ -377,7 +377,7 @@ httpd_cgi_init(void)
   httpd_cgi_add(&file);
   httpd_cgi_add(&tcp);
   httpd_cgi_add(&proc);
-#if WEBSERVER_CONF_STATUSPAGE && UIP_CONF_IPV6
+#if WEBSERVER_CONF_STATUSPAGE && NETSTACK_CONF_WITH_IPV6
   httpd_cgi_add(&adrs);
   httpd_cgi_add(&nbrs);
   httpd_cgi_add(&rtes);

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: process.h,v 1.17 2010/09/14 18:55:04 dak664 Exp $
  */
 
 /**
@@ -51,8 +50,8 @@
  * Adam Dunkels <adam@sics.se>
  *
  */
-#ifndef __PROCESS_H__
-#define __PROCESS_H__
+#ifndef PROCESS_H_
+#define PROCESS_H_
 
 #include "sys/pt.h"
 #include "sys/cc.h"
@@ -221,7 +220,7 @@ typedef unsigned char process_num_events_t;
  */
 #define PROCESS_PAUSE()             do {				\
   process_post(PROCESS_CURRENT(), PROCESS_EVENT_CONTINUE, NULL);	\
-  PROCESS_WAIT_EVENT();							\
+  PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_CONTINUE);               \
 } while(0)
 
 /** @} end of protothread functions */
@@ -336,11 +335,11 @@ struct process {
  *
  * \param p A pointer to a process structure.
  *
- * \param arg An argument pointer that can be passed to the new
+ * \param data An argument pointer that can be passed to the new
  * process
  *
  */
-CCIF void process_start(struct process *p, const char *arg);
+CCIF void process_start(struct process *p, process_data_t data);
 
 /**
  * Post an asynchronous event.
@@ -363,7 +362,7 @@ CCIF void process_start(struct process *p, const char *arg);
  * \retval PROCESS_ERR_FULL The event queue was full and the event could
  * not be posted.
  */
-CCIF int process_post(struct process *p, process_event_t ev, void* data);
+CCIF int process_post(struct process *p, process_event_t ev, process_data_t data);
 
 /**
  * Post a synchronous event to a process.
@@ -376,7 +375,7 @@ CCIF int process_post(struct process *p, process_event_t ev, void* data);
  * with the event.
  */
 CCIF void process_post_synch(struct process *p,
-			     process_event_t ev, void* data);
+			     process_event_t ev, process_data_t data);
 
 /**
  * \brief      Cause a process to exit
@@ -526,7 +525,7 @@ CCIF extern struct process *process_list;
 
 #define PROCESS_LIST() process_list
 
-#endif /* __PROCESS_H__ */
+#endif /* PROCESS_H_ */
 
 /** @} */
 /** @} */

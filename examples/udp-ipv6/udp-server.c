@@ -34,7 +34,7 @@
 #include <string.h>
 
 #define DEBUG DEBUG_PRINT
-#include "net/uip-debug.h"
+#include "net/ip/uip-debug.h"
 
 #define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
 
@@ -43,7 +43,7 @@
 static struct uip_udp_conn *server_conn;
 
 PROCESS(udp_server_process, "UDP server process");
-AUTOSTART_PROCESSES(&udp_server_process);
+AUTOSTART_PROCESSES(&resolv_process,&udp_server_process);
 /*---------------------------------------------------------------------------*/
 static void
 tcpip_handler(void)
@@ -93,6 +93,10 @@ PROCESS_THREAD(udp_server_process, ev, data)
 
   PROCESS_BEGIN();
   PRINTF("UDP server started\n");
+
+#if RESOLV_CONF_SUPPORTS_MDNS
+  resolv_set_hostname("contiki-udp-server");
+#endif
 
 #if UIP_CONF_ROUTER
   uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 0);

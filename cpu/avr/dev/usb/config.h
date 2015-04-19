@@ -19,7 +19,6 @@
  * $Revision: 1.1 $
  * $RCSfile: config.h,v $
  * $Date: 2008/10/14 20:16:36 $  \n
- * $Id: config.h,v 1.1 2008/10/14 20:16:36 c_oflynn Exp $
  ******************************************************************************/
 /* Copyright (c) 2008  ATMEL Corporation
    All rights reserved.
@@ -50,11 +49,11 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef CONFIG_H_
+#define CONFIG_H_
 
 /**
-   @addtogroup usb
+   @addtogroup usbstick
    @{
 */
 
@@ -110,5 +109,5 @@
 
 /** @}  */
 
-#endif // _CONFIG_H_
+#endif //CONFIG_H_
 

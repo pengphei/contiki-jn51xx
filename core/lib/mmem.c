@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: mmem.c,v 1.2 2006/12/22 17:14:06 barner Exp $
  */
 
 /**
@@ -152,8 +151,13 @@ mmem_free(struct mmem *m)
 void
 mmem_init(void)
 {
+  static int inited = 0;
+  if(inited) {
+    return;
+  }
   list_init(mmemlist);
   avail_memory = MMEM_SIZE;
+  inited = 1;
 }
 /*---------------------------------------------------------------------------*/
 

@@ -28,11 +28,10 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: smtp.h,v 1.3 2010/05/31 15:22:08 nifi Exp $
  *
  */
-#ifndef __SMTP_H__
-#define __SMTP_H__
+#ifndef SMTP_H_
+#define SMTP_H_
 
 #include "contiki-net.h"
 
@@ -45,7 +44,7 @@ void smtp_configure(char *localhostname, uip_ipaddr_t *smtpserver);
 
 unsigned char smtp_send(char *to, char *cc, char *from,
 			char *subject, char *msg,
-			u8_t msgwidth, u8_t msgheight);
+			uint8_t msgwidth, uint8_t msgheight);
 
 void smtp_appcall(void *state);
 
@@ -61,4 +60,4 @@ void smtp_appcall(void *state);
 
 void smtp_init(void);
 
-#endif /* __SMTP_H__ */
+#endif /* SMTP_H_ */

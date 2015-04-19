@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-netstat.h,v 1.1 2009/05/10 21:02:24 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_NETSTAT_H__
-#define __SHELL_NETSTAT_H__
+#ifndef SHELL_NETSTAT_H_
+#define SHELL_NETSTAT_H_
 
 #include "shell.h"
 
 void shell_netstat_init(void);
 
-#endif /* __SHELL_NETSTAT_H__ */
+#endif /* SHELL_NETSTAT_H_ */

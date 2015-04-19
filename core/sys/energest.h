@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: energest.h,v 1.5 2009/10/20 20:19:27 adamdunkels Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __ENERGEST_H__
-#define __ENERGEST_H__
+#ifndef ENERGEST_H_
+#define ENERGEST_H_
 
 #include "sys/rtimer.h"
 
@@ -91,7 +90,22 @@ extern energest_t energest_leveldevice_current_leveltime[ENERGEST_CONF_LEVELDEVI
                            energest_current_time[type] = RTIMER_NOW(); \
 			   energest_current_mode[type] = 1; \
                            } while(0)
+#ifdef __AVR__
+/* Handle 16 bit rtimer wraparound */
+#define ENERGEST_OFF(type) if(energest_current_mode[type] != 0) do {	\
+							if (RTIMER_NOW() < energest_current_time[type]) energest_total_time[type].current += RTIMER_ARCH_SECOND; \
+							energest_total_time[type].current += (rtimer_clock_t)(RTIMER_NOW() - \
+							energest_current_time[type]); \
+							energest_current_mode[type] = 0; \
+                           } while(0)
 
+#define ENERGEST_OFF_LEVEL(type,level) do { \
+										if (RTIMER_NOW() < energest_current_time[type]) energest_total_time[type].current += RTIMER_ARCH_SECOND; \
+										energest_leveldevice_current_leveltime[level].current += (rtimer_clock_t)(RTIMER_NOW() - \
+										energest_current_time[type]); \
+										energest_current_mode[type] = 0; \
+                                       } while(0)
+#else
 #define ENERGEST_OFF(type) if(energest_current_mode[type] != 0) do {	\
                            energest_total_time[type].current += (rtimer_clock_t)(RTIMER_NOW() - \
                            energest_current_time[type]); \
@@ -103,6 +117,7 @@ extern energest_t energest_leveldevice_current_leveltime[ENERGEST_CONF_LEVELDEVI
 			                energest_current_time[type]); \
 			   energest_current_mode[type] = 0; \
                                         } while(0)
+#endif
 
 
 #else /* ENERGEST_CONF_ON */
@@ -111,4 +126,4 @@ extern energest_t energest_leveldevice_current_leveltime[ENERGEST_CONF_LEVELDEVI
 #define ENERGEST_OFF_LEVEL(type,level) do { } while(0)
 #endif /* ENERGEST_CONF_ON */
 
-#endif /* __ENERGEST_H__ */
+#endif /* ENERGEST_H_ */

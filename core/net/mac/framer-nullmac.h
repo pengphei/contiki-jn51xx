@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: framer-nullmac.h,v 1.1 2009/10/19 18:30:03 adamdunkels Exp $
  */
 
 /**
@@ -37,11 +36,11 @@
  *         Joakim Eriksson <joakime@sics.se>
  */
 
-#ifndef __FRAMER_NULLMAC_H__
-#define __FRAMER_NULLMAC_H__
+#ifndef FRAMER_NULLMAC_H_
+#define FRAMER_NULLMAC_H_
 
 #include "net/mac/framer.h"
 
 extern const struct framer framer_nullmac;
 
-#endif /* __FRAMER_NULLMAC_H__ */
+#endif /* FRAMER_NULLMAC_H_ */

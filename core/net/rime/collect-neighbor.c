@@ -1,8 +1,3 @@
-/**
- * \addtogroup rimecollect_neighbor
- * @{
- */
-
 /*
  * Copyright (c) 2006, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -33,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: collect-neighbor.c,v 1.10 2011/01/10 15:08:52 adamdunkels Exp $
  */
 
 /**
@@ -41,6 +35,11 @@
  *         Radio neighborhood management
  * \author
  *         Adam Dunkels <adam@sics.se>
+ */
+
+/**
+ * \addtogroup rimeneighbor
+ * @{
  */
 
 #include <limits.h>
@@ -127,11 +126,14 @@ collect_neighbor_list_new(struct collect_neighbor_list *neighbors_list)
 /*---------------------------------------------------------------------------*/
 struct collect_neighbor *
 collect_neighbor_list_find(struct collect_neighbor_list *neighbors_list,
-                           const rimeaddr_t *addr)
+                           const linkaddr_t *addr)
 {
   struct collect_neighbor *n;
+  if(neighbors_list == NULL) {
+    return NULL;
+  }
   for(n = list_head(neighbors_list->list); n != NULL; n = list_item_next(n)) {
-    if(rimeaddr_cmp(&n->addr, addr)) {
+    if(linkaddr_cmp(&n->addr, addr)) {
       return n;
     }
   }
@@ -140,7 +142,7 @@ collect_neighbor_list_find(struct collect_neighbor_list *neighbors_list,
 /*---------------------------------------------------------------------------*/
 int
 collect_neighbor_list_add(struct collect_neighbor_list *neighbors_list,
-                          const rimeaddr_t *addr, uint16_t nrtmetric)
+                          const linkaddr_t *addr, uint16_t nrtmetric)
 {
   struct collect_neighbor *n;
 
@@ -149,11 +151,15 @@ collect_neighbor_list_add(struct collect_neighbor_list *neighbors_list,
     return 0;
   }
 
+  if(neighbors_list == NULL) {
+    return 0;
+  }
+
   PRINTF("collect_neighbor_add: adding %d.%d\n", addr->u8[0], addr->u8[1]);
 
   /* Check if the collect_neighbor is already on the list. */
   for(n = list_head(neighbors_list->list); n != NULL; n = list_item_next(n)) {
-    if(rimeaddr_cmp(&n->addr, addr)) {
+    if(linkaddr_cmp(&n->addr, addr)) {
       PRINTF("collect_neighbor_add: already on list %d.%d\n",
              addr->u8[0], addr->u8[1]);
       break;
@@ -208,7 +214,7 @@ collect_neighbor_list_add(struct collect_neighbor_list *neighbors_list,
 
   if(n != NULL) {
     n->age = 0;
-    rimeaddr_copy(&n->addr, addr);
+    linkaddr_copy(&n->addr, addr);
     n->rtmetric = nrtmetric;
     collect_link_estimate_new(&n->le);
     n->le_age = 0;
@@ -220,14 +226,24 @@ collect_neighbor_list_add(struct collect_neighbor_list *neighbors_list,
 list_t
 collect_neighbor_list(struct collect_neighbor_list *neighbors_list)
 {
+  if(neighbors_list == NULL) {
+    return NULL;
+  }
+
   return neighbors_list->list;
 }
 /*---------------------------------------------------------------------------*/
 void
 collect_neighbor_list_remove(struct collect_neighbor_list *neighbors_list,
-                             const rimeaddr_t *addr)
+                             const linkaddr_t *addr)
 {
-  struct collect_neighbor *n = collect_neighbor_list_find(neighbors_list, addr);
+  struct collect_neighbor *n;
+
+  if(neighbors_list == NULL) {
+    return;
+  }
+
+  n = collect_neighbor_list_find(neighbors_list, addr);
 
   if(n != NULL) {
     list_remove(neighbors_list->list, n);
@@ -245,6 +261,10 @@ collect_neighbor_list_best(struct collect_neighbor_list *neighbors_list)
   rtmetric = RTMETRIC_MAX;
   best = NULL;
   found = 0;
+
+  if(neighbors_list == NULL) {
+    return NULL;
+  }
 
   /*  PRINTF("%d: ", node_id);*/
   PRINTF("collect_neighbor_best: ");
@@ -268,6 +288,10 @@ collect_neighbor_list_best(struct collect_neighbor_list *neighbors_list)
 int
 collect_neighbor_list_num(struct collect_neighbor_list *neighbors_list)
 {
+  if(neighbors_list == NULL) {
+    return 0;
+  }
+
   PRINTF("collect_neighbor_num %d\n", list_length(neighbors_list->list));
   return list_length(neighbors_list->list);
 }
@@ -277,6 +301,10 @@ collect_neighbor_list_get(struct collect_neighbor_list *neighbors_list, int num)
 {
   int i;
   struct collect_neighbor *n;
+
+  if(neighbors_list == NULL) {
+    return NULL;
+  }
 
   PRINTF("collect_neighbor_get %d\n", num);
 
@@ -295,6 +323,10 @@ collect_neighbor_list_get(struct collect_neighbor_list *neighbors_list, int num)
 void
 collect_neighbor_list_purge(struct collect_neighbor_list *neighbors_list)
 {
+  if(neighbors_list == NULL) {
+    return;
+  }
+
   while(list_head(neighbors_list->list) != NULL) {
     memb_free(&collect_neighbors_mem, list_pop(neighbors_list->list));
   }
@@ -305,7 +337,7 @@ collect_neighbor_update_rtmetric(struct collect_neighbor *n, uint16_t rtmetric)
 {
   if(n != NULL) {
     PRINTF("%d.%d: collect_neighbor_update %d.%d rtmetric %d\n",
-           rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+           linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
            n->addr.u8[0], n->addr.u8[1], rtmetric);
     n->rtmetric = rtmetric;
     n->age = 0;
@@ -315,6 +347,9 @@ collect_neighbor_update_rtmetric(struct collect_neighbor *n, uint16_t rtmetric)
 void
 collect_neighbor_tx_fail(struct collect_neighbor *n, uint16_t num_tx)
 {
+  if(n == NULL) {
+    return;
+  }
   collect_link_estimate_update_tx_fail(&n->le, num_tx);
   n->le_age = 0;
   n->age = 0;
@@ -323,6 +358,9 @@ collect_neighbor_tx_fail(struct collect_neighbor *n, uint16_t num_tx)
 void
 collect_neighbor_tx(struct collect_neighbor *n, uint16_t num_tx)
 {
+  if(n == NULL) {
+    return;
+  }
   collect_link_estimate_update_tx(&n->le, num_tx);
   n->le_age = 0;
   n->age = 0;
@@ -331,6 +369,9 @@ collect_neighbor_tx(struct collect_neighbor *n, uint16_t num_tx)
 void
 collect_neighbor_rx(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return;
+  }
   collect_link_estimate_update_rx(&n->le);
   n->age = 0;
 }
@@ -338,6 +379,9 @@ collect_neighbor_rx(struct collect_neighbor *n)
 uint16_t
 collect_neighbor_link_estimate(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return 0;
+  }
   if(collect_neighbor_is_congested(n)) {
     /*    printf("Congested %d.%d, sould return %d, returning %d\n",
            n->addr.u8[0], n->addr.u8[1],
@@ -352,24 +396,38 @@ collect_neighbor_link_estimate(struct collect_neighbor *n)
 uint16_t
 collect_neighbor_rtmetric_link_estimate(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return 0;
+  }
   return n->rtmetric + collect_link_estimate(&n->le);
 }
 /*---------------------------------------------------------------------------*/
 uint16_t
 collect_neighbor_rtmetric(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return 0;
+  }
+
   return n->rtmetric;
 }
 /*---------------------------------------------------------------------------*/
 void
 collect_neighbor_set_congested(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return;
+  }
   timer_set(&n->congested_timer, EXPECTED_CONGESTION_DURATION);
 }
 /*---------------------------------------------------------------------------*/
 int
 collect_neighbor_is_congested(struct collect_neighbor *n)
 {
+  if(n == NULL) {
+    return 0;
+  }
+
   if(timer_expired(&n->congested_timer)) {
     return 0;
   } else {

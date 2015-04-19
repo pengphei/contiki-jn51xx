@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: example-rudolph2.c,v 1.8 2010/11/15 21:50:02 adamdunkels Exp $
  */
 
 /**
@@ -39,7 +38,7 @@
  */
 
 #include "contiki.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/rudolph2.h"
 
 #include "dev/button-sensor.h"
@@ -94,7 +93,7 @@ write_chunk(struct rudolph2_conn *c, int offset, int flag,
   if(flag == RUDOLPH2_FLAG_LASTCHUNK) {
     int i;
     printf("+++ rudolph2 entire file received at %d, %d\n",
-	   rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1]);
+	   linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
     leds_off(LEDS_RED);
     leds_on(LEDS_YELLOW);
 
@@ -104,13 +103,13 @@ write_chunk(struct rudolph2_conn *c, int offset, int flag,
       int r = cfs_read(fd, &buf, 1);
       if (r != 1) {
 	printf("%d.%d: error: read failed at %d\n",
-	       rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	       linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	       i);
 	break;
       }       
       else if(buf != (unsigned char)i) {
 	printf("%d.%d: error: diff at %d, %d != %d\n",
-	       rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	       linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	       i, (unsigned char)i, buf);
 	break;
       }
@@ -132,7 +131,7 @@ read_chunk(struct rudolph2_conn *c, int offset, uint8_t *to, int maxsize)
   cfs_seek(fd, offset, CFS_SEEK_SET);
   ret = cfs_read(fd, to, maxsize);
   /*  printf("%d.%d: read_chunk %d bytes at %d, %d\n",
-	 rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	 linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	 ret, offset, (unsigned char)to[0]);*/
   cfs_close(fd);
   return ret;
@@ -141,7 +140,7 @@ const static struct rudolph2_callbacks rudolph2_call = {write_chunk,
 							read_chunk};
 static struct rudolph2_conn rudolph2;
 /*---------------------------------------------------------------------------*/
-#include "node-id.h"
+#include "sys/node-id.h"
 
 PROCESS_THREAD(example_rudolph2_process, ev, data)
 {
@@ -157,13 +156,13 @@ PROCESS_THREAD(example_rudolph2_process, ev, data)
 
   PROCESS_PAUSE();
   
-  if(rimeaddr_node_addr.u8[0] == 1 &&
-     rimeaddr_node_addr.u8[1] == 0) {
+  if(linkaddr_node_addr.u8[0] == 1 &&
+     linkaddr_node_addr.u8[1] == 0) {
     {
       int i;
       
       printf("%d.%d: selected data source\n",
-	     rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1]);
+	     linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1]);
       
       fd = cfs_open("hej", CFS_WRITE);
       for(i = 0; i < FILESIZE; i++) {
@@ -171,7 +170,7 @@ PROCESS_THREAD(example_rudolph2_process, ev, data)
 	int w = cfs_write(fd, &buf, 1);
 	if (w != 1) {
 	  printf("%d.%d: error: write failed at %d\n",
-	       rimeaddr_node_addr.u8[0], rimeaddr_node_addr.u8[1],
+	       linkaddr_node_addr.u8[0], linkaddr_node_addr.u8[1],
 	       i);
 	  break;
 	}       

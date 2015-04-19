@@ -1,30 +1,3 @@
-/**
- * \file
- * Declaration of the DSC program description structure.
- * \author Adam Dunkels <adam@dunkels.com>
- *
- */
-
-/**
- * \addtogroup loader
- * @{
- */
-
-/**
- * \page dsc The program description structure
- *
- * The Contiki DSC structure is used for describing programs. It
- * includes a string describing the program, the name of the program
- * file on disk (or a pointer to the programs initialization function
- * for systems without disk support), a bitmap icon and a text version
- * of the same icon.
- *
- * The DSC is saved into a file which can be loaded by programs such
- * as the "Directory" application which reads all DSC files on disk
- * and presents the icons and descriptions in a window.
- *
- */
-
 /*
  * Copyright (c) 2003, Adam Dunkels.
  * All rights reserved. 
@@ -56,11 +29,38 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: dsc.h,v 1.4 2008/10/14 12:46:39 nvt-se Exp $
  *
  */
-#ifndef __DSC_H__
-#define __DSC_H__
+
+/**
+ * \file
+ * Declaration of the DSC program description structure.
+ * \author Adam Dunkels <adam@dunkels.com>
+ *
+ */
+
+/**
+ * \addtogroup loader
+ * @{
+ */
+
+/**
+ * \page dsc The program description structure
+ *
+ * The Contiki DSC structure is used for describing programs. It
+ * includes a string describing the program, the name of the program
+ * file on disk (or a pointer to the programs initialization function
+ * for systems without disk support), a bitmap icon and a text version
+ * of the same icon.
+ *
+ * The DSC is saved into a file which can be loaded by programs such
+ * as the "Directory" application which reads all DSC files on disk
+ * and presents the icons and descriptions in a window.
+ *
+ */
+
+#ifndef DSC_H_
+#define DSC_H_
 
 #include "ctk/ctk.h"
 
@@ -105,7 +105,7 @@ struct dsc {
  *
  * \param prgname The name of the program on disk.
  *
- * \param initfunc A pointer to the initialization function of the
+ * \param process A pointer to the initialization function of the
  * program.
  *
  * \param icon A pointer to the CTK icon.
@@ -138,4 +138,4 @@ struct dsc {
 
 /** @} */
 
-#endif /* _DSC_H__ */
+#endif /*DSC_H__ */

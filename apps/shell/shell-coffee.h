@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: shell-coffee.h,v 1.1 2008/07/03 17:56:17 adamdunkels Exp $
  */
 
 /**
@@ -38,11 +37,11 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __SHELL_COFFEE_H__
-#define __SHELL_COFFEE_H__
+#ifndef SHELL_COFFEE_H_
+#define SHELL_COFFEE_H_
 
 #include "shell.h"
 
 void shell_coffee_init(void);
 
-#endif /* __SHELL_COFFEE_H__ */
+#endif /* SHELL_COFFEE_H_ */

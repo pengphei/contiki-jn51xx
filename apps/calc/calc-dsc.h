@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: calc-dsc.h,v 1.1 2006/06/17 22:41:10 adamdunkels Exp $
  *
  */
-#ifndef __CALC_DSC_H__
-#define __CALC_DSC_H__
+#ifndef CALC_DSC_H_
+#define CALC_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(calc_dsc);
 
-#endif /* __CALC_DSC_H__ */
+#endif /* CALC_DSC_H_ */

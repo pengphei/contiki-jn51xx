@@ -1,6 +1,6 @@
 #include "contiki-net.h"
 #include "ctk/ctk.h"
-#include "net/dhcpc.h"
+#include "net/ip/dhcpc.h"
 
 
 
@@ -48,7 +48,7 @@ set_statustext(char *text)
 }
 /*---------------------------------------------------------------------------*/
 static char *
-makebyte(u8_t byte, char *str)
+makebyte(uint8_t byte, char *str)
 {
   if(byte >= 100) {
     *str++ = (byte / 100 ) % 10 + '0';
@@ -88,7 +88,7 @@ makestrings(void)
   uip_getdraddr(&addr);
   makeaddr(&addr, gateway);
 
-  addrptr = resolv_getserver();
+  addrptr = uip_nameserver_get(0);
   if(addrptr != NULL) {
     makeaddr(addrptr, dnsserver);
   }
@@ -114,7 +114,7 @@ PROCESS_THREAD(dhcp_process, ev, data)
   CTK_WIDGET_FOCUS(&window, &getbutton);
 
   ctk_window_open(&window);
-  dhcpc_init(uip_ethaddr.addr, sizeof(uip_ethaddr.addr));
+  dhcpc_init(uip_lladdr.addr, sizeof(uip_lladdr.addr));
 
 
   while(1) {
@@ -147,7 +147,7 @@ dhcpc_configured(const struct dhcpc_state *s)
   uip_sethostaddr(&s->ipaddr);
   uip_setnetmask(&s->netmask);
   uip_setdraddr(&s->default_router);
-  resolv_conf(&s->dnsaddr);
+  uip_nameserver_update(&s->dnsaddr, UIP_NAMESERVER_INFINITE_LIFETIME);
   set_statustext("Configured.");
   process_post(PROCESS_CURRENT(), SHOWCONFIG, NULL);
 }

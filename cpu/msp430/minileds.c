@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
  * SUCH DAMAGE. 
  *
- * @(#)$Id: minileds.c,v 1.1 2006/09/27 09:32:08 bg- Exp $
  */
 
 /*
@@ -38,10 +37,7 @@
  * (820 bytes on a msp430).
  */
 
-#include <io.h>
-
 #include "contiki.h"
-
 #include "dev/leds.h"
 
 void
@@ -78,10 +74,5 @@ leds_off(unsigned char leds)
 void
 leds_toggle(unsigned char leds)
 {
-  /*
-   * Synonym: void leds_invert(unsigned char leds);
-   */
-  asm(".global leds_invert\nleds_invert:\n");
-
   LEDS_PxOUT ^= l2p[leds & LEDS_ALL];
 }

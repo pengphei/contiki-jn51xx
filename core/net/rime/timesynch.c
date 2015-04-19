@@ -1,9 +1,3 @@
-/**
- * \addtogroup timesynch
- * @{
- */
-
-
 /*
  * Copyright (c) 2007, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -34,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: timesynch.c,v 1.11 2010/12/16 22:47:38 adamdunkels Exp $
  */
 
 /**
@@ -44,10 +37,16 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/**
+ * \addtogroup timesynch
+ * @{
+ */
+
 #include "contiki.h"
 #include "lib/random.h"
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "net/rime/timesynch.h"
+#include <string.h>
 
 #if TIMESYNCH_CONF_ENABLED
 static int authority_level;
@@ -128,7 +127,7 @@ adjust_offset(rtimer_clock_t authoritative_time, rtimer_clock_t local_time)
 }
 /*---------------------------------------------------------------------------*/
 static void
-broadcast_recv(struct broadcast_conn *c, const rimeaddr_t *from)
+broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   struct timesynch_msg msg;
 

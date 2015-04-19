@@ -1,26 +1,3 @@
-/** \addtogroup apps
- * @{ */
-
-/**
- * \defgroup servreghack A service registration and diseemination hack
- * @{
- *
- * This application is a quick'n'dirty hack for registering,
- * disseminating, and looking up services. A service is identified by
- * an 8-bit integer between 1 and 255. Integers below 128 are reserved
- * for system services.
- *
- * A service is registered with the function
- * servreg_hack_register(). Registered services will be transmitted to
- * all neighbors that run the servreg-hack application. These will in
- * turn resend the registration to their neighbors.
- *
- * Services from neighbors are stored in a local table. Services
- * stored in the table can be looked up using a combination of the
- * servreg_hack_list() and servreg_hack_item_match() functions.
- *
- */
-
 /*
  * Copyright (c) 2010, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -51,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: servreg-hack.h,v 1.1 2010/06/15 19:00:28 adamdunkels Exp $
  */
 
 /**
@@ -61,11 +37,34 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+/** \addtogroup apps
+ * @{ */
+
+/**
+ * \defgroup servreghack A service registration and diseemination hack
+ * @{
+ *
+ * This application is a quick'n'dirty hack for registering,
+ * disseminating, and looking up services. A service is identified by
+ * an 8-bit integer between 1 and 255. Integers below 128 are reserved
+ * for system services.
+ *
+ * A service is registered with the function
+ * servreg_hack_register(). Registered services will be transmitted to
+ * all neighbors that run the servreg-hack application. These will in
+ * turn resend the registration to their neighbors.
+ *
+ * Services from neighbors are stored in a local table. Services
+ * stored in the table can be looked up using a combination of the
+ * servreg_hack_list() and servreg_hack_item_match() functions.
+ *
+ */
+
 #ifndef SERVREG_HACK_H
 #define SERVREG_HACK_H
 
 #include "contiki-conf.h"
-#include "net/uip.h"
+#include "net/ip/uip.h"
 
 typedef uint8_t servreg_hack_id_t;
 typedef void servreg_hack_item_t;
@@ -81,6 +80,7 @@ void servreg_hack_init(void);
 /**
  * \brief      Register that this node provides a service
  * \param service_id The 8-bit ID for the service
+ * \param addr The address associated with the service
  *
  *             This function is used to register a
  *             service. Registering a service means that other nodes
@@ -91,7 +91,7 @@ void servreg_hack_init(void);
  *             reached: this is up to the application that uses the
  *             servreg-hack application.
  */
-void servreg_hack_register(servreg_hack_id_t service_id);
+void servreg_hack_register(servreg_hack_id_t service_id, const uip_ipaddr_t *addr);
 
 
 /**

@@ -28,7 +28,6 @@
  *
  * This file is part of the Contiki operating system.
  *
- * $Id: mac.h,v 1.14 2010/10/03 20:37:32 adamdunkels Exp $
  */
 
 /**
@@ -38,8 +37,8 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef __MAC_H__
-#define __MAC_H__
+#ifndef MAC_H_
+#define MAC_H_
 
 #include "contiki-conf.h"
 #include "dev/radio.h"
@@ -99,4 +98,4 @@ enum {
   MAC_TX_ERR_FATAL,
 };
 
-#endif /* __MAC_H__ */
+#endif /* MAC_H_ */

@@ -28,10 +28,10 @@
  *
  * This file is part of the Contiki operating system.
  *
- * @(#)$Id: beep.h,v 1.2 2006/07/07 06:38:53 nifi Exp $
  */
+
 /**
- * \addtogroup esb
+ * \addtogroup native_platform
  * @{
  */
 
@@ -47,8 +47,8 @@
  *
  */
 
-#ifndef __BEEP_H__
-#define __BEEP_H__
+#ifndef BEEP_H_
+#define BEEP_H_
 
 #define BEEP_ALARM1 1
 #define BEEP_ALARM2 2
@@ -160,4 +160,4 @@ void beep_quick(int num);
 /** @} */
 /** @} */
 
-#endif /* __BEEP_H__ */
+#endif /* BEEP_H_ */

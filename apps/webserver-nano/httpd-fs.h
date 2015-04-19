@@ -28,8 +28,8 @@
  *
  * This file is part of the lwIP TCP/IP stack.
  */
-#ifndef __HTTPD_FS_H__
-#define __HTTPD_FS_H__
+#ifndef HTTPD_FS_H_
+#define HTTPD_FS_H_
 
 #include "contiki-net.h"
 #include "httpd.h"
@@ -44,11 +44,11 @@ struct httpd_fs_file {
 uint16_t httpd_fs_open(const char *name, struct httpd_fs_file *file);
 
 #if WEBSERVER_CONF_FILESTATS
-extern u16_t httpd_filecount[];
-u16_t httpd_fs_count(char *name);
+extern uint16_t httpd_filecount[];
+uint16_t httpd_fs_count(char *name);
 void* httpd_fs_get_root(void);
 #endif
 
 void httpd_fs_init(void);
 
-#endif /* __HTTPD_FS_H__ */
+#endif /* HTTPD_FS_H_ */

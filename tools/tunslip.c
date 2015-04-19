@@ -28,7 +28,6 @@
  *
  * This file is part of the uIP TCP/IP stack.
  *
- * $Id: tunslip.c,v 1.17 2010/11/25 09:17:39 adamdunkels Exp $
  *
  */
 
@@ -153,7 +152,7 @@ in_addr_t giaddr;
 in_addr_t netaddr;
 in_addr_t circuit_addr;
 
-char tundev[32] = { "tun0" };
+char tundev[1024] = { "tun0" };
 
 struct sockaddr_in dhaddr;
 int dhsock = -1;
@@ -748,7 +747,7 @@ stty_telos(int fd)
 int
 devopen(const char *dev, int flags)
 {
-  char t[32];
+  char t[1024];
   strcpy(t, "/dev/");
   strcat(t, dev);
   return open(t, flags);

@@ -29,14 +29,13 @@
  *
  * This file is part of the Contiki desktop environment
  *
- * $Id: webserver-dsc.h,v 1.1 2006/06/17 22:41:14 adamdunkels Exp $
  *
  */
-#ifndef __WEBSERVER_DSC_H__
-#define __WEBSERVER_DSC_H__
+#ifndef WEBSERVER_DSC_H_
+#define WEBSERVER_DSC_H_
 
 #include "sys/dsc.h"
 
 DSC_HEADER(webserver_dsc);
 
-#endif /* __WEBSERVER_DSC_H__ */
+#endif /* WEBSERVER_DSC_H_ */

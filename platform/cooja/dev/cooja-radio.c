@@ -26,7 +26,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: cooja-radio.c,v 1.15 2010/06/14 19:19:17 adamdunkels Exp $
  */
 
 #include <stdio.h>
@@ -45,8 +44,10 @@
 #include "dev/cooja-radio.h"
 
 #define COOJA_RADIO_BUFSIZE PACKETBUF_SIZE
-
 #define CCA_SS_THRESHOLD -95
+
+#define WITH_TURNAROUND 1
+#define WITH_SEND_CCA 1
 
 const struct simInterface radio_interface;
 
@@ -61,6 +62,7 @@ int simSignalStrength = -100;
 int simLastSignalStrength = -100;
 char simPower = 100;
 int simRadioChannel = 26;
+int simLQI = 105;
 
 static const void *pending_data;
 
@@ -92,6 +94,12 @@ radio_signal_strength_current(void)
   return simSignalStrength;
 }
 /*---------------------------------------------------------------------------*/
+int
+radio_LQI(void)
+{
+	return simLQI;
+}
+/*---------------------------------------------------------------------------*/
 static int
 radio_on(void)
 {
@@ -109,16 +117,16 @@ radio_off(void)
 static void
 doInterfaceActionsBeforeTick(void)
 {
-  if (!simRadioHWOn) {
+  if(!simRadioHWOn) {
     simInSize = 0;
     return;
   }
-  if (simReceiving) {
+  if(simReceiving) {
     simLastSignalStrength = simSignalStrength;
     return;
   }
 
-  if (simInSize > 0) {
+  if(simInSize > 0) {
     process_poll(&cooja_radio_process);
   }
 }
@@ -133,7 +141,7 @@ radio_read(void *buf, unsigned short bufsize)
 {
   int tmp = simInSize;
 
-  if (simInSize == 0) {
+  if(simInSize == 0) {
     return 0;
   }
   if(bufsize < simInSize) {
@@ -144,13 +152,35 @@ radio_read(void *buf, unsigned short bufsize)
 
   memcpy(buf, simInDataBuffer, simInSize);
   simInSize = 0;
+  packetbuf_set_attr(PACKETBUF_ATTR_RSSI, simSignalStrength);
+  packetbuf_set_attr(PACKETBUF_ATTR_LINK_QUALITY, simLQI);
+
   return tmp;
+}
+/*---------------------------------------------------------------------------*/
+static int
+channel_clear(void)
+{
+  if(simSignalStrength > CCA_SS_THRESHOLD) {
+    return 0;
+  }
+  return 1;
 }
 /*---------------------------------------------------------------------------*/
 static int
 radio_send(const void *payload, unsigned short payload_len)
 {
   int radiostate = simRadioHWOn;
+
+  /* Simulate turnaround time of 2ms for packets, 1ms for acks*/
+#if WITH_TURNAROUND
+  simProcessRunValue = 1;
+  cooja_mt_yield();
+  if(payload_len > 3) {
+    simProcessRunValue = 1;
+    cooja_mt_yield();
+  }
+#endif /* WITH_TURNAROUND */
 
   if(!simRadioHWOn) {
     /* Turn on radio temporarily */
@@ -165,6 +195,13 @@ radio_send(const void *payload, unsigned short payload_len)
   if(simOutSize > 0) {
     return RADIO_TX_ERR;
   }
+
+  /* Transmit on CCA */
+#if WITH_SEND_CCA
+  if(!channel_clear()) {
+    return RADIO_TX_COLLISION;
+  }
+#endif /* WITH_SEND_CCA */
 
   /* Copy packet data to temporary storage */
   memcpy(simOutDataBuffer, payload, payload_len);
@@ -208,15 +245,6 @@ pending_packet(void)
   return !simReceiving && simInSize > 0;
 }
 /*---------------------------------------------------------------------------*/
-static int
-channel_clear(void)
-{
-  if(simSignalStrength > CCA_SS_THRESHOLD) {
-    return 0;
-  }
-  return 1;
-}
-/*---------------------------------------------------------------------------*/
 PROCESS_THREAD(cooja_radio_process, ev, data)
 {
   int len;
@@ -244,6 +272,30 @@ init(void)
   return 1;
 }
 /*---------------------------------------------------------------------------*/
+static radio_result_t
+get_value(radio_param_t param, radio_value_t *value)
+{
+  return RADIO_RESULT_NOT_SUPPORTED;
+}
+/*---------------------------------------------------------------------------*/
+static radio_result_t
+set_value(radio_param_t param, radio_value_t value)
+{
+  return RADIO_RESULT_NOT_SUPPORTED;
+}
+/*---------------------------------------------------------------------------*/
+static radio_result_t
+get_object(radio_param_t param, void *dest, size_t size)
+{
+  return RADIO_RESULT_NOT_SUPPORTED;
+}
+/*---------------------------------------------------------------------------*/
+static radio_result_t
+set_object(radio_param_t param, const void *src, size_t size)
+{
+  return RADIO_RESULT_NOT_SUPPORTED;
+}
+/*---------------------------------------------------------------------------*/
 const struct radio_driver cooja_radio_driver =
 {
     init,
@@ -256,6 +308,10 @@ const struct radio_driver cooja_radio_driver =
     pending_packet,
     radio_on,
     radio_off,
+    get_value,
+    set_value,
+    get_object,
+    set_object
 };
 /*---------------------------------------------------------------------------*/
 SIM_INTERFACE(radio_interface,

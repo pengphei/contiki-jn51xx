@@ -46,6 +46,7 @@
 #include <AppHardwareApi.h>
 #include "lib/assert.h"
 #include "net/netstack.h"
+#include "net/packetbuf.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -55,9 +56,9 @@
 #endif
 
 /* also used by auxiliary functions defined in ieee802_aux.c */
-static void (*lqicb)(const rimeaddr_t*, uint8_t) = NULL;
+static void (*lqicb)(const linkaddr_t*, uint8) = NULL;
 
-#include "net/rime.h"
+#include "net/rime/rime.h"
 #include "string.h"
 #include "gdb2.h"
 
@@ -99,7 +100,7 @@ typedef enum { NONPRESENT, RESERVED, SHORT, LONG } addrmode;
 #define UNALLOCATED_SHORT_ADDR           (0xFFFE)
 
 void
-ieee_register_lqi_callback(void (*func)(const rimeaddr_t*, uint8_t))
+ieee_register_lqi_callback(void (*func)(const linkaddr_t*, uint8))
 {
   lqicb = func;
 }
@@ -132,7 +133,7 @@ ieee_send(mac_callback_t cb, void *ptr)
   req.uParam.sReqData.sFrame.u8TxOptions = packetbuf_attr(PACKETBUF_ATTR_RELIABLE) ? MAC_TX_OPTION_ACK : 0;
 
   /* fill in destination address. */
-  if(rimeaddr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER), &rimeaddr_null))
+  if(linkaddr_cmp(packetbuf_addr(PACKETBUF_ADDR_RECEIVER), &linkaddr_null))
   {
     req.uParam.sReqData.sFrame.sDstAddr.u8AddrMode     = SHORT;
     req.uParam.sReqData.sFrame.sDstAddr.u16PanId       = BROADCAST_PANID;
@@ -157,8 +158,8 @@ ieee_send(mac_callback_t cb, void *ptr)
     ((MAC_ExtAddr_s*) ieee_get_mac())->u32H;
 
 //  printf("mac addr: 0x%x%x 0x%x lladdr: 0x%x%x%x%x%x%x%x%x 0x%x%x\n",
-//                                    *((uint32_t*) pvAppApiGetMacAddrLocation()),
-//                                    *((uint32_t*) pvAppApiGetMacAddrLocation()+1),
+//                                    *((uint32*) pvAppApiGetMacAddrLocation()),
+//                                    *((uint32*) pvAppApiGetMacAddrLocation()+1),
 //                                    pvAppApiGetMacAddrLocation(),
 //                                    (int) uip_lladdr.addr[0],
 //                                    (int) uip_lladdr.addr[1],
@@ -168,8 +169,8 @@ ieee_send(mac_callback_t cb, void *ptr)
 //                                    (int) uip_lladdr.addr[5],
 //                                    (int) uip_lladdr.addr[6],
 //                                    (int) uip_lladdr.addr[7],
-//                                    *((uint32_t*) uip_lladdr.addr),
-//                                    *((uint32_t*) uip_lladdr.addr+1));
+//                                    *((uint32*) uip_lladdr.addr),
+//                                    *((uint32*) uip_lladdr.addr+1));
 
   /* copy over payload */
   req.uParam.sReqData.sFrame.u8SduLength = packetbuf_datalen();
@@ -242,8 +243,8 @@ ieee_register_beacon_callback(void (*func)(MAC_MlmeIndBeacon_s*))
   beaconrxcb = func;
 }
 
-static rimeaddr_t*
-asrimeaddr(MAC_ExtAddr_s *addr, rimeaddr_t *rime)
+static linkaddr_t*
+aslinkaddr(MAC_ExtAddr_s *addr, linkaddr_t *rime)
 {
   CTASSERT(sizeof(*rime) == sizeof(*addr));
   ((MAC_ExtAddr_s*) rime)->u32H = addr->u32L;
@@ -267,7 +268,7 @@ req_reset(bool setDefaultPib)
 #define SCAN_ALL_CHANNELS 0x03FFF800UL
 
 static void
-req_scan(uint8_t scantype, uint8_t duration)
+req_scan(uint8 scantype, uint8 duration)
   /* scan duration is (2**n+1) * 960 symbols, maximum is 14
    * according to JN-RM-2002-802.15.4-Stack-API-1v7.pdf */
 {
@@ -300,7 +301,7 @@ static void
 ieee_mcpspt(MAC_McpsDcfmInd_s *ev)
   /* packet input and output thread */
 {
-  rimeaddr_t rime;
+  linkaddr_t rime;
   switch(ev->u8Type)
   {
     case MAC_MCPS_IND_DATA:
@@ -310,24 +311,24 @@ ieee_mcpspt(MAC_McpsDcfmInd_s *ev)
           asdataframe(ev).u8SduLength);
       packetbuf_set_datalen(asdataframe(ev).u8SduLength);
       packetbuf_set_addr(PACKETBUF_ADDR_SENDER,
-          asrimeaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime));
+          aslinkaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime));
 
       if(asdataframe(ev).sDstAddr.u8AddrMode==LONG) {
         /* addressed frame */
         packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER,
-            asrimeaddr(&asdataframe(ev).sDstAddr.uAddr.sExt, &rime));
+            aslinkaddr(&asdataframe(ev).sDstAddr.uAddr.sExt, &rime));
       } else if(asdataframe(ev).sDstAddr.u8AddrMode==SHORT &&
          asdataframe(ev).sDstAddr.u16PanId==BROADCAST_PANID &&
          asdataframe(ev).sDstAddr.uAddr.u16Short==BROADCAST_ADDR) {
         /* broadcast frame */
-        packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER, &rimeaddr_null);
+        packetbuf_set_addr(PACKETBUF_ADDR_RECEIVER, &linkaddr_null);
       }
 
       /* update lqi stuff and call lqi callback */
       packetbuf_set_attr(PACKETBUF_ATTR_RSSI, asdataframe(ev).u8LinkQuality);
 
       if (asdataframe(ev).sSrcAddr.u8AddrMode == LONG && lqicb)
-        lqicb(asrimeaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime),
+        lqicb(aslinkaddr(&asdataframe(ev).sSrcAddr.uAddr.sExt, &rime),
               asdataframe(ev).u8LinkQuality);
       else if (lqicb)
         lqicb(NULL, asdataframe(ev).u8LinkQuality);
@@ -338,9 +339,9 @@ ieee_mcpspt(MAC_McpsDcfmInd_s *ev)
 
       //{
       //  static char buf[512];
-      //  uint8_t i;
-      //  uint16_t j;
-      //  printf("delay:%d len:%d data:", (int32_t) (clock_hrtime()-asdataframe(ev).timestamp), asdataframe(ev).u8SduLength);
+      //  uint8 i;
+      //  uint16 j;
+      //  printf("delay:%d len:%d data:", (int32) (clock_hrtime()-asdataframe(ev).timestamp), asdataframe(ev).u8SduLength);
       //  for (i=0,j=0; i<asdataframe(ev).u8SduLength; i++)
       //    j+=snprintf(buf+j,sizeof(buf)-j,"0x%x ",asdataframe(ev).au8Sdu[i]);
       //  buf[j]='\n';
