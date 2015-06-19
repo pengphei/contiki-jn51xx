@@ -2,8 +2,7 @@ ifndef CONTIKI
   $(error CONTIKI not defined! You must specify where CONTIKI resides!)
 endif
 
-CONTIKI_TARGET_SOURCEFILES += ieee802.c \
-                              leds-arch.c leds.c contiki-main.c
+CONTIKI_TARGET_SOURCEFILES += contiki-main.c
 
 CONTIKIBOARD=.
 CONTIKI_TARGET_DIRS += .
@@ -14,8 +13,8 @@ TARGET_STARTFILES = ${addprefix $(OBJECTDIR)/,contiki-main.o}
 
 include $(CONTIKI)/cpu/jennic/Makefile.jn516x
 
-MODULES += core/net core/net/mac \
-           core/net/mac/contikimac \
-           core/net/llsec
+#MODULES += core/net core/net/mac \
+#           core/net/mac/contikimac \
+#           core/net/llsec
 
 

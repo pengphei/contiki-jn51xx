@@ -66,6 +66,7 @@ JENNIC_LIBS += -lHardwareApi_JN516x
 JENNIC_LIBS += -lMicroSpecific_JN516x
 JENNIC_LIBS += -lBoot_JN516x
 JENNIC_LIBS += -lMaths_JN516x
+JENNIC_LIBS += -lm
 
 JENNIC_LIBS += -lAppApi_JN516x
 JENNIC_LIBS += -lMAC_JN516x

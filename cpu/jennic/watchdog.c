@@ -42,7 +42,7 @@ void
 watchdog_start(void)
 {
 #ifdef __BA2__
-  vAHI_WatchdogStart(8); /* about 1s timeout */
+  vAHI_WatchdogStart(12); /* about 1s timeout */
 #endif
 }
 /*---------------------------------------------------------------------------*/
