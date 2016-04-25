@@ -21,7 +21,7 @@ AppColdStart(void)
   init_hardware();
   process_init();
   procinit_init();
-  init_net();
+  //init_net();
   jts_init();
 
   /* application startup */

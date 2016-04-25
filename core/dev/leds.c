@@ -86,6 +86,8 @@ leds_blink(void)
   clock_delay(400);
 
   leds_toggle(blink);
+
+  clock_delay(400);
 }
 /*---------------------------------------------------------------------------*/
 unsigned char

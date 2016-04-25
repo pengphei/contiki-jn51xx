@@ -3,7 +3,10 @@ ifndef CONTIKI
 endif
 
 CONTIKI_TARGET_SOURCEFILES += ieee802.c \
-                              leds-arch.c leds.c contiki-main.c
+                              leds-arch.c \
+                              contiki-main.c \
+                              motor.c \
+                              app_main.c
 
 CONTIKIBOARD=.
 CONTIKI_TARGET_DIRS += .

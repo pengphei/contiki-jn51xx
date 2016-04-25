@@ -175,7 +175,7 @@ int printf(const char *fmt, ...)
   va_end(va);
   str[m+1] = '\0';
   for (i=0;i<m;i++)
-    uart0_writeb(str[i]);
+    sys_print_char(str[i]);
   return m;
 }
 
@@ -184,8 +184,8 @@ int puts(const char *s)
   char c;
 
   while (c=*s++)
-    uart0_writeb(c);
-  uart0_writeb('\n');
+    sys_print_char(c);
+  sys_print_char('\n');
 
   return strlen(s);
 }
@@ -193,6 +193,6 @@ int puts(const char *s)
 #undef putchar
 int putchar(int c)
 {
-  uart0_writeb(c);
+  sys_print_char(c);
   return 1;
 }

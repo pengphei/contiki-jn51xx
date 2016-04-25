@@ -38,8 +38,10 @@
 #include "clock.h"
 
 void jn5148_doze(clock_time_t time);
-void sys_baudrate_init(uint16 baudrate);
+void sys_baudrate_init();
+void inline sys_print_char(unsigned char c);
 void init_hardware();
+void debug_blink();
 
 #endif
 

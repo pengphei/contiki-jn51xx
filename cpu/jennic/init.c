@@ -368,20 +368,7 @@ void sys_irs_init()
 }
 
 void
-init_hardware()
-{
-    u32AHI_Init();
-    watchdog_stop();
-    sys_irs_init();
-    sys_baudrate_init(E_AHI_UART_RATE_38400);
-    leds_init();
-    irq_init();
-    clock_init();
-    ctimer_init();
-}
-
-void
-sys_baudrate_init(uint16 baudrate)
+sys_baudrate_init()
 {
 #ifdef __BA2__
 #ifdef JENNIC_CHIP_FAMILY_JN516x
@@ -395,10 +382,43 @@ sys_baudrate_init(uint16 baudrate)
 #ifdef GDB
     GDB2_STARTUP(E_AHI_UART_0, E_AHI_UART_RATE_38400);
 # ifdef __BA1__
-    uart0_set_br(baudrate);
+    uart0_set_br(E_AHI_UART_RATE_38400);
     HAL_BREAKPOINT();
 # endif
 # else
-    uart0_init(baudrate);
+    //uart0_init(E_AHI_UART_RATE_115200);
+    uart1_init(E_AHI_UART_RATE_38400);
 #endif
+
+}
+
+void debug_blink()
+{
+    int ii = 5;
+    while(ii--)
+    {
+        leds_blink();
+    }
+}
+
+void
+init_hardware()
+{
+    u32AHI_Init();
+    watchdog_init();
+    sys_irs_init();
+    sys_baudrate_init();
+    leds_init();
+    irq_init();
+    clock_init();
+    ctimer_init();
+}
+
+
+
+void
+inline sys_print_char(unsigned char c)
+{
+    //uart0_writeb(c);
+    uart1_writeb(c);
 }

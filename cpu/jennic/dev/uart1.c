@@ -52,6 +52,13 @@
 # define UART_AFC_OFFSET  0x2C
 #endif
 
+
+#define TXBUFSIZE 1024
+
+static struct ringbuf txbuf;
+static uint8_t txbuf_data[TXBUFSIZE];
+static volatile uint8_t transmitting;
+
 void
 uart1_set_br(uint16 br)
 {
@@ -104,8 +111,21 @@ static int (*uart1_input)(unsigned char c);
 
 static void irq(uint32 irqsrc, uint32 map)
 {
-  while (u8AHI_UartReadLineStatus(E_AHI_UART_1)&E_AHI_UART_LS_DR)
-    uart1_input(u8AHI_UartReadData(E_AHI_UART_1));
+    if (map==E_AHI_UART_INT_RXDATA)
+    {
+      if (uart1_input)
+        uart1_input(u8AHI_UartReadData(E_AHI_UART_1));
+      else
+        u8AHI_UartReadData(E_AHI_UART_1);
+    }
+
+    if (map==E_AHI_UART_INT_TX)
+    {
+      if (ringbuf_elements(&txbuf)==0)
+        transmitting=0;
+      else
+        vAHI_UartWriteData(E_AHI_UART_1, ringbuf_get(&txbuf));
+    }
 }
 
 void uart1_set_input(int (*input)(unsigned char c))
@@ -115,14 +135,22 @@ void uart1_set_input(int (*input)(unsigned char c))
 
 void uart1_writeb(unsigned char c)
 {
-  while(!(u8AHI_UartReadLineStatus(E_AHI_UART_1)&E_AHI_UART_LS_THRE))
-      ; /* wait for transmit buffer to empty */
+    /* push into rinbuf until there is space */
+    while (ringbuf_put(&txbuf,c)==0)
+      ;
 
-  vAHI_UartWriteData(E_AHI_UART_1, c);
+    if (transmitting==0)
+    {
+      transmitting=1;
+      vAHI_UartWriteData(E_AHI_UART_1, ringbuf_get(&txbuf));
+    }
 }
 
 void uart1_init(uint16 br)
 {
+  transmitting = 0;
+  ringbuf_init(&txbuf, txbuf_data, sizeof(txbuf_data));
+
   vAHI_UartSetRTSCTS(E_AHI_UART_1, false);
   vAHI_UartEnable(E_AHI_UART_1);
 
@@ -134,7 +162,7 @@ void uart1_init(uint16 br)
   vAHI_Uart1RegisterCallback(irq);
   vAHI_UartSetInterrupt(E_AHI_UART_1, false,  /* modem status         */
                               false,  /* rx line error status */
-                              false,  /* tx fifo empty        */
+                              true,  /* tx fifo empty        */
                               true,   /* rx data there        */
                               E_AHI_UART_FIFO_LEVEL_1);
 

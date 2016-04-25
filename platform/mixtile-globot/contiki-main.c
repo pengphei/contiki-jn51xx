@@ -3,6 +3,7 @@
 #include "gdb2.h"
 #include "init.h"
 #include "jts.h"
+#include "app_main.h"
 
 PROCINIT(&etimer_process);
 
@@ -22,8 +23,8 @@ AppColdStart(void)
   process_init();
   procinit_init();
   //init_net();
-  jts_init();
-
+  //jts_init();
+  app_init();
   /* application startup */
   autostart_start(autostart_processes);
 
@@ -31,6 +32,8 @@ AppColdStart(void)
 #ifdef __BA2__
   watchdog_start();
 #endif
+
+  /* application init */
 
   /* default main loop */
   while(1)
